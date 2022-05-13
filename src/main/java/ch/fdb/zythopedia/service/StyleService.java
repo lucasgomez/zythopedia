@@ -16,11 +16,9 @@ import java.util.stream.Collectors;
 public class StyleService {
 
     private StyleRepository styleRepository;
-    private BeerService beerService;
 
-    public StyleService(StyleRepository styleRepository, BeerService beerService) {
+    public StyleService(StyleRepository styleRepository) {
         this.styleRepository = styleRepository;
-        this.beerService = beerService;
     }
 
     public Optional<Style> findById(long styleId) {
@@ -68,7 +66,8 @@ public class StyleService {
         var styleToDelete = styleRepository.findById(styleId)
                 .orElseThrow();
 
-        beerService.unsetStyle(styleToDelete);
+//        styleToDelete.getDrinks()
+//                .forEach(drink -> drink.setStyle(null));
         styleToDelete.getChildren()
                 .forEach(child -> child.setParent(styleToDelete.getParent()));
 

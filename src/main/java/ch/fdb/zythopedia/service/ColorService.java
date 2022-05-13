@@ -13,11 +13,9 @@ import java.util.Optional;
 public class ColorService {
 
     private ColorRepository colorRepository;
-    private BeerService beerService;
 
-    public ColorService(ColorRepository colorRepository, BeerService beerService) {
+    public ColorService(ColorRepository colorRepository) {
         this.colorRepository = colorRepository;
-        this.beerService = beerService;
     }
 
     public List<Color> findAll() {
@@ -47,7 +45,10 @@ public class ColorService {
     public void delete(long colorId) {
         var colorToDelete = colorRepository.findById(colorId)
                 .orElseThrow();
-        beerService.unsetColors(colorToDelete);
+
+//        colorToDelete.getDrinks()
+//                .forEach(drink -> drink.setColor(null));
+
         colorRepository.delete(colorToDelete);
     }
 }

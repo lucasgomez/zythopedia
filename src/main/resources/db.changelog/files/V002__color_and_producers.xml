@@ -15,4 +15,34 @@
         </createTable>
         <addUniqueConstraint tableName="COLOR" columnNames="NAME" constraintName="UK_COLOR__NAME"/>
     </changeSet>
+
+    <changeSet author="lg" id="V002.02">
+        <createTable tableName="ORIGIN">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="PK_ORIGIN"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(255)"/>
+            <column name="SHORT_NAME" type="VARCHAR2(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLAG" type="VARCHAR2(255)"/>
+        </createTable>
+        <addUniqueConstraint tableName="ORIGIN" columnNames="NAME" constraintName="UK_ORIGIN__NAME"/>
+        <addUniqueConstraint tableName="ORIGIN" columnNames="SHORT_NAME" constraintName="UK_ORIGIN__SHORT_NAME"/>
+    </changeSet>
+
+    <changeSet author="lg" id="V002.03">
+        <createTable tableName="PRODUCER">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="PK_PRODUCER"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ORIGIN_FK" type="BIGINT"/>
+        </createTable><addForeignKeyConstraint baseColumnNames="ORIGIN_FK" baseTableName="PRODUCER"
+                                               constraintName="FK_PRODUCER_ORIGIN__ORIGIN"
+                                               referencedColumnNames="ID" referencedTableName="ORIGIN"/>
+        <addUniqueConstraint tableName="PRODUCER" columnNames="NAME" constraintName="UK_PRODUCER__NAME"/>
+    </changeSet>
 </databaseChangeLog>
