@@ -18,4 +18,17 @@
             <column name="DESCRIPTION" type="VARCHAR2(2000)"/>
         </createTable>
     </changeSet>
+
+    <changeSet author="lg" id="V001.03">
+        <addColumn tableName="STYLE">
+            <column name="PARENT_FK" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="PARENT_FK" baseTableName="STYLE"
+                                 constraintName="FK_STYLE_PARENT"
+                                 referencedColumnNames="ID" referencedTableName="STYLE"/>
+    </changeSet>
+
+    <changeSet author="lg" id="V001.04">
+        <addUniqueConstraint tableName="STYLE" columnNames="NAME" constraintName="UK_STYLE__NAME"/>
+    </changeSet>
 </databaseChangeLog>

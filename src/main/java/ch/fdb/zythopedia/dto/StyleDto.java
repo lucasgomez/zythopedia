@@ -9,7 +9,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class StyleDto {
 
-    private long id;
+    private Long id;
     private String name;
     private String description;
+    private Long parentId;
 }
