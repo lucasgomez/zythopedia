@@ -42,13 +42,13 @@ public class StyleController {
     @PostMapping(value = "/style")
     public StyleDto create(@RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
-                styleService.create(createStyleDto.getName(), createStyleDto.getDescription(), createStyleDto.getParentStyleId()));
+                styleService.create(createStyleDto));
     }
 
     @PutMapping(value = "/style/{styleId}")
-    public StyleDto create(@PathVariable long styleId, @RequestBody CreateStyleDto createStyleDto) {
+    public StyleDto update(@PathVariable long styleId, @RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
-                styleService.update(styleId, createStyleDto.getName(), createStyleDto.getDescription(), createStyleDto.getParentStyleId()));
+                styleService.update(styleId, createStyleDto));
     }
 
     @DeleteMapping(value = "/style/{styleId}")

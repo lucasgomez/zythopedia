@@ -7,10 +7,8 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Builder
 @Jacksonized
-public class CreateStyleDto {
+public class CreateColorDto {
 
     private String name;
     private String description;
-    private Long parentStyleId;
-    private String parentName;
 }

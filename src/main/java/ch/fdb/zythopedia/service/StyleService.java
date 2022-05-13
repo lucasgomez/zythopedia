@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.CreateStyleDto;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.repository.StyleRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,32 +31,36 @@ public class StyleService {
         return styleRepository.findAll();
     }
 
-    public Style create(String name, String description, Long parentStyleId) {
-        var parent = Optional.ofNullable(parentStyleId)
+    public Style create(CreateStyleDto createStyleDto) {
+        var parent = Optional.ofNullable(createStyleDto.getParentStyleId())
                 .flatMap(styleRepository::findById)
-                .orElse(null);
+                .orElseGet(() -> Optional.ofNullable(createStyleDto.getParentName())
+                        .flatMap(styleRepository::findByName)
+                        .orElse(null));
 
         return styleRepository.save(Style.builder()
-                .name(name)
-                .description(description)
+                .name(createStyleDto.getName())
+                .description(createStyleDto.getDescription())
                 .parent(parent)
                 .build());
     }
 
-    public Style update(long styleId, String newName, String newDescription, Long parentStyleId) {
+    public Style update(long styleId, CreateStyleDto createStyleDto) {
         var styleToUpdate = styleRepository.findById(styleId)
                 .orElseThrow();
 
-        var newParent = Optional.ofNullable(parentStyleId)
+        var newParent = Optional.ofNullable(createStyleDto.getParentStyleId())
                 .flatMap(styleRepository::findById)
-                .orElse(null);
+                .orElseGet(() -> Optional.ofNullable(createStyleDto.getParentName())
+                        .flatMap(styleRepository::findByName)
+                        .orElse(null));
 
         checkForCycles(styleToUpdate, newParent);
 
         return styleRepository
                 .save(styleToUpdate
-                        .setName(newName)
-                        .setDescription(newDescription)
+                        .setName(createStyleDto.getName())
+                        .setDescription(createStyleDto.getDescription())
                         .setParent(newParent));
     }
 
@@ -97,4 +102,5 @@ public class StyleService {
 
         return children;
     }
+
 }
