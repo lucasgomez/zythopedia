@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="lg" id="V001.01">
+        <createSequence incrementBy="1" minValue="1337" sequenceName="HIBERNATE_SEQUENCE"/>
+    </changeSet>
+
+    <changeSet author="lg" id="V001.02">
+        <createTable tableName="STYLE">
+            <column name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="PK_STYLE"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR2(2000)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
