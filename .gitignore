@@ -10,9 +10,4 @@ front/.sass-cache/
 front/.tmp/
 front/.angular/cache
 
-appDir/*/app/*
-appDir/*/tmp/*
-appDir/*/data/*
-
-appDir/CO/config/logback-spring.xml
-appDir/*/config/devel.properties
+tmp/*

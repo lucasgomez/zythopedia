@@ -1,6 +1,6 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.CreateStyleDto;
+import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
 import ch.fdb.zythopedia.service.StyleService;

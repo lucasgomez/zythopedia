@@ -53,20 +53,15 @@
             <column name="DRINK_FK" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR2(255)">
-                <constraints nullable="false"/>
-            </column>
             <column name="BUYING_PRICE" type="DOUBLE">
                 <constraints nullable="false"/>
             </column>
-            <column name="VOLUME_IN_CL" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
+            <column name="VOLUME_IN_CL" type="BIGINT"/>
             <column name="SERVICE_METHOD" type="VARCHAR2(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addUniqueConstraint tableName="BOUGHT_DRINK" columnNames="NAME" constraintName="UK_BOUGHT_DRINK__NAME"/>
+        <addUniqueConstraint tableName="BOUGHT_DRINK" columnNames="CODE,EDITION_FK" constraintName="UK_BOUGHT_DRINK__NAME"/>
         <addForeignKeyConstraint baseColumnNames="EDITION_FK" baseTableName="BOUGHT_DRINK"
                                  constraintName="FK_BOUGHT_DRINK__EDITION"
                                  referencedColumnNames="ID" referencedTableName="EDITION"/>

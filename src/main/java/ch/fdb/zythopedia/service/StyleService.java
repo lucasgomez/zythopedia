@@ -1,6 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.CreateStyleDto;
+import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.repository.StyleRepository;
 import lombok.extern.slf4j.Slf4j;

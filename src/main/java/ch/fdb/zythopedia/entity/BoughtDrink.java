@@ -36,7 +36,7 @@ public class BoughtDrink {
     @Column(name = "BUYING_PRICE", nullable = false)
     private Double buyingPrice;
 
-    @Column(name = "VOLUME_IN_CL", nullable = false)
+    @Column(name = "VOLUME_IN_CL")
     private Double volumeInCl;
 
     @Column(name = "SERVICE_METHOD", nullable = false)

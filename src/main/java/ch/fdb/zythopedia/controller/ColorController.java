@@ -1,7 +1,7 @@
 package ch.fdb.zythopedia.controller;
 
 import ch.fdb.zythopedia.dto.ColorDto;
-import ch.fdb.zythopedia.dto.CreateColorDto;
+import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.dto.mapper.ColorMapper;
 import ch.fdb.zythopedia.service.ColorService;
 import lombok.extern.slf4j.Slf4j;

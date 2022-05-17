@@ -1,7 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.CreateProducerDto;
-import ch.fdb.zythopedia.entity.Origin;
+import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.ProducerRepository;
 import lombok.extern.slf4j.Slf4j;

@@ -1,12 +1,8 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.ColorDto;
-import ch.fdb.zythopedia.dto.CreateColorDto;
-import ch.fdb.zythopedia.dto.CreateOriginDto;
+import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.OriginDto;
-import ch.fdb.zythopedia.dto.mapper.ColorMapper;
 import ch.fdb.zythopedia.dto.mapper.OriginMapper;
-import ch.fdb.zythopedia.service.ColorService;
 import ch.fdb.zythopedia.service.OriginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

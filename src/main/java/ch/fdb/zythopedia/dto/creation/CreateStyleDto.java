@@ -1,4 +1,4 @@
-package ch.fdb.zythopedia.dto;
+package ch.fdb.zythopedia.dto.creation;
 
 import lombok.Builder;
 import lombok.Data;

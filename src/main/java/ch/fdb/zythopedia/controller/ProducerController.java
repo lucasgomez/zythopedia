@@ -1,6 +1,6 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.CreateProducerDto;
+import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.dto.ProducerDto;
 import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
 import ch.fdb.zythopedia.service.ProducerService;

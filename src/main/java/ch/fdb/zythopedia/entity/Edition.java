@@ -21,6 +21,6 @@ public class Edition {
     private Long id;
 
     @Column(name = "NAME", nullable = false)
-    private Long name;
+    private String name;
 
 }
