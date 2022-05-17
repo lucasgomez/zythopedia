@@ -11,6 +11,7 @@ public class CreateBoughtDrinkDto {
     private String code;
     private String name;
     private Double buyingPrice;
+    private Long volumeInCl;
     private ServiceMethod serviceMethod;
 
 }

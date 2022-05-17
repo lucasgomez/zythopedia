@@ -1,7 +1,9 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
+import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Color;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Edition;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -22,18 +25,53 @@ public class ImportService {
 
     private BoughtDrinkService boughtDrinkService;
     private DrinkService drinkService;
+    private StyleService styleService;
+    private ColorService colorService;
     private AmsteinImporterService amsteinImporterService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, AmsteinImporterService amsteinImporterService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, AmsteinImporterService amsteinImporterService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
+        this.styleService = styleService;
+        this.colorService = colorService;
         this.amsteinImporterService = amsteinImporterService;
+    }
+
+    public void importAmsteinCatalogData(MultipartFile multipartFile) {
+        log.info("Starting import from amstein catalog file");
+
+        var colorsFromImport = amsteinImporterService.readColorsFromCatalogFile(multipartFile);
+
+        var allColorsNames = colorService.findAll().stream()
+                .map(Color::getName)
+                .collect(Collectors.toSet());
+        var colorsToImport = colorsFromImport.stream()
+                .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
+                .collect(Collectors.toSet());
+
+        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
+        var stylesToImport = stylesFromImport.stream()
+                .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
+                .collect(Collectors.toSet());
+
+        colorsToImport.stream()
+                .map(colorService::create)
+                .collect(Collectors.toSet());
+        stylesToImport.stream()
+                .map(styleService::create)
+                .collect(Collectors.toSet());
+
+
+    }
+
+    public void testImportAmsteinOrder(MultipartFile multipartFile) {
+        //TODO add method to test reading data
     }
 
     public void importAmsteinOrder(MultipartFile multipartFile) {
         log.info("Starting import from amstein order file");
 
-        var boughtDrinkToImports = amsteinImporterService.importFromFile(multipartFile);
+        var boughtDrinkToImports = amsteinImporterService.readBoughtDrinkFromFile(multipartFile);
 
         log.info(String.format("Trying to import %s records", boughtDrinkToImports.size()));
 

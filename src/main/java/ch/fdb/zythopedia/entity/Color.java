@@ -4,6 +4,8 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "COLOR", uniqueConstraints = {@UniqueConstraint(name = "UK_COLOR__NAME", columnNames = {"NAME"})})
@@ -25,5 +27,8 @@ public class Color {
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    @OneToMany(mappedBy = "color")
+    private List<Drink> drinks = new ArrayList<>();
 
 }

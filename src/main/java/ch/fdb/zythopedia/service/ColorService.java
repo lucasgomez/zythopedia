@@ -1,12 +1,15 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.entity.Color;
 import ch.fdb.zythopedia.repository.ColorRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,6 +27,10 @@ public class ColorService {
 
     public Optional<Color> findById(long colorId) {
         return colorRepository.findById(colorId);
+    }
+
+    public Color create(CreateColorDto createColorDto) {
+        return create(createColorDto.getName(), createColorDto.getDescription());
     }
 
     public Color create(String name, String description) {
@@ -46,8 +53,8 @@ public class ColorService {
         var colorToDelete = colorRepository.findById(colorId)
                 .orElseThrow();
 
-//        colorToDelete.getDrinks()
-//                .forEach(drink -> drink.setColor(null));
+        colorToDelete.getDrinks()
+                .forEach(drink -> drink.setColor(null));
 
         colorRepository.delete(colorToDelete);
     }

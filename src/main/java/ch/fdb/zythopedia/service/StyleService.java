@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -66,8 +67,8 @@ public class StyleService {
         var styleToDelete = styleRepository.findById(styleId)
                 .orElseThrow();
 
-//        styleToDelete.getDrinks()
-//                .forEach(drink -> drink.setStyle(null));
+        styleToDelete.getDrinks()
+                .forEach(drink -> drink.setStyle(null));
         styleToDelete.getChildren()
                 .forEach(child -> child.setParent(styleToDelete.getParent()));
 
@@ -101,5 +102,4 @@ public class StyleService {
 
         return children;
     }
-
 }

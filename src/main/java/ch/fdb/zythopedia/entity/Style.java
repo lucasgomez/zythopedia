@@ -35,4 +35,7 @@ public class Style {
     @OneToMany(mappedBy = "parent")
     private List<Style> children = new ArrayList<>();
 
+    @OneToMany(mappedBy = "style")
+    private List<Drink> drinks = new ArrayList<>();
+
 }
