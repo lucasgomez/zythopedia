@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface OriginRepository extends JpaRepository<Origin, Long> {
 
     Optional<Origin> findByShortName(String originShortName);
+
+    Optional<Origin> findByName(String name);
 }

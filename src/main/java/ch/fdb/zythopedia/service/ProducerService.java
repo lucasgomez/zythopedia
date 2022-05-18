@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.ProducerRepository;
@@ -32,7 +33,19 @@ public class ProducerService {
     public Producer create(CreateProducerDto createProducerDto) {
         var origin = originService.findByIdOrName(
                 createProducerDto.getOriginId(),
-                createProducerDto.getOriginShortName());
+                createProducerDto.getOriginShortName(),
+                createProducerDto.getOriginName());
+
+        if (origin.isEmpty() &&
+                (null != createProducerDto.getOriginShortName() || null != createProducerDto.getOriginName())) {
+            origin = Optional.ofNullable(createProducerDto.getOriginShortName())
+                    .or(() -> Optional.ofNullable(createProducerDto.getOriginName()))
+                    .map(name -> name.substring(0, 4))
+                    .map(shortName -> originService.create(CreateOriginDto.builder()
+                            .shortName(shortName)
+                            .name(createProducerDto.getOriginName())
+                            .build()));
+        }
 
         return producerRepository.save(Producer.builder()
                 .name(createProducerDto.getName())
@@ -45,7 +58,8 @@ public class ProducerService {
                 .orElseThrow();
         var origin = originService.findByIdOrName(
                 createProducerDto.getOriginId(),
-                createProducerDto.getOriginShortName());
+                createProducerDto.getOriginShortName(),
+                createProducerDto.getOriginName());
 
         return producerRepository.save(producerToUpdate
                 .setName(createProducerDto.getName())

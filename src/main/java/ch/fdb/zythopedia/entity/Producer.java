@@ -29,7 +29,7 @@ public class Producer {
     @JoinColumn(name = "ORIGIN_FK", foreignKey = @ForeignKey(name = "FK_PRODUCER_ORIGIN__ORIGIN"))
     private Origin origin;
 
-//    @OneToMany(mappedBy = "producer")
-//    private List<Drink> drinks;
+    @OneToMany(mappedBy = "producer")
+    private List<Drink> drinks;
 
 }

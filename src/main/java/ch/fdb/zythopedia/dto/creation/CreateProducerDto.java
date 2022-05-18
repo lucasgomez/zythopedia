@@ -11,4 +11,5 @@ public class CreateProducerDto {
     private String name;
     private Long originId;
     private String originShortName;
+    private String originName;
 }

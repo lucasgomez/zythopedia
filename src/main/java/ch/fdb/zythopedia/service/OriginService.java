@@ -55,10 +55,12 @@ public class OriginService {
         originRepository.delete(originToDelete);
     }
 
-    public Optional<Origin> findByIdOrName(Long originId, String originShortName) {
+    public Optional<Origin> findByIdOrName(Long originId, String originShortName, String originLongName) {
         return Optional.ofNullable(originId)
                 .flatMap(originRepository::findById)
                 .or(() -> Optional.ofNullable(originShortName)
-                        .flatMap(originRepository::findByShortName));
+                        .flatMap(originRepository::findByShortName))
+                .or(() -> Optional.ofNullable(originLongName)
+                        .flatMap(originRepository::findByName));
     }
 }

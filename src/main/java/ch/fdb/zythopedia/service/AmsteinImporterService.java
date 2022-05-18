@@ -1,9 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
-import ch.fdb.zythopedia.dto.creation.CreateColorDto;
-import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
-import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
+import ch.fdb.zythopedia.dto.creation.*;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.enums.Strength;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +44,13 @@ public class AmsteinImporterService {
                 .map(this::getDrinkByBoughtDrinkFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+    }
+
+    public Collection<CreateProducerDto> readProducersFromCatalogFile(MultipartFile multipartFile) {
+        return readRowsFromFile(multipartFile).stream()
+                .map(this::getProducerFromRow)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 
     public Collection<CreateStyleDto> readStylesFromCatalogFile(MultipartFile multipartFile) {
@@ -131,6 +135,17 @@ public class AmsteinImporterService {
                 .sweetness(getCellContentAsStrength(row, CATALOG_SWEETNESS_COLUMN_NUM))
                 .hoppiness(getCellContentAsStrength(row, CATALOG_HOPPINESS_COLUMN_NUM))
                 .build();
+    }
+
+    private CreateProducerDto getProducerFromRow(Row row) {
+        return Optional.ofNullable(row.getCell(CATALOG_PRODUCER_COLUMN_NUM))
+                .map(Cell::getStringCellValue)
+                .filter(Predicate.not(String::isBlank))
+                .map(content -> CreateProducerDto.builder()
+                        .name(content)
+                        .originName(getCellStringContent(row, CATALOG_ORIGIN_COLUMN_NUM))
+                        .build())
+                .orElse(null);
     }
 
     private CreateStyleDto getStyleFromRow(Row row) {

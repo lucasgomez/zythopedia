@@ -23,66 +23,26 @@ public class ImportService {
     private DrinkService drinkService;
     private StyleService styleService;
     private ColorService colorService;
+    private ProducerService producerService;
     private AmsteinImporterService amsteinImporterService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, AmsteinImporterService amsteinImporterService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, ProducerService producerService, AmsteinImporterService amsteinImporterService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
         this.styleService = styleService;
         this.colorService = colorService;
+        this.producerService = producerService;
         this.amsteinImporterService = amsteinImporterService;
     }
 
     public void importAmsteinCatalogData(MultipartFile multipartFile) {
         log.info("Starting import from amstein catalog file");
 
-        var colorsFromImport = amsteinImporterService.readColorsFromCatalogFile(multipartFile);
-        log.info(String.format("Colors found in amstein catalog file : %s", colorsFromImport.size()));
+        importColors(multipartFile);
+        importStyles(multipartFile);
+        importProducers(multipartFile);
+        importDrinks(multipartFile);
 
-        var allColorsNames = colorService.findAll().stream()
-                .map(Color::getName)
-                .collect(Collectors.toSet());
-        var colorsToImport = colorsFromImport.stream()
-                .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
-                .collect(Collectors.toSet());
-        log.info(String.format("Colors from amstein catalog file to import : %s", colorsToImport.size()));
-
-        var importedColors = colorsToImport.stream()
-                .map(colorService::create)
-                .collect(Collectors.toSet());
-        log.info(String.format("Colors from amstein catalog file imported : %s/%s", importedColors.size(), colorsFromImport.size()));
-
-        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
-        log.info(String.format("Styles found in amstein catalog file : %s", stylesFromImport.size()));
-
-        var allStylesName = styleService.findAll().stream()
-                .map(Style::getName)
-                .collect(Collectors.toSet());
-        var stylesToImport = stylesFromImport.stream()
-                .filter(Predicate.not(color -> allStylesName.contains(color.getName())))
-                .collect(Collectors.toSet());
-        log.info(String.format("Styles from amstein catalog file to import : %s", stylesToImport.size()));
-
-        var importedStyles = stylesToImport.stream()
-                .map(styleService::create)
-                .collect(Collectors.toSet());
-        log.info(String.format("Styles from amstein catalog file imported : %s/%s", importedStyles.size(), stylesFromImport.size()));
-
-        var drinksToImport = amsteinImporterService.readDrinkFromCatalogFile(multipartFile);
-        log.info(String.format("Drinks from amstein catalog file read : %s", drinksToImport.size()));
-
-        var boughtDrinksUpdated = boughtDrinkService.updateBoughtDrinksVolume(drinksToImport.keySet());
-        log.info(String.format("BoughtDrinks volume from amstein catalog file imported : %s", boughtDrinksUpdated.size()));
-
-        var updatedDrinks = drinksToImport.entrySet().stream()
-                .map(drinkByBoughtDrink -> Pair.of(
-                        boughtDrinkService.findCurrentEditionBoughtDrinkByCode(drinkByBoughtDrink.getKey().getCode()),
-                        drinkByBoughtDrink.getValue()))
-                .filter(drinkByBoughtDrink -> drinkByBoughtDrink.getFirst().map(BoughtDrink::getDrink).isPresent())
-                .map(drinkByBoughtDrink -> drinkService.update(drinkByBoughtDrink.getFirst().get().getDrink(), drinkByBoughtDrink.getSecond()))
-                .collect(Collectors.toSet());
-
-        log.info(String.format("Drinks updated (%s/%s)", updatedDrinks.size(), drinksToImport.size()));
         log.info("Amstein catalog import finished");
     }
 
@@ -119,6 +79,83 @@ public class ImportService {
         log.info(String.format("Referenced drinks from current edition updated (%s/%s)", updatedBoughtDrinks.size(), referencedFromCurrentEditionBoughtDrinks.size()));
 
         log.info("End of import");
+    }
+
+
+    private void importDrinks(MultipartFile multipartFile) {
+        var drinksToImport = amsteinImporterService.readDrinkFromCatalogFile(multipartFile);
+        log.info(String.format("Drinks from amstein catalog file read : %s", drinksToImport.size()));
+
+        var boughtDrinksUpdated = boughtDrinkService.updateBoughtDrinksVolume(drinksToImport.keySet());
+        log.info(String.format("BoughtDrinks volume from amstein catalog file imported : %s", boughtDrinksUpdated.size()));
+
+        var updatedDrinks = drinksToImport.entrySet().stream()
+                .map(drinkByBoughtDrink -> Pair.of(
+                        boughtDrinkService.findCurrentEditionBoughtDrinkByCode(drinkByBoughtDrink.getKey().getCode()),
+                        drinkByBoughtDrink.getValue()))
+                .filter(drinkByBoughtDrink -> drinkByBoughtDrink.getFirst().map(BoughtDrink::getDrink).isPresent())
+                .map(drinkByBoughtDrink -> drinkService.update(drinkByBoughtDrink.getFirst().get().getDrink(), drinkByBoughtDrink.getSecond()))
+                .collect(Collectors.toSet());
+
+        log.info(String.format("Drinks updated (%s/%s)", updatedDrinks.size(), drinksToImport.size()));
+    }
+
+    private void importProducers(MultipartFile multipartFile) {
+        var producerFromImport = amsteinImporterService.readProducersFromCatalogFile(multipartFile);
+        log.info(String.format("Producers found in amstein catalog file : %s", producerFromImport.size()));
+
+        var allProducersName = producerService.findAll().stream()
+                .map(Producer::getName)
+                .collect(Collectors.toSet());
+        var producersToImport = producerFromImport.stream()
+                .filter(Predicate.not(producer -> allProducersName.contains(producer.getName())))
+                .collect(Collectors.toSet());
+        log.info(String.format("Producers from amstein catalog file to import : %s", producersToImport.size()));
+
+        var importedProducers = producersToImport.stream()
+                .map(producerService::create)
+                .collect(Collectors.toSet());
+        log.info(String.format("Producers from amstein catalog file imported : %s/%s", importedProducers.size(), producerFromImport.size()));
+    }
+
+    private Collection<Style> importStyles(MultipartFile multipartFile) {
+        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
+        log.info(String.format("Styles found in amstein catalog file : %s", stylesFromImport.size()));
+
+        var allStylesName = styleService.findAll().stream()
+                .map(Style::getName)
+                .collect(Collectors.toSet());
+        var stylesToImport = stylesFromImport.stream()
+                .filter(Predicate.not(color -> allStylesName.contains(color.getName())))
+                .collect(Collectors.toSet());
+        log.info(String.format("Styles from amstein catalog file to import : %s", stylesToImport.size()));
+
+        var importedStyles = stylesToImport.stream()
+                .map(styleService::create)
+                .collect(Collectors.toSet());
+        log.info(String.format("Styles from amstein catalog file imported : %s/%s", importedStyles.size(), stylesFromImport.size()));
+
+        return importedStyles;
+    }
+
+    private Collection<Color> importColors(MultipartFile multipartFile) {
+        var colorsFromImport = amsteinImporterService.readColorsFromCatalogFile(multipartFile);
+        log.info(String.format("Colors found in amstein catalog file : %s", colorsFromImport.size()));
+
+        var allColorsNames = colorService.findAll().stream()
+                .map(Color::getName)
+                .collect(Collectors.toSet());
+        var colorsToImport = colorsFromImport.stream()
+                .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
+                .collect(Collectors.toSet());
+        log.info(String.format("Colors from amstein catalog file to import : %s", colorsToImport.size()));
+
+        var importedColors = colorsToImport.stream()
+                .map(colorService::create)
+                .collect(Collectors.toSet());
+        log.info(String.format("Colors from amstein catalog file imported : %s/%s", importedColors.size(), colorsFromImport.size()));
+
+        return importedColors;
     }
 
     private Collection<Pair<CreateBoughtDrinkDto, Drink>> mapPairToDrink(Collection<Pair<CreateBoughtDrinkDto, BoughtDrink>> referencedFromPreviousEditionBoughtDrinks) {
