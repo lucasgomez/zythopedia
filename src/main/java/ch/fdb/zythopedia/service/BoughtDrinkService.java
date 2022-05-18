@@ -4,6 +4,7 @@ import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Edition;
+import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.repository.BoughtDrinkRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
@@ -21,10 +22,12 @@ public class BoughtDrinkService {
 
     public static final double CENTS_PRECISION = 0.01d;
     private BoughtDrinkRepository boughtDrinkRepository;
+    private ServiceService serviceService;
     private EditionService editionService;
 
-    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, EditionService editionService) {
+    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, ServiceService serviceService, EditionService editionService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
+        this.serviceService = serviceService;
         this.editionService = editionService;
     }
 
@@ -32,10 +35,25 @@ public class BoughtDrinkService {
     public Collection<BoughtDrink> createNewBoughtDrinks(Collection<Pair<CreateBoughtDrinkDto, Drink>> unreferencedBoughtDrinks) {
         var currentEdition = editionService.getCurrentEdition();
 
-        return unreferencedBoughtDrinks.stream()
+        var createdBoughtDrinks = unreferencedBoughtDrinks.stream()
                 .map(boughtDrinkToCreate -> createBoughtDrink(boughtDrinkToCreate, currentEdition))
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toList());
+
+        createServiceIfNeeded(createdBoughtDrinks);
+
+        return createdBoughtDrinks;
+    }
+
+    private void createServiceIfNeeded(Collection<BoughtDrink> createdBoughtDrinks) {
+        createdBoughtDrinks.stream()
+                .filter(this::isReadyForServiceCreation)
+                .forEach(boughtDrink -> serviceService.createNeededService(boughtDrink));
+    }
+
+    private boolean isReadyForServiceCreation(BoughtDrink boughtDrink) {
+        return ServiceMethod.TAP == boughtDrink.getServiceMethod()
+                || Optional.ofNullable(boughtDrink.getVolumeInCl()).filter(volume -> 0 < volume).isPresent();
     }
 
     private BoughtDrink createBoughtDrink(Pair<CreateBoughtDrinkDto, Drink> boughtDrinkToCreate, Edition currentEdition) {
@@ -67,13 +85,17 @@ public class BoughtDrinkService {
     public Set<BoughtDrink> updateBoughtDrinksVolume(Collection<CreateBoughtDrinkDto> drinksToUpdate) {
         var allBoughtDrinksByCode = boughtDrinkRepository.findAll().stream()
                 .collect(Collectors.toMap(BoughtDrink::getCode, boughtDrink -> boughtDrink));
-        return drinksToUpdate.stream()
+        var updatedBoughtDrinks = drinksToUpdate.stream()
                 .map(drinkToUpdate -> Optional.ofNullable(allBoughtDrinksByCode.get(drinkToUpdate.getCode()))
                         .map(boughtDrink -> boughtDrink.setVolumeInCl(drinkToUpdate.getVolumeInCl()))
                         .orElse(null))
                 .filter(Objects::nonNull)
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toSet());
+
+        createServiceIfNeeded(updatedBoughtDrinks);
+
+        return updatedBoughtDrinks;
     }
 
     public Optional<BoughtDrink> findCurrentEditionBoughtDrinkByCode(String code) {
