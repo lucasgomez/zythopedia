@@ -23,4 +23,8 @@ public class EditionService {
         return editionRepository.findByName(currentEditionName)
                 .orElseGet(() -> editionRepository.save(Edition.builder().name(currentEditionName).build()));
     }
+
+    public String getCurrentEditionName() {
+        return currentEditionName;
+    }
 }

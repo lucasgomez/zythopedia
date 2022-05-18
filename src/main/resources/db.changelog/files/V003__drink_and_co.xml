@@ -86,4 +86,13 @@
                                  constraintName="FK_SERVICE__BOUGHT_DRINK"
                                  referencedColumnNames="ID" referencedTableName="BOUGHT_DRINK"/>
     </changeSet>
+
+    <changeSet author="lg" id="V003.05">
+        <addColumn tableName="DRINK">
+            <column name="SOURNESS" type="VARCHAR2(255)"/>
+            <column name="BITTERNESS" type="VARCHAR2(255)"/>
+            <column name="SWEETNESS" type="VARCHAR2(255)"/>
+            <column name="HOPPINESS" type="VARCHAR2(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,11 +1,7 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
-import ch.fdb.zythopedia.dto.creation.CreateColorDto;
-import ch.fdb.zythopedia.entity.BoughtDrink;
-import ch.fdb.zythopedia.entity.Color;
-import ch.fdb.zythopedia.entity.Drink;
-import ch.fdb.zythopedia.entity.Edition;
+import ch.fdb.zythopedia.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
@@ -41,6 +37,7 @@ public class ImportService {
         log.info("Starting import from amstein catalog file");
 
         var colorsFromImport = amsteinImporterService.readColorsFromCatalogFile(multipartFile);
+        log.info(String.format("Colors found in amstein catalog file : %s", colorsFromImport.size()));
 
         var allColorsNames = colorService.findAll().stream()
                 .map(Color::getName)
@@ -48,20 +45,45 @@ public class ImportService {
         var colorsToImport = colorsFromImport.stream()
                 .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
                 .collect(Collectors.toSet());
+        log.info(String.format("Colors from amstein catalog file to import : %s", colorsToImport.size()));
 
-        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
-        var stylesToImport = stylesFromImport.stream()
-                .filter(Predicate.not(color -> allColorsNames.contains(color.getName())))
-                .collect(Collectors.toSet());
-
-        colorsToImport.stream()
+        var importedColors = colorsToImport.stream()
                 .map(colorService::create)
                 .collect(Collectors.toSet());
-        stylesToImport.stream()
+        log.info(String.format("Colors from amstein catalog file imported : %s/%s", importedColors.size(), colorsFromImport.size()));
+
+        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
+        log.info(String.format("Styles found in amstein catalog file : %s", stylesFromImport.size()));
+
+        var allStylesName = styleService.findAll().stream()
+                .map(Style::getName)
+                .collect(Collectors.toSet());
+        var stylesToImport = stylesFromImport.stream()
+                .filter(Predicate.not(color -> allStylesName.contains(color.getName())))
+                .collect(Collectors.toSet());
+        log.info(String.format("Styles from amstein catalog file to import : %s", stylesToImport.size()));
+
+        var importedStyles = stylesToImport.stream()
                 .map(styleService::create)
                 .collect(Collectors.toSet());
+        log.info(String.format("Styles from amstein catalog file imported : %s/%s", importedStyles.size(), stylesFromImport.size()));
 
+        var drinksToImport = amsteinImporterService.readDrinkFromCatalogFile(multipartFile);
+        log.info(String.format("Drinks from amstein catalog file read : %s", drinksToImport.size()));
 
+        var boughtDrinksUpdated = boughtDrinkService.updateBoughtDrinksVolume(drinksToImport.keySet());
+        log.info(String.format("BoughtDrinks volume from amstein catalog file imported : %s", boughtDrinksUpdated.size()));
+
+        var updatedDrinks = drinksToImport.entrySet().stream()
+                .map(drinkByBoughtDrink -> Pair.of(
+                        boughtDrinkService.findCurrentEditionBoughtDrinkByCode(drinkByBoughtDrink.getKey().getCode()),
+                        drinkByBoughtDrink.getValue()))
+                .filter(drinkByBoughtDrink -> drinkByBoughtDrink.getFirst().map(BoughtDrink::getDrink).isPresent())
+                .map(drinkByBoughtDrink -> drinkService.update(drinkByBoughtDrink.getFirst().get().getDrink(), drinkByBoughtDrink.getSecond()))
+                .collect(Collectors.toSet());
+
+        log.info(String.format("Drinks updated (%s/%s)", updatedDrinks.size(), drinksToImport.size()));
+        log.info("Amstein catalog import finished");
     }
 
     public void testImportAmsteinOrder(MultipartFile multipartFile) {
@@ -71,7 +93,7 @@ public class ImportService {
     public void importAmsteinOrder(MultipartFile multipartFile) {
         log.info("Starting import from amstein order file");
 
-        var boughtDrinkToImports = amsteinImporterService.readBoughtDrinkFromFile(multipartFile);
+        var boughtDrinkToImports = amsteinImporterService.readBoughtDrinkFromOrderFile(multipartFile);
 
         log.info(String.format("Trying to import %s records", boughtDrinkToImports.size()));
 

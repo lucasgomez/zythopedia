@@ -29,4 +29,14 @@ public class ImportController {
 
         return filename;
     }
+
+    @PostMapping(value = "/catalog/amstein")
+    public String importAmsteinCatalog(@RequestParam("file") MultipartFile file) {
+        var filename = file.getOriginalFilename();
+        log.info("File uploaded : "+filename);
+
+        importService.importAmsteinCatalogData(file);
+
+        return filename;
+    }
 }

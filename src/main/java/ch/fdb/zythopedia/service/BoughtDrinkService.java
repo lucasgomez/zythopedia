@@ -63,4 +63,20 @@ public class BoughtDrinkService {
     private Predicate<Pair<CreateBoughtDrinkDto, BoughtDrink>> hasPriceChanged() {
         return pair -> Precision.equals(pair.getFirst().getBuyingPrice(), pair.getSecond().getBuyingPrice(), CENTS_PRECISION);
     }
+
+    public Set<BoughtDrink> updateBoughtDrinksVolume(Collection<CreateBoughtDrinkDto> drinksToUpdate) {
+        var allBoughtDrinksByCode = boughtDrinkRepository.findAll().stream()
+                .collect(Collectors.toMap(BoughtDrink::getCode, boughtDrink -> boughtDrink));
+        return drinksToUpdate.stream()
+                .map(drinkToUpdate -> Optional.ofNullable(allBoughtDrinksByCode.get(drinkToUpdate.getCode()))
+                        .map(boughtDrink -> boughtDrink.setVolumeInCl(drinkToUpdate.getVolumeInCl()))
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .map(boughtDrinkRepository::save)
+                .collect(Collectors.toSet());
+    }
+
+    public Optional<BoughtDrink> findCurrentEditionBoughtDrinkByCode(String code) {
+        return boughtDrinkRepository.findByCodeAndEditionName(code, editionService.getCurrentEditionName());
+    }
 }

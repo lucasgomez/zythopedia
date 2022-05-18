@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.entity;
 
+import ch.fdb.zythopedia.enums.Strength;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -41,6 +42,18 @@ public class Drink {
     @ManyToOne
     @JoinColumn(name = "STYLE_FK", foreignKey = @ForeignKey(name = "FK_DRINK__STYLE"))
     private Style style;
+
+    @Enumerated(value = EnumType.STRING)
+    private Strength sourness;
+
+    @Enumerated(value = EnumType.STRING)
+    private Strength bitterness;
+
+    @Enumerated(value = EnumType.STRING)
+    private Strength sweetness;
+
+    @Enumerated(value = EnumType.STRING)
+    private Strength hoppiness;
 
     @OneToMany(mappedBy = "drink")
     private List<BoughtDrink> boughtDrinks;

@@ -47,7 +47,6 @@ public class AmsteinImporterService {
                 .map(this::getDrinkByBoughtDrinkFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-
     }
 
     public Collection<CreateStyleDto> readStylesFromCatalogFile(MultipartFile multipartFile) {
@@ -65,7 +64,7 @@ public class AmsteinImporterService {
                 .collect(Collectors.toSet());
     }
 
-    public Collection<CreateBoughtDrinkDto> readBoughtDrinkFromFile(MultipartFile multipartFile) {
+    public Collection<CreateBoughtDrinkDto> readBoughtDrinkFromOrderFile(MultipartFile multipartFile) {
         return readRowsFromFile(multipartFile)
                 .stream()
                 .map(this::getBoughtDrinkFromRow)
@@ -111,17 +110,26 @@ public class AmsteinImporterService {
                 .orElse(null);
     }
 
+    private Strength getCellContentAsStrength(Row row, int column_num) {
+        return Optional.ofNullable(row.getCell(column_num))
+                .map(Cell::getNumericCellValue)
+                .filter(Predicate.not(Objects::isNull))
+                .map(Double::longValue)
+                .map(Strength::getStrengthByRank)
+                .orElse(null);
+    }
+
     private CreateDrinkDto buildDrinkDtoFromRow(Row row) {
         return CreateDrinkDto.builder()
-                .name(getCellStringContent(row, CATALOG_COLOR_COLUMN_NUM))
+                .name(getCellStringContent(row, CATALOG_NAME_COLUMN_NUM))
                 .abv(getCellDoubleContent(row, CATALOG_ABV_COLUMN_NUM))
                 .colorName(getCellStringContent(row, CATALOG_COLOR_COLUMN_NUM))
                 .styleName(getCellStringContent(row, CATALOG_STYLE_COLUMN_NUM))
                 .producerName(getCellStringContent(row, CATALOG_PRODUCER_COLUMN_NUM))
-                .sourness(Strength.getStrengthByRank(getCellStringContent(row, CATALOG_SOURNESS_COLUMN_NUM)))
-                .bitterness(Strength.getStrengthByRank(getCellStringContent(row, CATALOG_BITTERNESS_COLUMN_NUM)))
-                .sweetness(Strength.getStrengthByRank(getCellStringContent(row, CATALOG_SWEETNESS_COLUMN_NUM)))
-                .hoppiness(Strength.getStrengthByRank(getCellStringContent(row, CATALOG_HOPPINESS_COLUMN_NUM)))
+                .sourness(getCellContentAsStrength(row, CATALOG_SOURNESS_COLUMN_NUM))
+                .bitterness(getCellContentAsStrength(row, CATALOG_BITTERNESS_COLUMN_NUM))
+                .sweetness(getCellContentAsStrength(row, CATALOG_SWEETNESS_COLUMN_NUM))
+                .hoppiness(getCellContentAsStrength(row, CATALOG_HOPPINESS_COLUMN_NUM))
                 .build();
     }
 

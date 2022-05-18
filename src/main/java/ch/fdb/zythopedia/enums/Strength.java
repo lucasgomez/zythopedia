@@ -19,13 +19,13 @@ public enum Strength {
 
     public static Strength getStrengthByRank(String rank) {
         try {
-            return getStrengthByRank(Integer.parseInt(rank));
+            return getStrengthByRank(Long.parseLong(rank));
         } catch (NumberFormatException exception) {
             return null;
         }
     }
 
-    public static Strength getStrengthByRank(int rank) {
+    public static Strength getStrengthByRank(Long rank) {
         return Arrays.stream(Strength.values())
                 .filter(strength -> strength.getRank() == rank)
                 .findFirst()

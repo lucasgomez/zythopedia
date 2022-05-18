@@ -37,7 +37,7 @@ public class BoughtDrink {
     private Double buyingPrice;
 
     @Column(name = "VOLUME_IN_CL")
-    private Double volumeInCl;
+    private Long volumeInCl;
 
     @Column(name = "SERVICE_METHOD", nullable = false)
     @Enumerated(EnumType.STRING)
