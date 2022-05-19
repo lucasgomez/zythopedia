@@ -13,5 +13,6 @@ public class CreateBoughtDrinkDto {
     private Double buyingPrice;
     private Long volumeInCl;
     private ServiceMethod serviceMethod;
+    private Boolean returnable;
 
 }

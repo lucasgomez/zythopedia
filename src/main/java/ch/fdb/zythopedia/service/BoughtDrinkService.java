@@ -36,6 +36,7 @@ public class BoughtDrinkService {
         var currentEdition = editionService.getCurrentEdition();
 
         var createdBoughtDrinks = unreferencedBoughtDrinks.stream()
+                .filter(boughtDrinkRepository -> Objects.nonNull(boughtDrinkRepository.getFirst().getServiceMethod()))
                 .map(boughtDrinkToCreate -> createBoughtDrink(boughtDrinkToCreate, currentEdition))
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toList());
@@ -60,6 +61,7 @@ public class BoughtDrinkService {
         return BoughtDrink.builder()
                 .code(boughtDrinkToCreate.getFirst().getCode())
                 .serviceMethod(boughtDrinkToCreate.getFirst().getServiceMethod())
+                .returnable(boughtDrinkToCreate.getFirst().getReturnable())
                 .buyingPrice(boughtDrinkToCreate.getFirst().getBuyingPrice())
                 .drink(boughtDrinkToCreate.getSecond())
                 .edition(currentEdition)
@@ -100,5 +102,9 @@ public class BoughtDrinkService {
 
     public Optional<BoughtDrink> findCurrentEditionBoughtDrinkByCode(String code) {
         return boughtDrinkRepository.findByCodeAndEditionName(code, editionService.getCurrentEditionName());
+    }
+
+    public Collection<BoughtDrink> getCurrentEditionBoughtDrinks() {
+        return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition());
     }
 }

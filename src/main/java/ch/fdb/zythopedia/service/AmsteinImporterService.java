@@ -3,6 +3,7 @@ package ch.fdb.zythopedia.service;
 import ch.fdb.zythopedia.dto.creation.*;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.enums.Strength;
+import ch.fdb.zythopedia.utils.FileHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -162,15 +163,20 @@ public class AmsteinImporterService {
                 .name(getCellStringContent(row, ORDER_NAME_COLUMN_NUM))
                 .buyingPrice(getCellDoubleContent(row, ORDER_BUYING_PRICE_COLUMN_NUM))
                 .serviceMethod(getServiceMethodFromAmsteinContentType(getCellStringContent(row, ORDER_CONTENT_TYPE_COLUMN_NUM)))
+                .returnable(isReturnableFromAmsteinContentType(getCellStringContent(row, ORDER_CONTENT_TYPE_COLUMN_NUM)))
                 .build();
     }
 
     private ServiceMethod getServiceMethodFromAmsteinContentType(String contentType) {
         switch (contentType) {
             case "FUT": return ServiceMethod.TAP;
-            case "CAR": return ServiceMethod.BOTTLE;
+            case "CAR": case "CAI": return ServiceMethod.BOTTLE;
             default: return null;
         }
+    }
+
+    private boolean isReturnableFromAmsteinContentType(String contentType) {
+        return "CAI".equalsIgnoreCase(contentType);
     }
 
     private boolean rowHasContent(Sheet sheet, int rowNum) {
@@ -181,26 +187,8 @@ public class AmsteinImporterService {
                 .orElse(false);
     }
 
-    private static File toFile(MultipartFile multipartFile) {
-        var fileToSave = new File(String.format(
-                "tmp/%s_%s",
-                UUID.randomUUID(),
-                multipartFile.getOriginalFilename()));
-
-        try (var outputStream = new FileOutputStream(fileToSave)) {
-            if (0 == multipartFile.getBytes().length) {
-                throw new RuntimeException(String.format("File %s is empty", multipartFile.getOriginalFilename()));
-            }
-            outputStream.write(multipartFile.getBytes());
-        } catch (IOException ex) {
-            throw new RuntimeException(String.format("File %s could not be read", multipartFile.getOriginalFilename()));
-        }
-
-        return fileToSave;
-    }
-
     private Collection<Row> readRowsFromFile(MultipartFile multipartFile) {
-        var file = toFile(multipartFile);
+        var file = FileHelper.toFile(multipartFile);
 
         try (var inputStream = new FileInputStream(file)) {
             var workbook = WorkbookFactory.create(inputStream);

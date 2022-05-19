@@ -43,6 +43,9 @@ public class BoughtDrink {
     @Enumerated(EnumType.STRING)
     private ServiceMethod serviceMethod;
 
+    @Column(name = "RETURNABLE")
+    private Boolean returnable;
+
     @OneToMany( mappedBy = "boughtDrink")
     private List<Service> services;
 }
