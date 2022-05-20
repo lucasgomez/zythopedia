@@ -39,4 +39,24 @@ public class ImportController {
 
         return filename;
     }
+
+    @PostMapping(value = "/calculator")
+    public String importPricesFromCalculator(@RequestParam("file") MultipartFile file) {
+        var filename = file.getOriginalFilename();
+        log.info("File uploaded : "+filename);
+
+        importService.importAmsteinCatalogData(file);
+
+        return filename;
+    }
+
+    @PostMapping(value = "/data")
+    public String importDrinkData(@RequestParam("file") MultipartFile file) {
+        var filename = file.getOriginalFilename();
+        log.info("File uploaded : "+filename);
+
+        importService.importDrinksData(file);
+
+        return filename;
+    }
 }

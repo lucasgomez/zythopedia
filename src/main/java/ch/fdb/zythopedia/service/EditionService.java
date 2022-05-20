@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class EditionService {
@@ -26,5 +28,9 @@ public class EditionService {
 
     public String getCurrentEditionName() {
         return currentEditionName;
+    }
+
+    public Optional<Edition> findEdition(String editionName) {
+        return editionRepository.findByName(editionName);
     }
 }

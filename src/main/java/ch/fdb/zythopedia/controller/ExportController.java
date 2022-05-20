@@ -6,6 +6,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +16,7 @@ import java.nio.file.Files;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/export", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
+@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ExportController {
 
     private ExportService exportService;
@@ -24,9 +25,17 @@ public class ExportController {
         this.exportService = exportService;
     }
 
-    @GetMapping("/calculator")
+    @GetMapping("/export/calculator")
     public ResponseEntity<ByteArrayResource> getCalculatorForCurrentEdition() {
-        var file = exportService.getCalculatorForCurrentEdition();
+        return buildResponseEntity(exportService.getCalculatorForCurrentEdition());
+    }
+
+    @GetMapping("/edition/{editionName}/export/data")
+    public ResponseEntity<ByteArrayResource> getDrinksData(@PathVariable String editionName) {
+        return buildResponseEntity(exportService.getDrinksData(editionName));
+    }
+
+    private ResponseEntity<ByteArrayResource> buildResponseEntity(File file) {
         var bytes = getBytes(file);
         return ResponseEntity.ok()
                 .contentLength(bytes.length)
