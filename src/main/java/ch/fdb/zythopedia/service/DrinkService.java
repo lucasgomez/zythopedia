@@ -86,7 +86,7 @@ public class DrinkService {
                     .setSweetness(drinkData.getSweetness())
                     .setHoppiness(drinkData.getHoppiness()));
         } catch (PropertyValueException exception) {
-            log.error(String.format("Failed to update drink %s", drinkToUpdate.getId()), exception);
+            log.error(String.format("Failed to update drink %s (field %s)", drinkToUpdate.getId(), exception.getPropertyName()), exception);
             throw new IllegalArgumentException(String.format("Failed to update drink %s", drinkToUpdate.getId()), exception);
         }
     }

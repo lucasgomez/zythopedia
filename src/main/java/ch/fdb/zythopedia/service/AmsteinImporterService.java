@@ -73,6 +73,7 @@ public class AmsteinImporterService {
         return readRowsFromFile(multipartFile)
                 .stream()
                 .map(this::getBoughtDrinkFromRow)
+                .filter(boughtDrinkDto -> Objects.nonNull(boughtDrinkDto.getServiceMethod()))
                 .collect(Collectors.toSet());
     }
 
@@ -195,7 +196,7 @@ public class AmsteinImporterService {
             var sheet = workbook.getSheetAt(0);
 
             var rowNum = 1;
-            var rows = new ArrayList<Row>();
+            var rows = (Collection<Row>) new ArrayList<Row>();
             while (rowHasContent(sheet, rowNum)) {
                 rows.add(sheet.getRow(rowNum));
                 rowNum++;
