@@ -1,14 +1,15 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.ColorDto;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.entity.Color;
 import ch.fdb.zythopedia.repository.ColorRepository;
+import liquibase.pro.packaged.M;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.PropertyValueException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,5 +58,38 @@ public class ColorService {
                 .forEach(drink -> drink.setColor(null));
 
         colorRepository.delete(colorToDelete);
+    }
+
+    public Color update(ColorDto colorData) {
+        var colorToUpdate = findById(colorData.getId())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("No color of id %s could be found", colorData.getId())));
+
+        try {
+            return colorRepository.save(colorToUpdate
+                    .setName(colorData.getName())
+                    .setDescription(colorData.getDescription()));
+        } catch (PropertyValueException exception) {
+            log.error(String.format("Failed to update color %s (field %s)", colorData.getId(), exception.getPropertyName()), exception);
+            throw new IllegalArgumentException(String.format("Failed to update drink %s", colorData.getId()), exception);
+        }
+    }
+
+    public void delete(Long colorIdToDelete, Long colorIdToTransferTo) {
+        var colorToDelete = colorRepository.findById(colorIdToDelete);
+        if (colorToDelete.isEmpty()) {
+            log.error(String.format("Could not delete color %s due to self nihilism", colorToDelete));
+            return;
+        }
+        if (Objects.nonNull(colorIdToTransferTo)) {
+            var colorToTransferTo = colorRepository.findById(colorIdToTransferTo)
+                    .orElseThrow(() -> new IllegalArgumentException(String.format(
+                            "Could not transfer color %s to color %s due to self nihilism",
+                            colorIdToDelete,
+                            colorIdToTransferTo)));
+            colorToDelete.get().getDrinks().forEach(drink -> drink.setColor(colorToTransferTo));
+            log.info(String.format("Transfered drinks from color id %s to color id %s", colorIdToDelete, colorIdToTransferTo));
+        }
+        colorRepository.delete(colorToDelete.get());
+        log.info(String.format("Deleted color id %s", colorIdToDelete));
     }
 }

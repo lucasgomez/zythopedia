@@ -2,7 +2,9 @@ package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.entity.*;
+import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 
 @Slf4j
 @Service
@@ -24,24 +28,50 @@ public class ImportService {
     private StyleService styleService;
     private ColorService colorService;
     private ProducerService producerService;
-    private AmsteinImporterService amsteinImporterService;
+    private AmsteinReaderService amsteinReaderService;
+    private DrinkDataReaderService drinkDataReaderService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, ProducerService producerService, AmsteinImporterService amsteinImporterService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
         this.styleService = styleService;
         this.colorService = colorService;
         this.producerService = producerService;
-        this.amsteinImporterService = amsteinImporterService;
+        this.amsteinReaderService = amsteinReaderService;
+        this.drinkDataReaderService = drinkDataReaderService;
+    }
+
+    public void importDrinksData(MultipartFile file) {
+        log.info("Starting import of drinks data");
+
+        var workbook = getWorkbookFromFile(file);
+        var colorRows = drinkDataReaderService.getColorRows(workbook);
+        var readColors = drinkDataReaderService.readColorsToUpdate(colorRows);
+
+        log.info(String.format("Colors to update %s", readColors));
+        var updatedColors = readColors.stream()
+                .filter(color -> Objects.nonNull(color.getId()))
+                .map(colorService::update)
+                .collect(Collectors.toSet());
+        log.info(String.format("Colors updated %s/%s", updatedColors, readColors));
+
+        var colorsToDelete = drinkDataReaderService.readColorsToDeleteWithReplacement(colorRows);
+        colorsToDelete.entrySet()
+                .forEach(colorToDeleteByColorToTransferTo -> colorService.delete(
+                        colorToDeleteByColorToTransferTo.getKey(),
+                        colorToDeleteByColorToTransferTo.getValue()));
+
+        log.info("End of import of drinks data");
     }
 
     public void importAmsteinCatalogData(MultipartFile multipartFile) {
         log.info("Starting import from amstein catalog file");
 
-        importColors(multipartFile);
-        importStyles(multipartFile);
-        importProducers(multipartFile);
-        importDrinks(multipartFile);
+        var sheet = SpreadsheetHelper.getWorkbookFromFile(multipartFile).getSheetAt(0);
+        importColors(sheet);
+        importStyles(sheet);
+        importProducers(sheet);
+        importDrinks(sheet);
 
         log.info("Amstein catalog import finished");
     }
@@ -53,7 +83,8 @@ public class ImportService {
     public void importAmsteinOrder(MultipartFile multipartFile) {
         log.info("Starting import from amstein order file");
 
-        var boughtDrinkToImports = amsteinImporterService.readBoughtDrinkFromOrderFile(multipartFile);
+        var sheet = SpreadsheetHelper.getWorkbookFromFile(multipartFile).getSheetAt(0);
+        var boughtDrinkToImports = amsteinReaderService.readBoughtDrinkFromOrderFile(sheet);
 
         log.info(String.format("Trying to import %s records", boughtDrinkToImports.size()));
 
@@ -82,8 +113,8 @@ public class ImportService {
     }
 
 
-    private void importDrinks(MultipartFile multipartFile) {
-        var drinksToImport = amsteinImporterService.readDrinkFromCatalogFile(multipartFile);
+    private void importDrinks(Sheet sheet) {
+        var drinksToImport = amsteinReaderService.readDrinkFromCatalogFile(sheet);
         log.info(String.format("Drinks from amstein catalog file read : %s", drinksToImport.size()));
 
         var boughtDrinksUpdated = boughtDrinkService.updateBoughtDrinksVolume(drinksToImport.keySet());
@@ -100,8 +131,8 @@ public class ImportService {
         log.info(String.format("Drinks updated (%s/%s)", updatedDrinks.size(), drinksToImport.size()));
     }
 
-    private void importProducers(MultipartFile multipartFile) {
-        var producerFromImport = amsteinImporterService.readProducersFromCatalogFile(multipartFile);
+    private void importProducers(Sheet sheet) {
+        var producerFromImport = amsteinReaderService.readProducersFromCatalogFile(sheet);
         log.info(String.format("Producers found in amstein catalog file : %s", producerFromImport.size()));
 
         var allProducersName = producerService.findAll().stream()
@@ -118,8 +149,8 @@ public class ImportService {
         log.info(String.format("Producers from amstein catalog file imported : %s/%s", importedProducers.size(), producerFromImport.size()));
     }
 
-    private Collection<Style> importStyles(MultipartFile multipartFile) {
-        var stylesFromImport = amsteinImporterService.readStylesFromCatalogFile(multipartFile);
+    private Collection<Style> importStyles(Sheet sheet) {
+        var stylesFromImport = amsteinReaderService.readStylesFromCatalogFile(sheet);
         log.info(String.format("Styles found in amstein catalog file : %s", stylesFromImport.size()));
 
         var allStylesName = styleService.findAll().stream()
@@ -138,8 +169,8 @@ public class ImportService {
         return importedStyles;
     }
 
-    private Collection<Color> importColors(MultipartFile multipartFile) {
-        var colorsFromImport = amsteinImporterService.readColorsFromCatalogFile(multipartFile);
+    private Collection<Color> importColors(Sheet sheet) {
+        var colorsFromImport = amsteinReaderService.readColorsFromCatalogFile(sheet);
         log.info(String.format("Colors found in amstein catalog file : %s", colorsFromImport.size()));
 
         var allColorsNames = colorService.findAll().stream()

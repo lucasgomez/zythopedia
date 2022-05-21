@@ -3,24 +3,23 @@ package ch.fdb.zythopedia.service;
 import ch.fdb.zythopedia.dto.creation.*;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.enums.Strength;
-import ch.fdb.zythopedia.utils.FileHelper;
+import ch.fdb.zythopedia.utils.SpreadsheetHelper;
+import ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
+
 @Slf4j
 @Service
-public class AmsteinImporterService {
+public class AmsteinReaderService {
 
     private static final int ORDER_CODE_COLUMN_NUM = 1;
     private static final int ORDER_NAME_COLUMN_NUM = 2;
@@ -40,38 +39,36 @@ public class AmsteinImporterService {
     private static final int CATALOG_HOPPINESS_COLUMN_NUM = 11;
     private static final int CATALOG_PRODUCER_COLUMN_NUM = 12;
 
-    public Map<CreateBoughtDrinkDto, CreateDrinkDto> readDrinkFromCatalogFile(MultipartFile multipartFile) {
-        return readRowsFromFile(multipartFile).stream()
+    public Map<CreateBoughtDrinkDto, CreateDrinkDto> readDrinkFromCatalogFile(Sheet sheet) {
+        return readRowsFromSheet(sheet).stream()
                 .map(this::getDrinkByBoughtDrinkFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
     }
 
-    public Collection<CreateProducerDto> readProducersFromCatalogFile(MultipartFile multipartFile) {
-        return readRowsFromFile(multipartFile).stream()
+    public Collection<CreateProducerDto> readProducersFromCatalogFile(Sheet sheet) {
+        return readRowsFromSheet(sheet).stream()
                 .map(this::getProducerFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
-    public Collection<CreateStyleDto> readStylesFromCatalogFile(MultipartFile multipartFile) {
-        return readRowsFromFile(multipartFile).stream()
+    public Collection<CreateStyleDto> readStylesFromCatalogFile(Sheet sheet) {
+        return readRowsFromSheet(sheet).stream()
                 .map(this::getStyleFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
-    public Collection<CreateColorDto> readColorsFromCatalogFile(MultipartFile multipartFile) {
-        return readRowsFromFile(multipartFile)
-                .stream()
+    public Collection<CreateColorDto> readColorsFromCatalogFile(Sheet sheet) {
+        return readRowsFromSheet(sheet).stream()
                 .map(this::getColorFromRow)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
-    public Collection<CreateBoughtDrinkDto> readBoughtDrinkFromOrderFile(MultipartFile multipartFile) {
-        return readRowsFromFile(multipartFile)
-                .stream()
+    public Collection<CreateBoughtDrinkDto> readBoughtDrinkFromOrderFile(Sheet sheet) {
+        return readRowsFromSheet(sheet).stream()
                 .map(this::getBoughtDrinkFromRow)
                 .filter(boughtDrinkDto -> Objects.nonNull(boughtDrinkDto.getServiceMethod()))
                 .collect(Collectors.toSet());
@@ -102,27 +99,6 @@ public class AmsteinImporterService {
 
     private Long convertLToCl(Double volumeInL) {
         return Double.valueOf(volumeInL * 100).longValue();
-    }
-
-    private String getCellStringContent(Row row, int column_num) {
-        return Optional.ofNullable(row.getCell(column_num))
-                .map(Cell::getStringCellValue)
-                .orElse(null);
-    }
-
-    private Double getCellDoubleContent(Row row, int column_num) {
-        return Optional.ofNullable(row.getCell(column_num))
-                .map(Cell::getNumericCellValue)
-                .orElse(null);
-    }
-
-    private Strength getCellContentAsStrength(Row row, int column_num) {
-        return Optional.ofNullable(row.getCell(column_num))
-                .map(Cell::getNumericCellValue)
-                .filter(Predicate.not(Objects::isNull))
-                .map(Double::longValue)
-                .map(Strength::getStrengthByRank)
-                .orElse(null);
     }
 
     private CreateDrinkDto buildDrinkDtoFromRow(Row row) {
@@ -178,36 +154,5 @@ public class AmsteinImporterService {
 
     private boolean isReturnableFromAmsteinContentType(String contentType) {
         return "CAI".equalsIgnoreCase(contentType);
-    }
-
-    private boolean rowHasContent(Sheet sheet, int rowNum) {
-        return Optional.ofNullable(sheet.getRow(rowNum))
-                .map(row -> row.getCell(ORDER_CODE_COLUMN_NUM))
-                .map(Cell::getStringCellValue)
-                .map(content -> !content.isBlank())
-                .orElse(false);
-    }
-
-    private Collection<Row> readRowsFromFile(MultipartFile multipartFile) {
-        var file = FileHelper.toFile(multipartFile);
-
-        try (var inputStream = new FileInputStream(file)) {
-            var workbook = WorkbookFactory.create(inputStream);
-            var sheet = workbook.getSheetAt(0);
-
-            var rowNum = 1;
-            var rows = (Collection<Row>) new ArrayList<Row>();
-            while (rowHasContent(sheet, rowNum)) {
-                rows.add(sheet.getRow(rowNum));
-                rowNum++;
-            }
-            return rows;
-        } catch (FileNotFoundException fileNotFoundException) {
-            log.error("File not found", fileNotFoundException);
-            throw new IllegalArgumentException("File not found", fileNotFoundException);
-        } catch (IOException e) {
-            log.error("Could not read file", e);
-            throw new IllegalArgumentException("Could not read file", e);
-        }
     }
 }

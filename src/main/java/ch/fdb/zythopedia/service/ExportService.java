@@ -71,7 +71,7 @@ public class ExportService {
         }
     }
 
-    private Workbook buildDataExporterWorkbook(Set<DrinkDto> drinks) {
+    private Workbook buildDataExporterWorkbook(Collection<DrinkDto> drinks) {
         var workbook = (Workbook) new XSSFWorkbook();
         var boldCellStyle = buildBoldCellStyle(workbook);
 
@@ -179,7 +179,7 @@ public class ExportService {
     private Sheet buildColorsSheet(Workbook workbook, List<ColorDto> colors, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("colors");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "To delete?"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "toDelete", "replaceBy"));
 
         for (var rowId = 0; rowId < colors.size(); rowId++) {
             var cellId = 0;
