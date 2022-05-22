@@ -36,8 +36,10 @@ public class ImportService {
     private ProducerService producerService;
     private AmsteinReaderService amsteinReaderService;
     private DrinkDataReaderService drinkDataReaderService;
+    private PricesCalculatorReaderService pricesCalculatorReaderService;
+    private ServiceService serviceService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, OriginService originService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, OriginService originService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService, PricesCalculatorReaderService pricesCalculatorReaderService, ServiceService serviceService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
         this.styleService = styleService;
@@ -46,6 +48,23 @@ public class ImportService {
         this.producerService = producerService;
         this.amsteinReaderService = amsteinReaderService;
         this.drinkDataReaderService = drinkDataReaderService;
+        this.pricesCalculatorReaderService = pricesCalculatorReaderService;
+        this.serviceService = serviceService;
+    }
+
+    public void importPrices(MultipartFile file) {
+        log.info("Starting import of prices");
+
+        var workbook = getWorkbookFromFile(file);
+        var pricesToUpdate = pricesCalculatorReaderService.readServices(workbook);
+
+        log.info(String.format("Prices to import read %s", pricesToUpdate.size()));
+        var servicesUpdated = pricesToUpdate.stream()
+                .map(serviceService::updatePrice)
+                .collect(Collectors.toList());
+        log.info(String.format("Prices to imported %s / %s", servicesUpdated.size(), pricesToUpdate.size()));
+
+        log.info("End of import of prices");
     }
 
     public void importDrinksData(MultipartFile file) {

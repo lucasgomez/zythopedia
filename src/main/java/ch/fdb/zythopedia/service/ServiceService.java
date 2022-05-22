@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.ServiceDto;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Service;
 import ch.fdb.zythopedia.enums.ServiceMethod;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,5 +43,12 @@ public class ServiceService {
                         .build())
                 .map(serviceRepository::save)
                 .collect(Collectors.toSet());
+    }
+
+    public Service updatePrice(ServiceDto serviceDto) {
+        return serviceRepository.findById(serviceDto.getId())
+                .map(service -> service.setSellingPrice(serviceDto.getPrice()))
+                .map(serviceRepository::save)
+                .orElse(null);
     }
 }

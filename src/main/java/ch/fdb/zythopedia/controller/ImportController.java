@@ -45,7 +45,7 @@ public class ImportController {
         var filename = file.getOriginalFilename();
         log.info("File uploaded : "+filename);
 
-        importService.importAmsteinCatalogData(file);
+        importService.importPrices(file);
 
         return filename;
     }

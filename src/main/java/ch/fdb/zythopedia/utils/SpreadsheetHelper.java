@@ -84,6 +84,7 @@ public final class SpreadsheetHelper {
 
     public static Double getCellDoubleContent(Row row, int column_num) {
         return Optional.ofNullable(row.getCell(column_num))
+                .filter(cell -> CellType.NUMERIC == cell.getCellType())
                 .map(Cell::getNumericCellValue)
                 .orElse(null);
     }

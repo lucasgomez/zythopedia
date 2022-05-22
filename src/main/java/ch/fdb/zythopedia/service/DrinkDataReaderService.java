@@ -1,7 +1,6 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.*;
-import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -11,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellLongContent;
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellStringContent;
 
 @Slf4j
 @Service
