@@ -1,6 +1,5 @@
 package ch.fdb.zythopedia.entity;
 
-import liquibase.pro.packaged.P;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Producer implements HasId {
+public class Producer implements NamedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

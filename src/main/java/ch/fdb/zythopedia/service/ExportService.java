@@ -1,10 +1,11 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.*;
-import ch.fdb.zythopedia.dto.mapper.*;
+import ch.fdb.zythopedia.dto.mapper.DrinkMapper;
+import ch.fdb.zythopedia.dto.mapper.DrinkPriceCalculatorDtoMapper;
+import ch.fdb.zythopedia.dto.mapper.SimpleDrinkMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.enums.ServiceMethod;
-import liquibase.pro.packaged.D;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
@@ -12,7 +13,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,16 +113,16 @@ public class ExportService {
             var row = sheet.createRow(rowId+1);
             var drink = simpleDrinks.get(rowId);
 
-            writeContentToCell(row, cellId++, drink.getId());
-            writeContentToCell(row, cellId++, drink.getName());
-            writeContentToCell(row, cellId++, drink.getProducerId());
-            writeContentToCell(row, cellId++, drink.getProducerName());
-            writeContentToCell(row, cellId++, drink.getDescription());
-            writeContentToCell(row, cellId++, drink.getAbv());
-            writeContentToCell(row, cellId++, drink.getColorId());
-            writeContentToCell(row, cellId++, drink.getColorName());
-            writeContentToCell(row, cellId++, drink.getStyleId());
-            writeContentToCell(row, cellId++, drink.getStyleName());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_ID_COLUMN_NUM, drink.getId());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_NAME_COLUMN_NUM, drink.getName());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_PRODUCER_ID_COLUMN_NUM, drink.getProducerId());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_PRODUCER_NAME_COLUMN_NUM, drink.getProducerName());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_DESCRIPTION_COLUMN_NUM, drink.getDescription());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_ABV_COLUMN_NUM, drink.getAbv());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_COLOR_ID_COLUMN_NUM, drink.getColorId());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_COLOR_NAME_COLUMN_NUM, drink.getColorName());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_STYLE_ID_COLUMN_NUM, drink.getStyleId());
+            writeContentToCell(row, DrinkDataReaderService.DRINK_STYLE_NAME_COLUMN_NUM, drink.getStyleName());
         }
         return sheet;
     }

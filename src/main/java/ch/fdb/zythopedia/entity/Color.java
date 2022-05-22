@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Color implements HasId {
+public class Color implements NamedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

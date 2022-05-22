@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Drink implements HasId {
+public class Drink implements NamedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

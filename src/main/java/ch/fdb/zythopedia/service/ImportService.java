@@ -75,14 +75,15 @@ public class ImportService {
         processOriginsToImport(workbook);
         processProducersToImport(workbook);
         processStylesToImport(workbook);
+        processDrinksToImport(workbook);
 
         log.info("End of import of drinks data");
     }
 
-    private <D extends HasId, E> void processDataToImport(String entityName, Collection<Row> originRows,
-                                                          Function<Collection<Row>, Collection<D>> reader,
-                                                          Function<Collection<Row>, Map<Long, IdOrNameDto>> readerForDeletionWithReplacement,
-                                                          Function<D, E> updater, Function<D, E> creater, BiFunction<Long, IdOrNameDto, Void> deleter) {
+    private <D extends NamedEntity, E> void processDataToImport(String entityName, Collection<Row> originRows,
+                                                                Function<Collection<Row>, Collection<D>> reader,
+                                                                Function<Collection<Row>, Map<Long, IdOrNameDto>> readerForDeletionWithReplacement,
+                                                                Function<D, E> updater, Function<D, E> creater, BiFunction<Long, IdOrNameDto, Void> deleter) {
         var readDtos = reader.apply(originRows);
 
         log.info(String.format("%s to update %s", entityName, readDtos.size()));
@@ -135,7 +136,15 @@ public class ImportService {
                 colorService::update, colorService::create, colorService::delete);
     }
 
-    private Predicate<HasId> hasId() {
+    private void processDrinksToImport(Workbook workbook) {
+        processDataToImport("Colors", drinkDataReaderService.getDrinkRows(workbook),
+                drinkDataReaderService::readDrinks,
+                drinkDataReaderService::readDrinksToDelete,
+                drinkService::update, drinkService::create, colorService::delete);
+
+    }
+
+    private Predicate<NamedEntity> hasId() {
         return origin -> Objects.nonNull(origin.getId());
     }
 
@@ -196,11 +205,13 @@ public class ImportService {
         log.info(String.format("BoughtDrinks volume from amstein catalog file imported : %s", boughtDrinksUpdated.size()));
 
         var updatedDrinks = drinksToImport.entrySet().stream()
-                .map(drinkByBoughtDrink -> Pair.of(
-                        boughtDrinkService.findCurrentEditionBoughtDrinkByCode(drinkByBoughtDrink.getKey().getCode()),
-                        drinkByBoughtDrink.getValue()))
-                .filter(drinkByBoughtDrink -> drinkByBoughtDrink.getFirst().map(BoughtDrink::getDrink).isPresent())
-                .map(drinkByBoughtDrink -> drinkService.update(drinkByBoughtDrink.getFirst().get().getDrink(), drinkByBoughtDrink.getSecond()))
+                .map(drinkByBoughtDrink -> drinkByBoughtDrink.getValue()
+                        .setId(boughtDrinkService.findCurrentEditionBoughtDrinkByCode(drinkByBoughtDrink.getKey().getCode())
+                                .map(BoughtDrink::getDrink)
+                                .map(Drink::getId)
+                                .orElse(null)))
+                .filter(drinkDto -> Objects.nonNull(drinkDto.getId()))
+                .map(drinkService::update)
                 .collect(Collectors.toSet());
 
         log.info(String.format("Drinks updated (%s/%s)", updatedDrinks.size(), drinksToImport.size()));

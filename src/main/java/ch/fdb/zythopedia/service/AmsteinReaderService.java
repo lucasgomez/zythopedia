@@ -1,17 +1,25 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.creation.*;
+import ch.fdb.zythopedia.dto.ColorDto;
+import ch.fdb.zythopedia.dto.DrinkDto;
+import ch.fdb.zythopedia.dto.ProducerDto;
+import ch.fdb.zythopedia.dto.StyleDto;
+import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
+import ch.fdb.zythopedia.dto.creation.CreateColorDto;
+import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
+import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.enums.ServiceMethod;
-import ch.fdb.zythopedia.enums.Strength;
-import ch.fdb.zythopedia.utils.SpreadsheetHelper;
-import ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -39,7 +47,7 @@ public class AmsteinReaderService {
     private static final int CATALOG_HOPPINESS_COLUMN_NUM = 11;
     private static final int CATALOG_PRODUCER_COLUMN_NUM = 12;
 
-    public Map<CreateBoughtDrinkDto, CreateDrinkDto> readDrinkFromCatalogFile(Sheet sheet) {
+    public Map<CreateBoughtDrinkDto, DrinkDto> readDrinkFromCatalogFile(Sheet sheet) {
         return readRowsFromSheet(sheet).stream()
                 .map(this::getDrinkByBoughtDrinkFromRow)
                 .filter(Objects::nonNull)
@@ -82,7 +90,7 @@ public class AmsteinReaderService {
                 .orElse(null);
     }
 
-    private Pair<CreateBoughtDrinkDto, CreateDrinkDto> getDrinkByBoughtDrinkFromRow(Row row) {
+    private Pair<CreateBoughtDrinkDto, DrinkDto> getDrinkByBoughtDrinkFromRow(Row row) {
         return Optional.ofNullable(row.getCell(CATALOG_CODE_COLUMN_NUM))
                 .map(code -> Pair.of(
                         buildBoughtDrinkDtoFromRow(row),
@@ -101,13 +109,19 @@ public class AmsteinReaderService {
         return Double.valueOf(volumeInL * 100).longValue();
     }
 
-    private CreateDrinkDto buildDrinkDtoFromRow(Row row) {
-        return CreateDrinkDto.builder()
+    private DrinkDto buildDrinkDtoFromRow(Row row) {
+        return DrinkDto.builder()
                 .name(getCellStringContent(row, CATALOG_NAME_COLUMN_NUM))
                 .abv(getCellDoubleContent(row, CATALOG_ABV_COLUMN_NUM))
-                .colorName(getCellStringContent(row, CATALOG_COLOR_COLUMN_NUM))
-                .styleName(getCellStringContent(row, CATALOG_STYLE_COLUMN_NUM))
-                .producerName(getCellStringContent(row, CATALOG_PRODUCER_COLUMN_NUM))
+                .color(ColorDto.builder()
+                        .name(getCellStringContent(row, CATALOG_COLOR_COLUMN_NUM))
+                        .build())
+                .style(StyleDto.builder()
+                        .name(getCellStringContent(row, CATALOG_STYLE_COLUMN_NUM))
+                        .build())
+                .producer(ProducerDto.builder()
+                        .name(getCellStringContent(row, CATALOG_PRODUCER_COLUMN_NUM))
+                        .build())
                 .sourness(getCellContentAsStrength(row, CATALOG_SOURNESS_COLUMN_NUM))
                 .bitterness(getCellContentAsStrength(row, CATALOG_BITTERNESS_COLUMN_NUM))
                 .sweetness(getCellContentAsStrength(row, CATALOG_SWEETNESS_COLUMN_NUM))

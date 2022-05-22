@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Origin implements HasId {
+public class Origin implements NamedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

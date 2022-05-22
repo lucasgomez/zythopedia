@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Style implements HasId {
+public class Style implements NamedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

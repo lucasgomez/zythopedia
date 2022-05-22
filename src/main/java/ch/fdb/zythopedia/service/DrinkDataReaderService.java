@@ -12,8 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellLongContent;
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellStringContent;
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 
 @Slf4j
 @Service
@@ -51,6 +50,25 @@ public class DrinkDataReaderService {
     public static final int STYLE_REPLACE_BY_COLUMN_NUM = 6;
     public static final int STYLE_REPLACE_BY_NAME_COLUMN_NUM = 7;
 
+    public static final int DRINK_ID_COLUMN_NUM = 0;
+    public static final int DRINK_NAME_COLUMN_NUM = 1;
+    public static final int DRINK_PRODUCER_ID_COLUMN_NUM = 2;
+    public static final int DRINK_PRODUCER_NAME_COLUMN_NUM = 3;
+    public static final int DRINK_DESCRIPTION_COLUMN_NUM = 4;
+    public static final int DRINK_ABV_COLUMN_NUM = 5;
+    public static final int DRINK_COLOR_ID_COLUMN_NUM = 6;
+    public static final int DRINK_COLOR_NAME_COLUMN_NUM = 7;
+    public static final int DRINK_STYLE_ID_COLUMN_NUM = 8;
+    public static final int DRINK_STYLE_NAME_COLUMN_NUM = 9;
+    public static final int DRINK_TO_DELETE_COLUMN_NUM = 10;
+
+    public Collection<DrinkDto> readDrinks(Collection<Row> rows) {
+        return rows.stream()
+                .filter(row -> Strings.isBlank(getCellStringContent(row, DRINK_TO_DELETE_COLUMN_NUM)))
+                .map(this::buildDrinkDto)
+                .collect(Collectors.toSet());
+    }
+
     public Collection<ColorDto> readColors(Collection<Row> rows) {
         return rows.stream()
                 .filter(row -> Strings.isBlank(getCellStringContent(row, COLOR_TO_DELETE_COLUMN_NUM)))
@@ -79,6 +97,11 @@ public class DrinkDataReaderService {
                 .collect(Collectors.toSet());
     }
 
+    public Collection<Row> getDrinkRows(Workbook workbook) {
+        var sheet = workbook.getSheet("drinks");
+        return SpreadsheetHelper.readRowsFromSheet(sheet);
+    }
+
     public Collection<Row> getColorRows(Workbook workbook) {
         var sheet = workbook.getSheet("colors");
         return SpreadsheetHelper.readRowsFromSheet(sheet);
@@ -97,6 +120,14 @@ public class DrinkDataReaderService {
     public Collection<Row> getStyleRows(Workbook workbook) {
         var sheet = workbook.getSheet("styles");
         return SpreadsheetHelper.readRowsFromSheet(sheet);
+    }
+
+    public Map<Long, IdOrNameDto> readDrinksToDelete(Collection<Row> rows) {
+        return rows.stream()
+                .filter(row -> Strings.isNotBlank(getCellStringContent(row, DRINK_TO_DELETE_COLUMN_NUM)))
+                .collect(Collectors.toMap(
+                        row -> SpreadsheetHelper.getCellLongContent(row, DRINK_ID_COLUMN_NUM),
+                        row -> null));
     }
 
     public Map<Long, IdOrNameDto> readColorsToDeleteWithReplacement(Collection<Row> rows) {
@@ -150,6 +181,27 @@ public class DrinkDataReaderService {
                 .name(getCellStringContent(row, ORIGIN_NAME_COLUMN_NUM))
                 .shortName(getCellStringContent(row, ORIGIN_SHORT_NAME_COLUMN_NUM))
                 .flag(getCellStringContent(row, ORIGIN_FLAG_COLUMN_NUM))
+                .build();
+    }
+
+    private DrinkDto buildDrinkDto(Row row) {
+        return DrinkDto.builder()
+                .id(getCellLongContent(row, DRINK_ID_COLUMN_NUM))
+                .name(getCellStringContent(row, DRINK_NAME_COLUMN_NUM))
+                .description(getCellStringContent(row, DRINK_DESCRIPTION_COLUMN_NUM))
+                .abv(getCellDoubleContent(row, DRINK_ABV_COLUMN_NUM))
+                .color(ColorDto.builder()
+                        .id(getCellLongContent(row, DRINK_COLOR_ID_COLUMN_NUM))
+                        .name(getCellStringContent(row, DRINK_COLOR_NAME_COLUMN_NUM))
+                        .build())
+                .style(StyleDto.builder()
+                        .id(getCellLongContent(row, DRINK_STYLE_ID_COLUMN_NUM))
+                        .name(getCellStringContent(row, DRINK_STYLE_NAME_COLUMN_NUM))
+                        .build())
+                .producer(ProducerDto.builder()
+                        .id(getCellLongContent(row, DRINK_PRODUCER_ID_COLUMN_NUM))
+                        .name(getCellStringContent(row, DRINK_PRODUCER_NAME_COLUMN_NUM))
+                        .build())
                 .build();
     }
 

@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Service implements HasId {
+public class Service {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
