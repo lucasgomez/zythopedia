@@ -36,8 +36,16 @@ public final class SpreadsheetHelper {
     }
 
     public static boolean rowHasContent(Sheet sheet, int rowNum) {
+        return rowHasContent(sheet, rowNum, 0) || rowHasContent(sheet, rowNum, 1);
+    }
+
+    private static boolean rowHasContent(Sheet sheet, int rowNum, int cellNum) {
         return Optional.ofNullable(sheet.getRow(rowNum))
                 .map(row -> row.getCell(0))
+                .filter(SpreadsheetHelper::hasContent)
+                .isPresent()
+        || Optional.ofNullable(sheet.getRow(rowNum))
+                .map(row -> row.getCell(1))
                 .filter(SpreadsheetHelper::hasContent)
                 .isPresent();
     }
@@ -82,9 +90,19 @@ public final class SpreadsheetHelper {
 
     public static Long getCellLongContent(Row row, int column_num) {
         return Optional.ofNullable(row.getCell(column_num))
-                .map(Cell::getNumericCellValue)
-                .map(Double::longValue)
+                .map(SpreadsheetHelper::getCellLongContent)
                 .orElse(null);
+    }
+
+    private static Long getCellLongContent(Cell cell) {
+        switch (cell.getCellType()) {
+            case NUMERIC: return ((Double) cell.getNumericCellValue()).longValue();
+            case STRING: return Long.valueOf(cell.getStringCellValue());
+            default: {
+                log.error(String.format("Could not read value from cell %s, thus ignoring it", cell.getAddress().formatAsString()));
+                return null;
+            }
+        }
     }
 
     public static Strength getCellContentAsStrength(Row row, int column_num) {

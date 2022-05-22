@@ -15,12 +15,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Color {
+public class Color implements HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "ID")
-    private long id;
+    private Long id;
 
     @Column(name = "NAME", nullable = false)
     private String name;

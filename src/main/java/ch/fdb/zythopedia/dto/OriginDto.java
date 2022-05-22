@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 public class OriginDto implements HasId {
 
-    private long id;
+    private Long id;
     private String name;
     private String shortName;
     private String flag;

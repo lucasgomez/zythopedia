@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.dto;
 
+import ch.fdb.zythopedia.entity.HasId;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 @EqualsAndHashCode
-public class StyleDto {
+public class StyleDto implements HasId {
 
     private Long id;
     private String name;

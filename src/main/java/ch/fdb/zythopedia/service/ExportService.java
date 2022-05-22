@@ -4,6 +4,7 @@ import ch.fdb.zythopedia.dto.*;
 import ch.fdb.zythopedia.dto.mapper.*;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.enums.ServiceMethod;
+import liquibase.pro.packaged.D;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
@@ -25,12 +26,20 @@ public class ExportService {
             "styleName", "abv", "buyingPrice", "serviceMethod", "volumeInCl", "sellingPrice",
             "projectedSellingPrice", "price per alc. cL", "Projected margin", "Absolute margin");
     private BoughtDrinkService boughtDrinkService;
+    private StyleService styleService;
+    private ProducerService producerService;
+    private OriginService originService;
+    private ColorService colorService;
     private DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper;
     private DrinkMapper drinkMapper;
     private SimpleDrinkMapper simpleDrinkMapper;
 
-    public ExportService(BoughtDrinkService boughtDrinkService, DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper, DrinkMapper drinkMapper, SimpleDrinkMapper simpleDrinkMapper) {
+    public ExportService(BoughtDrinkService boughtDrinkService, StyleService styleService, ProducerService producerService, OriginService originService, ColorService colorService, DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper, DrinkMapper drinkMapper, SimpleDrinkMapper simpleDrinkMapper) {
         this.boughtDrinkService = boughtDrinkService;
+        this.styleService = styleService;
+        this.producerService = producerService;
+        this.originService = originService;
+        this.colorService = colorService;
         this.drinkPriceCalculatorDtoMapper = drinkPriceCalculatorDtoMapper;
         this.drinkMapper = drinkMapper;
         this.simpleDrinkMapper = simpleDrinkMapper;
@@ -76,10 +85,10 @@ public class ExportService {
         var boldCellStyle = buildBoldCellStyle(workbook);
 
         buildDrinksSheet(workbook, drinks, boldCellStyle);
-        buildStylesSheet(workbook, getStyles(drinks), boldCellStyle);
-        buildColorsSheet(workbook, getColors(drinks), boldCellStyle);
-        buildProducersSheet(workbook, getProducers(drinks), boldCellStyle);
-        buildOriginsSheet(workbook, getOrigins(drinks), boldCellStyle);
+        buildStylesSheet(workbook, styleService.findAllDto(), boldCellStyle);
+        buildColorsSheet(workbook, colorService.findAllDto(), boldCellStyle);
+        buildProducersSheet(workbook, producerService.findAllDto(), boldCellStyle);
+        buildOriginsSheet(workbook, originService.findAllDto(), boldCellStyle);
 
         return workbook;
     }
@@ -117,17 +126,16 @@ public class ExportService {
     private Sheet buildOriginsSheet(Workbook workbook, List<OriginDto> origins, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("origins");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "shortName", "flag", "toDelete", "replaceBy"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "shortName", "flag", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < origins.size(); rowId++) {
-            var cellId = 0;
             var row = sheet.createRow(rowId+1);
             var origin = origins.get(rowId);
 
-            writeContentToCell(row, cellId++, origin.getId());
-            writeContentToCell(row, cellId++, origin.getName());
-            writeContentToCell(row, cellId++, origin.getShortName());
-            writeContentToCell(row, cellId++, origin.getFlag());
+            writeContentToCell(row, DrinkDataReaderService.ORIGIN_ID_COLUMN_NUM, origin.getId());
+            writeContentToCell(row, DrinkDataReaderService.ORIGIN_NAME_COLUMN_NUM, origin.getName());
+            writeContentToCell(row, DrinkDataReaderService.ORIGIN_SHORT_NAME_COLUMN_NUM, origin.getShortName());
+            writeContentToCell(row, DrinkDataReaderService.ORIGIN_FLAG_COLUMN_NUM, origin.getFlag());
         }
         return sheet;
     }
@@ -135,22 +143,21 @@ public class ExportService {
     private Sheet buildProducersSheet(Workbook workbook, List<ProducerDto> producers, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("producers");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "originId", "originName", "toDelete", "replaceBy"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "originId", "originName", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < producers.size(); rowId++) {
-            var cellId = 0;
             var row = sheet.createRow(rowId+1);
             var producer = producers.get(rowId);
 
             var optionalOrigin = Optional.ofNullable(producer.getOrigin());
 
-            writeContentToCell(row, cellId++, producer.getId());
-            writeContentToCell(row, cellId++, producer.getName());
-            writeContentToCell(row, cellId++, optionalOrigin
+            writeContentToCell(row, DrinkDataReaderService.PRODUCER_ID_COLUMN_NUM, producer.getId());
+            writeContentToCell(row, DrinkDataReaderService.PRODUCER_NAME_COLUMN_NUM, producer.getName());
+            writeContentToCell(row, DrinkDataReaderService.PRODUCER_ORIGIN_ID_COLUMN_NUM, optionalOrigin
                     .map(OriginDto::getId)
                     .map(String::valueOf)
                     .orElse(""));
-            writeContentToCell(row, cellId++, optionalOrigin
+            writeContentToCell(row, DrinkDataReaderService.PRODUCER_ORIGIN_NAME_COLUMN_NUM, optionalOrigin
                     .map(OriginDto::getName)
                     .orElse(""));
         }
@@ -160,18 +167,17 @@ public class ExportService {
     private Sheet buildStylesSheet(Workbook workbook, List<StyleDto> styles, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("styles");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "parentId", "parentName", "toDelete", "replaceBy"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "parentId", "parentName", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < styles.size(); rowId++) {
-            var cellId = 0;
             var row = sheet.createRow(rowId+1);
             var style = styles.get(rowId);
 
-            writeContentToCell(row, cellId++, style.getId());
-            writeContentToCell(row, cellId++, style.getName());
-            writeContentToCell(row, cellId++, style.getDescription());
-            writeContentToCell(row, cellId++, style.getParentId());
-            writeContentToCell(row, cellId++, style.getParentName());
+            writeContentToCell(row, DrinkDataReaderService.STYLE_ID_COLUMN_NUM, style.getId());
+            writeContentToCell(row, DrinkDataReaderService.STYLE_NAME_COLUMN_NUM, style.getName());
+            writeContentToCell(row, DrinkDataReaderService.STYLE_DESCRIPTION_COLUMN_NUM, style.getDescription());
+            writeContentToCell(row, DrinkDataReaderService.STYLE_PARENT_ID_COLUMN_NUM, style.getParentId());
+            writeContentToCell(row, DrinkDataReaderService.STYLE_PARENT_NAME_COLUMN_NUM, style.getParentName());
         }
         return sheet;
     }
@@ -179,59 +185,17 @@ public class ExportService {
     private Sheet buildColorsSheet(Workbook workbook, List<ColorDto> colors, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("colors");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "toDelete", "replaceBy"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < colors.size(); rowId++) {
-            var cellId = 0;
             var row = sheet.createRow(rowId+1);
             var color = colors.get(rowId);
 
-            writeContentToCell(row, cellId++, color.getId());
-            writeContentToCell(row, cellId++, color.getName());
-            writeContentToCell(row, cellId++, color.getDescription());
+            writeContentToCell(row, DrinkDataReaderService.COLOR_ID_COLUMN_NUM, color.getId());
+            writeContentToCell(row, DrinkDataReaderService.COLOR_NAME_COLUMN_NUM, color.getName());
+            writeContentToCell(row, DrinkDataReaderService.COLOR_DESCRIPTION_COLUMN_NUM, color.getDescription());
         }
         return sheet;
-    }
-
-    private List<ColorDto> getColors(Collection<DrinkDto> drinks) {
-        var list = drinks.stream()
-                .map(DrinkDto::getColor)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        return list.stream()
-                .sorted(Comparator.comparing(ColorDto::getName))
-                .collect(Collectors.toList());
-    }
-
-    private List<StyleDto> getStyles(Collection<DrinkDto> drinks) {
-        var list = drinks.stream()
-                .map(DrinkDto::getStyle)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        return list.stream()
-            .sorted(Comparator.comparing(StyleDto::getName))
-            .collect(Collectors.toList());
-    }
-
-    private List<ProducerDto> getProducers(Collection<DrinkDto> drinks) {
-        var list = drinks.stream()
-                .map(DrinkDto::getProducer)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        return list.stream()
-                .sorted(Comparator.comparing(ProducerDto::getName))
-                .collect(Collectors.toList());
-    }
-
-    private List<OriginDto> getOrigins(Collection<DrinkDto> drinks) {
-        var list = drinks.stream()
-                .map(DrinkDto::getProducer)
-                .filter(Objects::nonNull)
-                .map(ProducerDto::getOrigin)
-                .collect(Collectors.toSet());
-        return list.stream()
-                .sorted(Comparator.comparing(OriginDto::getName))
-                .collect(Collectors.toList());
     }
 
     private Workbook buildPriceCalculatorWorkbook(List<DrinkPriceCalculatorDto> dtos) {

@@ -1,24 +1,34 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.IdOrNameDto;
+import ch.fdb.zythopedia.dto.ProducerDto;
+import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
+import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.ProducerRepository;
+import ch.fdb.zythopedia.utils.DeleterHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ProducerService {
 
     private ProducerRepository producerRepository;
+    private ProducerMapper producerMapper;
     private OriginService originService;
 
-    public ProducerService(ProducerRepository producerRepository, OriginService originService) {
+    public ProducerService(ProducerRepository producerRepository, ProducerMapper producerMapper, OriginService originService) {
         this.producerRepository = producerRepository;
+        this.producerMapper = producerMapper;
         this.originService = originService;
     }
 
@@ -26,8 +36,19 @@ public class ProducerService {
         return producerRepository.findAll();
     }
 
+    public List<ProducerDto> findAllDto() {
+        return producerRepository.findAll().stream()
+                .map(producerMapper::toDto)
+                .sorted(Comparator.comparing(ProducerDto::getName))
+                .collect(Collectors.toList());
+    }
+
     public Optional<Producer> findById(long producerId) {
         return producerRepository.findById(producerId);
+    }
+
+    public Producer create(ProducerDto producerDto) {
+        return create(producerMapper.toCreateDto(producerDto));
     }
 
     public Producer create(CreateProducerDto createProducerDto) {
@@ -53,6 +74,10 @@ public class ProducerService {
                 .build());
     }
 
+    public Producer update(ProducerDto producerDto) {
+        return update(producerDto.getId(), producerMapper.toCreateDto(producerDto));
+    }
+
     public Producer update(long producerId, CreateProducerDto createProducerDto) {
         var producerToUpdate = producerRepository.findById(producerId)
                 .orElseThrow();
@@ -67,13 +92,12 @@ public class ProducerService {
     }
 
     public void delete(long producerId) {
-        var producerToDelete = producerRepository.findById(producerId)
-                .orElseThrow();
+        delete(producerId, null);
+    }
 
-//        producerToDelete.getDrinks()
-//                .forEach(drink -> drink.setProducer(null));
-
-        producerRepository.delete(producerToDelete);
+    public Void delete(Long producerIdToDelete, IdOrNameDto producerIdToTransferTo) {
+        return DeleterHelper.delete("Producer", "Drink", producerIdToDelete, producerIdToTransferTo,
+                producerRepository, Producer::getDrinks, Drink::setProducer);
     }
 
 }

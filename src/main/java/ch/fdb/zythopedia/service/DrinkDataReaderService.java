@@ -1,9 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.ColorDto;
-import ch.fdb.zythopedia.dto.OriginDto;
-import ch.fdb.zythopedia.dto.ProducerDto;
-import ch.fdb.zythopedia.dto.StyleDto;
+import ch.fdb.zythopedia.dto.*;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +25,7 @@ public class DrinkDataReaderService {
     public static final int COLOR_DESCRIPTION_COLUMN_NUM = 2;
     public static final int COLOR_TO_DELETE_COLUMN_NUM = 3;
     public static final int COLOR_REPLACE_BY_COLUMN_NUM = 4;
+    public static final int COLOR_REPLACE_BY_NAME_COLUMN_NUM = 5;
 
     public static final int ORIGIN_ID_COLUMN_NUM = 0;
     public static final int ORIGIN_NAME_COLUMN_NUM = 1;
@@ -35,6 +33,7 @@ public class DrinkDataReaderService {
     public static final int ORIGIN_FLAG_COLUMN_NUM = 3;
     public static final int ORIGIN_TO_DELETE_COLUMN_NUM = 4;
     public static final int ORIGIN_REPLACE_BY_COLUMN_NUM = 5;
+    public static final int ORIGIN_REPLACE_BY_NAME_COLUMN_NUM = 6;
 
     public static final int PRODUCER_ID_COLUMN_NUM = 0;
     public static final int PRODUCER_NAME_COLUMN_NUM= 1;
@@ -42,6 +41,7 @@ public class DrinkDataReaderService {
     public static final int PRODUCER_ORIGIN_NAME_COLUMN_NUM = 3;
     public static final int PRODUCER_TO_DELETE_COLUMN_NUM = 4;
     public static final int PRODUCER_REPLACE_BY_COLUMN_NUM = 5;
+    public static final int PRODUCER_REPLACE_BY_NAME_COLUMN_NUM = 6;
 
     public static final int STYLE_ID_COLUMN_NUM = 0;
     public static final int STYLE_NAME_COLUMN_NUM = 1;
@@ -50,6 +50,7 @@ public class DrinkDataReaderService {
     public static final int STYLE_PARENT_NAME_COLUMN_NUM = 4;
     public static final int STYLE_TO_DELETE_COLUMN_NUM = 5;
     public static final int STYLE_REPLACE_BY_COLUMN_NUM = 6;
+    public static final int STYLE_REPLACE_BY_NAME_COLUMN_NUM = 7;
 
     public Collection<ColorDto> readColors(Collection<Row> rows) {
         return rows.stream()
@@ -99,35 +100,40 @@ public class DrinkDataReaderService {
         return SpreadsheetHelper.readRowsFromSheet(sheet);
     }
 
-    public Map<Long, Long> readColorsToDeleteWithReplacement(Collection<Row> rows) {
+    public Map<Long, IdOrNameDto> readColorsToDeleteWithReplacement(Collection<Row> rows) {
         return readEntityToDeleteWithReplacement(rows,
-                COLOR_TO_DELETE_COLUMN_NUM, COLOR_ID_COLUMN_NUM, COLOR_REPLACE_BY_COLUMN_NUM);
+                COLOR_TO_DELETE_COLUMN_NUM, COLOR_ID_COLUMN_NUM, COLOR_REPLACE_BY_COLUMN_NUM, COLOR_REPLACE_BY_NAME_COLUMN_NUM);
     }
 
-    public Map<Long, Long> readStylesToDeleteWithReplacement(Collection<Row> rows) {
+    public Map<Long, IdOrNameDto> readStylesToDeleteWithReplacement(Collection<Row> rows) {
         return readEntityToDeleteWithReplacement(rows,
-                STYLE_TO_DELETE_COLUMN_NUM, STYLE_ID_COLUMN_NUM, STYLE_REPLACE_BY_COLUMN_NUM);
+                STYLE_TO_DELETE_COLUMN_NUM, STYLE_ID_COLUMN_NUM, STYLE_REPLACE_BY_COLUMN_NUM, STYLE_REPLACE_BY_NAME_COLUMN_NUM);
     }
 
-    public Map<Long, Long> readProducersToDeleteWithReplacement(Collection<Row> rows) {
+    public Map<Long, IdOrNameDto> readProducersToDeleteWithReplacement(Collection<Row> rows) {
         return readEntityToDeleteWithReplacement(rows,
-                PRODUCER_TO_DELETE_COLUMN_NUM, PRODUCER_ID_COLUMN_NUM, PRODUCER_REPLACE_BY_COLUMN_NUM);
+                PRODUCER_TO_DELETE_COLUMN_NUM, PRODUCER_ID_COLUMN_NUM, PRODUCER_REPLACE_BY_COLUMN_NUM, PRODUCER_REPLACE_BY_NAME_COLUMN_NUM);
     }
 
-    public Map<Long, Long> readOriginsToDeleteWithReplacement(Collection<Row> rows) {
+    public Map<Long, IdOrNameDto> readOriginsToDeleteWithReplacement(Collection<Row> rows) {
         return readEntityToDeleteWithReplacement(rows,
-                ORIGIN_TO_DELETE_COLUMN_NUM, ORIGIN_ID_COLUMN_NUM, ORIGIN_REPLACE_BY_COLUMN_NUM);
+                ORIGIN_TO_DELETE_COLUMN_NUM, ORIGIN_ID_COLUMN_NUM, ORIGIN_REPLACE_BY_COLUMN_NUM, ORIGIN_REPLACE_BY_NAME_COLUMN_NUM);
     }
 
     /**
      * @return pairs of id of color to delete (1st) and the optional id of replacement color (2nd)
      */
-    private Map<Long, Long> readEntityToDeleteWithReplacement(Collection<Row> rows, int entityToDeleteColumnNum, int entityIdColumnNum, int entityToReplaceByColumnNum) {
+    private Map<Long, IdOrNameDto> readEntityToDeleteWithReplacement(Collection<Row> rows, int entityToDeleteColumnNum,
+                                                              int entityIdColumnNum, int entityToReplaceByColumnNum,
+                                                              int entityToReplaceByNameColumnNum) {
         return rows.stream()
                 .filter(row -> Strings.isNotBlank(getCellStringContent(row, entityToDeleteColumnNum)))
                 .collect(Collectors.toMap(
                         row -> SpreadsheetHelper.getCellLongContent(row, entityIdColumnNum),
-                        row -> getCellLongContent(row, entityToReplaceByColumnNum)
+                        row -> IdOrNameDto.builder()
+                                .id(getCellLongContent(row, entityToReplaceByColumnNum))
+                                .name(getCellStringContent(row, entityToReplaceByNameColumnNum))
+                                .build()
                 ));
     }
 

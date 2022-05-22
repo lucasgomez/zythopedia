@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode
 public class ProducerDto implements HasId {
 
-    private long id;
+    private Long id;
     private String name;
     private OriginDto origin;
 }

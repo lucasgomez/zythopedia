@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
@@ -53,29 +54,35 @@ public class ImportService {
         var workbook = getWorkbookFromFile(file);
         processColorsToImport(workbook);
         processOriginsToImport(workbook);
+        processProducersToImport(workbook);
+        processStylesToImport(workbook);
 
         log.info("End of import of drinks data");
     }
 
     private <D extends HasId, E> void processDataToImport(String entityName, Collection<Row> originRows,
                                                           Function<Collection<Row>, Collection<D>> reader,
-                                                          Function<Collection<Row>, Map<Long, Long>> readerForDeletionWithReplacement,
-                                                          Function<D, E> updater, Function<D, E> creater, BiFunction<Long, Long, Void> deleter) {
+                                                          Function<Collection<Row>, Map<Long, IdOrNameDto>> readerForDeletionWithReplacement,
+                                                          Function<D, E> updater, Function<D, E> creater, BiFunction<Long, IdOrNameDto, Void> deleter) {
         var readDtos = reader.apply(originRows);
 
         log.info(String.format("%s to update %s", entityName, readDtos.size()));
-        var updatedEntities = readDtos.stream()
+        var entitiesToUpdate = readDtos.stream()
                 .filter(hasId())
+                .collect(Collectors.toSet());
+        var updatedEntities = entitiesToUpdate.stream()
                 .map(updater)
                 .collect(Collectors.toSet());
-        log.info(String.format("%s updated %s/%s", entityName, updatedEntities.size(), readDtos.size()));
+        log.info(String.format("%s updated %s/%s", entityName, updatedEntities.size(), entitiesToUpdate.size()));
 
-        log.info(String.format("%s to create %s", entityName, readDtos.size()));
-        var createdEntities = readDtos.stream()
+        var entitiesToCreate = readDtos.stream()
                 .filter(Predicate.not(hasId()))
+                .collect(Collectors.toSet());
+        log.info(String.format("%s to create %s", entityName, entitiesToCreate.size()));
+        var createdEntities = entitiesToCreate.stream()
                 .map(creater)
                 .collect(Collectors.toSet());
-        log.info(String.format("Created %s %s/%s", entityName, readDtos.size(), createdEntities.size()));
+        log.info(String.format("Created %s %s/%s", entityName, createdEntities.size(), entitiesToCreate.size()));
 
         var entitiesToDeleteWitheEntityToTransferTo = readerForDeletionWithReplacement.apply(originRows);
         entitiesToDeleteWitheEntityToTransferTo.forEach(deleter::apply);

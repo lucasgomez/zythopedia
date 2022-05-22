@@ -1,15 +1,20 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.IdOrNameDto;
+import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
+import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.repository.StyleRepository;
+import ch.fdb.zythopedia.utils.DeleterHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -17,9 +22,11 @@ import java.util.stream.Collectors;
 public class StyleService {
 
     private StyleRepository styleRepository;
+    private StyleFlatMapper styleFlatMapper;
 
-    public StyleService(StyleRepository styleRepository) {
+    public StyleService(StyleRepository styleRepository, StyleFlatMapper styleFlatMapper) {
         this.styleRepository = styleRepository;
+        this.styleFlatMapper = styleFlatMapper;
     }
 
     public Optional<Style> findById(long styleId) {
@@ -28,6 +35,17 @@ public class StyleService {
 
     public List<Style> findAll() {
         return styleRepository.findAll();
+    }
+
+    public List<StyleDto> findAllDto() {
+        return styleRepository.findAll().stream()
+                .map(styleFlatMapper::toDto)
+                .sorted(Comparator.comparing(StyleDto::getName))
+                .collect(Collectors.toList());
+    }
+
+    public Style create(StyleDto styleDto) {
+        return create(styleFlatMapper.toCreateDto(styleDto));
     }
 
     public Style create(CreateStyleDto createStyleDto) {
@@ -42,6 +60,10 @@ public class StyleService {
                 .description(createStyleDto.getDescription())
                 .parent(parent)
                 .build());
+    }
+
+    public Style update(StyleDto styleDto) {
+        return update(styleDto.getId(), styleFlatMapper.toCreateDto(styleDto));
     }
 
     public Style update(long styleId, CreateStyleDto createStyleDto) {
@@ -75,16 +97,23 @@ public class StyleService {
         styleRepository.delete(styleToDelete);
     }
 
+    public Void delete(Long styleIdToDelete, IdOrNameDto styleIdToTransferTo) {
+        return DeleterHelper.delete("Style", "Drink", styleIdToDelete, styleIdToTransferTo,
+                styleRepository,
+                Style::getDrinks, Drink::setStyle,
+                Style::getChildren, Style::setParent);
+    }
+
     private void checkForCycles(Style styleToUpdate, Style newParent) {
         if (null == newParent) {
             return;
         }
-        if (styleToUpdate.getId() == newParent.getId()) {
+        if (styleToUpdate.getId().equals(newParent.getId())) {
             throw new IllegalArgumentException("Marty, you can't be your own father!");
         }
         if (getDescendants(styleToUpdate).stream()
                 .map(Style::getId)
-                .anyMatch(id -> id == newParent.getId())) {
+                .anyMatch(id -> id.equals(newParent.getId()))) {
             throw new IllegalArgumentException(String.format(
                     "Descendant style %s - %s can't be set as parent style to %s - %s",
                     newParent.getId(), newParent.getName(),

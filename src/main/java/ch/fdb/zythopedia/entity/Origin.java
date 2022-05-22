@@ -18,12 +18,12 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Origin {
+public class Origin implements HasId {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "ID")
-    private long id;
+    private Long id;
 
     @Column(name = "NAME")
     private String name;

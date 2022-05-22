@@ -6,7 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 
-public interface ColorRepository extends JpaRepository<Color, Long> {
-
-    Optional<Color> findByName(String colorName);
+public interface ColorRepository extends JpaRepository<Color, Long>, IdOrNameDtoFinderAndDeleter<Color> {
 }

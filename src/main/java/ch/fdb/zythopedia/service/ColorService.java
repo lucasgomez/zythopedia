@@ -1,10 +1,14 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.ColorDto;
+import ch.fdb.zythopedia.dto.IdOrNameDto;
+import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
+import ch.fdb.zythopedia.dto.mapper.ColorMapper;
 import ch.fdb.zythopedia.entity.Color;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.repository.ColorRepository;
-import liquibase.pro.packaged.M;
+import ch.fdb.zythopedia.utils.DeleterHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
 import org.springframework.stereotype.Service;
@@ -17,13 +21,22 @@ import java.util.stream.Collectors;
 public class ColorService {
 
     private ColorRepository colorRepository;
+    private ColorMapper colorMapper;
 
-    public ColorService(ColorRepository colorRepository) {
+    public ColorService(ColorRepository colorRepository, ColorMapper colorMapper) {
         this.colorRepository = colorRepository;
+        this.colorMapper = colorMapper;
     }
 
     public List<Color> findAll() {
         return colorRepository.findAll();
+    }
+
+    public List<ColorDto> findAllDto() {
+        return colorRepository.findAll().stream()
+                .map(colorMapper::toDto)
+                .sorted(Comparator.comparing(ColorDto::getName))
+                .collect(Collectors.toList());
     }
 
     public Optional<Color> findById(long colorId) {
@@ -78,26 +91,8 @@ public class ColorService {
         }
     }
 
-    public Void delete(Long colorIdToDelete, Long colorIdToTransferTo) {
-        var colorToDelete = colorRepository.findById(colorIdToDelete);
-        if (colorToDelete.isEmpty()) {
-            log.error(String.format("Could not delete color %s due to self nihilism", colorToDelete));
-            return null;
-        }
-        if (Objects.nonNull(colorIdToTransferTo)) {
-            var colorToTransferTo = colorRepository.findById(colorIdToTransferTo)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                            "Could not transfer color %s to color %s due to self nihilism",
-                            colorIdToDelete,
-                            colorIdToTransferTo)));
-            colorToDelete.get().getDrinks().forEach(drink -> drink.setColor(colorToTransferTo));
-            log.info(String.format("Transfered drinks from color id %s to color id %s", colorIdToDelete, colorIdToTransferTo));
-        } else {
-            colorToDelete.get().getDrinks().forEach(drink -> drink.setColor(null));
-            log.info(String.format("Unassociated drinks from color id %s", colorIdToDelete));
-        }
-        colorRepository.delete(colorToDelete.get());
-        log.info(String.format("Deleted color id %s", colorIdToDelete));
-        return null;
+    public Void delete(Long colorIdToDelete, IdOrNameDto colorIdToTransferTo) {
+        return DeleterHelper.delete("Color", "Drink", colorIdToDelete, colorIdToTransferTo,
+                colorRepository, Color::getDrinks, Drink::setColor);
     }
 }

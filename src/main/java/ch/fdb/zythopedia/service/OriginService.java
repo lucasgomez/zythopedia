@@ -1,16 +1,23 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.OriginDto;
+import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.mapper.OriginMapper;
 import ch.fdb.zythopedia.entity.Origin;
+import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.OriginRepository;
+import ch.fdb.zythopedia.utils.DeleterHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.hql.spi.id.MultiTableBulkIdStrategy;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +33,13 @@ public class OriginService {
 
     public List<Origin> findAll() {
         return originRepository.findAll();
+    }
+
+    public List<OriginDto> findAllDto() {
+        return originRepository.findAll().stream()
+                .map(originMapper::toDto)
+                .sorted(Comparator.comparing(OriginDto::getName))
+                .collect(Collectors.toList());
     }
 
     public Optional<Origin> findById(long originId) {
@@ -62,27 +76,9 @@ public class OriginService {
         delete(originId, null);
     }
 
-    public Void delete(Long originIdToDelete, Long originIdToTransferTo) {
-        var originToDelete = originRepository.findById(originIdToDelete);
-        if (originToDelete.isEmpty()) {
-            log.error(String.format("Could not delete origin %s due to self nihilism", originToDelete));
-            return null;
-        }
-        if (Objects.nonNull(originIdToTransferTo)) {
-            var originToTransferTo = originRepository.findById(originIdToTransferTo)
-                    .orElseThrow(() -> new IllegalArgumentException(String.format(
-                            "Could not transfer origin %s to origin %s due to self nihilism",
-                            originIdToDelete,
-                            originIdToTransferTo)));
-            originToDelete.get().getProducers().forEach(producer -> producer.setOrigin(originToTransferTo));
-            log.info(String.format("Transfered producers from origin id %s to origin id %s", originIdToDelete, originIdToTransferTo));
-        } else {
-            originToDelete.get().getProducers().forEach(producer -> producer.setOrigin(null));
-            log.info(String.format("Unassociated producers from origin id %s", originIdToDelete));
-        }
-        originRepository.delete(originToDelete.get());
-        log.info(String.format("Deleted origin id %s", originIdToDelete));
-        return null;
+    public Void delete(Long originIdToDelete, IdOrNameDto originIdToTransferTo) {
+        return DeleterHelper.delete("Origin", "Producer", originIdToDelete, originIdToTransferTo,
+                originRepository, Origin::getProducers, Producer::setOrigin);
     }
 
     public Optional<Origin> findByIdOrName(Long originId, String originShortName, String originLongName) {
