@@ -1,16 +1,20 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.ColorDto;
+import ch.fdb.zythopedia.dto.OriginDto;
+import ch.fdb.zythopedia.dto.ProducerDto;
+import ch.fdb.zythopedia.dto.StyleDto;
+import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.postgresql.shaded.com.ongres.scram.common.bouncycastle.pbkdf2.SHA256Digest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
@@ -20,13 +24,58 @@ import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 public class DrinkDataReaderService {
 
     public static final int COLOR_ID_COLUMN_NUM = 0;
-    public static final int TO_DELETE_COLUMN_NUM = 3;
-    public static final int REPLACE_BY_COLUMN_NUM = 4;
+    public static final int COLOR_NAME_COLUMN_NUM = 1;
+    public static final int COLOR_DESCRIPTION_COLUMN_NUM = 2;
+    public static final int COLOR_TO_DELETE_COLUMN_NUM = 3;
+    public static final int COLOR_REPLACE_BY_COLUMN_NUM = 4;
 
-    public Collection<ColorDto> readColorsToUpdate(Collection<Row> rows) {
+    public static final int ORIGIN_ID_COLUMN_NUM = 0;
+    public static final int ORIGIN_NAME_COLUMN_NUM = 1;
+    public static final int ORIGIN_SHORT_NAME_COLUMN_NUM = 2;
+    public static final int ORIGIN_FLAG_COLUMN_NUM = 3;
+    public static final int ORIGIN_TO_DELETE_COLUMN_NUM = 4;
+    public static final int ORIGIN_REPLACE_BY_COLUMN_NUM = 5;
+
+    public static final int PRODUCER_ID_COLUMN_NUM = 0;
+    public static final int PRODUCER_NAME_COLUMN_NUM= 1;
+    public static final int PRODUCER_ORIGIN_ID_COLUMN_NUM = 2;
+    public static final int PRODUCER_ORIGIN_NAME_COLUMN_NUM = 3;
+    public static final int PRODUCER_TO_DELETE_COLUMN_NUM = 4;
+    public static final int PRODUCER_REPLACE_BY_COLUMN_NUM = 5;
+
+    public static final int STYLE_ID_COLUMN_NUM = 0;
+    public static final int STYLE_NAME_COLUMN_NUM = 1;
+    public static final int STYLE_DESCRIPTION_COLUMN_NUM = 2;
+    public static final int STYLE_PARENT_ID_COLUMN_NUM = 3;
+    public static final int STYLE_PARENT_NAME_COLUMN_NUM = 4;
+    public static final int STYLE_TO_DELETE_COLUMN_NUM = 5;
+    public static final int STYLE_REPLACE_BY_COLUMN_NUM = 6;
+
+    public Collection<ColorDto> readColors(Collection<Row> rows) {
         return rows.stream()
-                .filter(row -> Strings.isBlank(getCellStringContent(row, 3)))
+                .filter(row -> Strings.isBlank(getCellStringContent(row, COLOR_TO_DELETE_COLUMN_NUM)))
                 .map(this::buildColorDto)
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<OriginDto> readOrigins(Collection<Row> rows) {
+        return rows.stream()
+                .filter(row -> Strings.isBlank(getCellStringContent(row, ORIGIN_TO_DELETE_COLUMN_NUM)))
+                .map(this::buildOriginDto)
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<ProducerDto> readProducers(Collection<Row> rows) {
+        return rows.stream()
+                .filter(row -> Strings.isBlank(getCellStringContent(row, PRODUCER_TO_DELETE_COLUMN_NUM)))
+                .map(this::buildProducerDto)
+                .collect(Collectors.toSet());
+    }
+
+    public Collection<StyleDto> readStyles(Collection<Row> rows) {
+        return rows.stream()
+                .filter(row -> Strings.isBlank(getCellStringContent(row, STYLE_TO_DELETE_COLUMN_NUM)))
+                .map(this::buildStyleDto)
                 .collect(Collectors.toSet());
     }
 
@@ -35,23 +84,88 @@ public class DrinkDataReaderService {
         return SpreadsheetHelper.readRowsFromSheet(sheet);
     }
 
+    public Collection<Row> getOriginRows(Workbook workbook) {
+        var sheet = workbook.getSheet("origins");
+        return SpreadsheetHelper.readRowsFromSheet(sheet);
+    }
+
+    public Collection<Row> getProducerRows(Workbook workbook) {
+        var sheet = workbook.getSheet("producers");
+        return SpreadsheetHelper.readRowsFromSheet(sheet);
+    }
+
+    public Collection<Row> getStyleRows(Workbook workbook) {
+        var sheet = workbook.getSheet("styles");
+        return SpreadsheetHelper.readRowsFromSheet(sheet);
+    }
+
+    public Map<Long, Long> readColorsToDeleteWithReplacement(Collection<Row> rows) {
+        return readEntityToDeleteWithReplacement(rows,
+                COLOR_TO_DELETE_COLUMN_NUM, COLOR_ID_COLUMN_NUM, COLOR_REPLACE_BY_COLUMN_NUM);
+    }
+
+    public Map<Long, Long> readStylesToDeleteWithReplacement(Collection<Row> rows) {
+        return readEntityToDeleteWithReplacement(rows,
+                STYLE_TO_DELETE_COLUMN_NUM, STYLE_ID_COLUMN_NUM, STYLE_REPLACE_BY_COLUMN_NUM);
+    }
+
+    public Map<Long, Long> readProducersToDeleteWithReplacement(Collection<Row> rows) {
+        return readEntityToDeleteWithReplacement(rows,
+                PRODUCER_TO_DELETE_COLUMN_NUM, PRODUCER_ID_COLUMN_NUM, PRODUCER_REPLACE_BY_COLUMN_NUM);
+    }
+
+    public Map<Long, Long> readOriginsToDeleteWithReplacement(Collection<Row> rows) {
+        return readEntityToDeleteWithReplacement(rows,
+                ORIGIN_TO_DELETE_COLUMN_NUM, ORIGIN_ID_COLUMN_NUM, ORIGIN_REPLACE_BY_COLUMN_NUM);
+    }
+
     /**
      * @return pairs of id of color to delete (1st) and the optional id of replacement color (2nd)
      */
-    public Map<Long, Long> readColorsToDeleteWithReplacement(Collection<Row> rows) {
+    private Map<Long, Long> readEntityToDeleteWithReplacement(Collection<Row> rows, int entityToDeleteColumnNum, int entityIdColumnNum, int entityToReplaceByColumnNum) {
         return rows.stream()
-                .filter(row -> Strings.isNotBlank(getCellStringContent(row, TO_DELETE_COLUMN_NUM)))
+                .filter(row -> Strings.isNotBlank(getCellStringContent(row, entityToDeleteColumnNum)))
                 .collect(Collectors.toMap(
-                        row -> SpreadsheetHelper.getCellLongContent(row, COLOR_ID_COLUMN_NUM),
-                        row -> getCellLongContent(row, REPLACE_BY_COLUMN_NUM)
+                        row -> SpreadsheetHelper.getCellLongContent(row, entityIdColumnNum),
+                        row -> getCellLongContent(row, entityToReplaceByColumnNum)
                 ));
     }
 
     private ColorDto buildColorDto(Row row) {
         return ColorDto.builder()
-                .id(getCellLongContent(row, 0))
-                .name(getCellStringContent(row, 1))
-                .description(getCellStringContent(row, 2))
+                .id(getCellLongContent(row, COLOR_ID_COLUMN_NUM))
+                .name(getCellStringContent(row, COLOR_NAME_COLUMN_NUM))
+                .description(getCellStringContent(row, COLOR_DESCRIPTION_COLUMN_NUM))
+                .build();
+    }
+
+    private OriginDto buildOriginDto(Row row) {
+        return OriginDto.builder()
+                .id(getCellLongContent(row, ORIGIN_ID_COLUMN_NUM))
+                .name(getCellStringContent(row, ORIGIN_NAME_COLUMN_NUM))
+                .shortName(getCellStringContent(row, ORIGIN_SHORT_NAME_COLUMN_NUM))
+                .flag(getCellStringContent(row, ORIGIN_FLAG_COLUMN_NUM))
+                .build();
+    }
+
+    private ProducerDto buildProducerDto(Row row) {
+        return ProducerDto.builder()
+                .id(getCellLongContent(row, PRODUCER_ID_COLUMN_NUM))
+                .name(getCellStringContent(row, PRODUCER_NAME_COLUMN_NUM))
+                .origin(OriginDto.builder()
+                        .id(getCellLongContent(row, PRODUCER_ORIGIN_ID_COLUMN_NUM))
+                        .name(getCellStringContent(row, PRODUCER_ORIGIN_NAME_COLUMN_NUM))
+                        .build())
+                .build();
+    }
+
+    private StyleDto buildStyleDto(Row row) {
+        return StyleDto.builder()
+                .id(getCellLongContent(row, STYLE_ID_COLUMN_NUM))
+                .name(getCellStringContent(row, STYLE_NAME_COLUMN_NUM))
+                .description(getCellStringContent(row, STYLE_DESCRIPTION_COLUMN_NUM))
+                .parentId(getCellLongContent(row, STYLE_PARENT_ID_COLUMN_NUM))
+                .parentName(getCellStringContent(row, STYLE_PARENT_NAME_COLUMN_NUM))
                 .build();
     }
 }

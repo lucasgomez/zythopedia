@@ -4,17 +4,21 @@ import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getWorkbookFromFile;
 
 @Slf4j
 @Service
@@ -27,15 +31,17 @@ public class ImportService {
     private DrinkService drinkService;
     private StyleService styleService;
     private ColorService colorService;
+    private OriginService originService;
     private ProducerService producerService;
     private AmsteinReaderService amsteinReaderService;
     private DrinkDataReaderService drinkDataReaderService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, OriginService originService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
         this.styleService = styleService;
         this.colorService = colorService;
+        this.originService = originService;
         this.producerService = producerService;
         this.amsteinReaderService = amsteinReaderService;
         this.drinkDataReaderService = drinkDataReaderService;
@@ -45,23 +51,66 @@ public class ImportService {
         log.info("Starting import of drinks data");
 
         var workbook = getWorkbookFromFile(file);
-        var colorRows = drinkDataReaderService.getColorRows(workbook);
-        var readColors = drinkDataReaderService.readColorsToUpdate(colorRows);
-
-        log.info(String.format("Colors to update %s", readColors));
-        var updatedColors = readColors.stream()
-                .filter(color -> Objects.nonNull(color.getId()))
-                .map(colorService::update)
-                .collect(Collectors.toSet());
-        log.info(String.format("Colors updated %s/%s", updatedColors, readColors));
-
-        var colorsToDelete = drinkDataReaderService.readColorsToDeleteWithReplacement(colorRows);
-        colorsToDelete.entrySet()
-                .forEach(colorToDeleteByColorToTransferTo -> colorService.delete(
-                        colorToDeleteByColorToTransferTo.getKey(),
-                        colorToDeleteByColorToTransferTo.getValue()));
+        processColorsToImport(workbook);
+        processOriginsToImport(workbook);
 
         log.info("End of import of drinks data");
+    }
+
+    private <D extends HasId, E> void processDataToImport(String entityName, Collection<Row> originRows,
+                                                          Function<Collection<Row>, Collection<D>> reader,
+                                                          Function<Collection<Row>, Map<Long, Long>> readerForDeletionWithReplacement,
+                                                          Function<D, E> updater, Function<D, E> creater, BiFunction<Long, Long, Void> deleter) {
+        var readDtos = reader.apply(originRows);
+
+        log.info(String.format("%s to update %s", entityName, readDtos.size()));
+        var updatedEntities = readDtos.stream()
+                .filter(hasId())
+                .map(updater)
+                .collect(Collectors.toSet());
+        log.info(String.format("%s updated %s/%s", entityName, updatedEntities.size(), readDtos.size()));
+
+        log.info(String.format("%s to create %s", entityName, readDtos.size()));
+        var createdEntities = readDtos.stream()
+                .filter(Predicate.not(hasId()))
+                .map(creater)
+                .collect(Collectors.toSet());
+        log.info(String.format("Created %s %s/%s", entityName, readDtos.size(), createdEntities.size()));
+
+        var entitiesToDeleteWitheEntityToTransferTo = readerForDeletionWithReplacement.apply(originRows);
+        entitiesToDeleteWitheEntityToTransferTo.forEach(deleter::apply);
+    }
+
+    private void processOriginsToImport(Workbook workbook) {
+        processDataToImport("Origins", drinkDataReaderService.getOriginRows(workbook),
+                drinkDataReaderService::readOrigins,
+                drinkDataReaderService::readOriginsToDeleteWithReplacement,
+                originService::update, originService::create, originService::delete);
+    }
+
+    private void processProducersToImport(Workbook workbook) {
+        processDataToImport("Producers", drinkDataReaderService.getProducerRows(workbook),
+                drinkDataReaderService::readProducers,
+                drinkDataReaderService::readProducersToDeleteWithReplacement,
+                producerService::update, producerService::create, producerService::delete);
+    }
+
+    private void processStylesToImport(Workbook workbook) {
+        processDataToImport("Styles", drinkDataReaderService.getStyleRows(workbook),
+                drinkDataReaderService::readStyles,
+                drinkDataReaderService::readStylesToDeleteWithReplacement,
+                styleService::update, styleService::create, styleService::delete);
+    }
+
+    private void processColorsToImport(Workbook workbook) {
+        processDataToImport("Colors", drinkDataReaderService.getColorRows(workbook),
+                drinkDataReaderService::readColors,
+                drinkDataReaderService::readColorsToDeleteWithReplacement,
+                colorService::update, colorService::create, colorService::delete);
+    }
+
+    private Predicate<HasId> hasId() {
+        return origin -> Objects.nonNull(origin.getId());
     }
 
     public void importAmsteinCatalogData(MultipartFile multipartFile) {

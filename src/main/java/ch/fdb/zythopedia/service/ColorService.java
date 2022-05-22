@@ -30,6 +30,10 @@ public class ColorService {
         return colorRepository.findById(colorId);
     }
 
+    public Color create(ColorDto colorDto) {
+        return create(colorDto.getName(), colorDto.getDescription());
+    }
+
     public Color create(CreateColorDto createColorDto) {
         return create(createColorDto.getName(), createColorDto.getDescription());
     }
@@ -74,11 +78,11 @@ public class ColorService {
         }
     }
 
-    public void delete(Long colorIdToDelete, Long colorIdToTransferTo) {
+    public Void delete(Long colorIdToDelete, Long colorIdToTransferTo) {
         var colorToDelete = colorRepository.findById(colorIdToDelete);
         if (colorToDelete.isEmpty()) {
             log.error(String.format("Could not delete color %s due to self nihilism", colorToDelete));
-            return;
+            return null;
         }
         if (Objects.nonNull(colorIdToTransferTo)) {
             var colorToTransferTo = colorRepository.findById(colorIdToTransferTo)
@@ -88,8 +92,12 @@ public class ColorService {
                             colorIdToTransferTo)));
             colorToDelete.get().getDrinks().forEach(drink -> drink.setColor(colorToTransferTo));
             log.info(String.format("Transfered drinks from color id %s to color id %s", colorIdToDelete, colorIdToTransferTo));
+        } else {
+            colorToDelete.get().getDrinks().forEach(drink -> drink.setColor(null));
+            log.info(String.format("Unassociated drinks from color id %s", colorIdToDelete));
         }
         colorRepository.delete(colorToDelete.get());
         log.info(String.format("Deleted color id %s", colorIdToDelete));
+        return null;
     }
 }

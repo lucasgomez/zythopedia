@@ -88,7 +88,7 @@ public class ExportService {
         var sheet = workbook.createSheet("drinks");
 
         addHeader(sheet, boldCellStyle, List.of("id", "name", "producerId", "producerName", "description",
-                "Abv", "ColorId", "ColorName", "StyleId", "StyleName", "To delete?"));
+                "Abv", "ColorId", "ColorName", "StyleId", "StyleName", "toDelete"));
 
         var simpleDrinks = drinks.stream()
                 .map(simpleDrinkMapper::toSimplerDto)
@@ -117,7 +117,7 @@ public class ExportService {
     private Sheet buildOriginsSheet(Workbook workbook, List<OriginDto> origins, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("origins");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "shortName", "flag", "To delete?"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "shortName", "flag", "toDelete", "replaceBy"));
 
         for (var rowId = 0; rowId < origins.size(); rowId++) {
             var cellId = 0;
@@ -135,7 +135,7 @@ public class ExportService {
     private Sheet buildProducersSheet(Workbook workbook, List<ProducerDto> producers, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("producers");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "originId", "originName", "To delete?"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "originId", "originName", "toDelete", "replaceBy"));
 
         for (var rowId = 0; rowId < producers.size(); rowId++) {
             var cellId = 0;
@@ -160,7 +160,7 @@ public class ExportService {
     private Sheet buildStylesSheet(Workbook workbook, List<StyleDto> styles, CellStyle boldCellStyle) {
         var sheet = workbook.createSheet("styles");
 
-        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "parentId", "parentName", "To delete?"));
+        addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "parentId", "parentName", "toDelete", "replaceBy"));
 
         for (var rowId = 0; rowId < styles.size(); rowId++) {
             var cellId = 0;
