@@ -6,7 +6,7 @@ class BeerApi extends Component {
       isLoading: true
     });
 
-    const baseUrl = 'http://localhost:8081/drinkopedia/beers/';
+    const baseUrl = 'http://localhost:8080/zythopedia/';
     let listUrl = baseUrl + listName + '/' + listId;
 
     fetch(listUrl)
