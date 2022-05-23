@@ -3,11 +3,6 @@
 .idea
 *.log
 
-front/node_modules/
-front/dist
-front/coverage/
-front/.sass-cache/
-front/.tmp/
-front/.angular/cache
+front/old/node_modules/
+front/old/dist
 
-tmp/*

@@ -47,7 +47,7 @@ public class ServiceService {
 
     public Service updatePrice(ServiceDto serviceDto) {
         return serviceRepository.findById(serviceDto.getId())
-                .map(service -> service.setSellingPrice(serviceDto.getPrice()))
+                .map(service -> service.setSellingPrice(serviceDto.getSellingPrice()))
                 .map(serviceRepository::save)
                 .orElse(null);
     }

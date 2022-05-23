@@ -113,4 +113,24 @@ public class BoughtDrinkService {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Edition %s does not exist. Yet.", editionName)));
         return boughtDrinkRepository.findByEdition(edition);
     }
+
+    public List<BoughtDrink> findCurrentEditionByColorId(Long colorId) {
+        return boughtDrinkRepository.findByDrinkColorIdAndEditionName(colorId, editionService.getCurrentEditionName());
+    }
+
+    public List<BoughtDrink> findCurrentEditionByStyleId(Long styleId) {
+        return boughtDrinkRepository.findByDrinkStyleIdAndEditionName(styleId, editionService.getCurrentEditionName());
+    }
+
+    public List<BoughtDrink> findCurrentEditionByProducerId(Long producerId) {
+        return boughtDrinkRepository.findByDrinkProducerIdAndEditionName(producerId, editionService.getCurrentEditionName());
+    }
+
+    public List<BoughtDrink> findCurrentEditionByOriginId(Long originId) {
+        return boughtDrinkRepository.findByDrinkProducerOriginIdAndEditionName(originId, editionService.getCurrentEditionName());
+    }
+
+    public List<BoughtDrink> findCurrentEditionByServiceMethod(ServiceMethod serviceMethod) {
+        return boughtDrinkRepository.findByServiceMethodAndEditionName(serviceMethod, editionService.getCurrentEditionName());
+    }
 }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
+@RequestMapping(path = "/api/color", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ColorController {
 
     private ColorService colorService;
@@ -25,33 +25,33 @@ public class ColorController {
         this.colorMapper = colorMapper;
     }
 
-    @GetMapping(value = "/color")
+    @GetMapping
     public List<ColorDto> findAll() {
         return colorService.findAll().stream()
                 .map(colorMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/color/{styleId}")
+    @GetMapping(value = "/{styleId}")
     public ColorDto findById(@PathVariable long styleId) {
         return colorService.findById(styleId)
                 .map(colorMapper::toDto)
                 .orElseThrow(EntityNotFoundException::new);
     }
 
-    @PostMapping(value = "/color")
+    @PostMapping
     public ColorDto create(@RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.create(createColorDto.getName(), createColorDto.getDescription()));
     }
 
-    @PutMapping(value = "/color/{styleId}")
+    @PutMapping(value = "/{styleId}")
     public ColorDto update(@PathVariable long styleId, @RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.update(styleId, createColorDto.getName(), createColorDto.getDescription()));
     }
 
-    @DeleteMapping(value = "/color/{styleId}")
+    @DeleteMapping(value = "/{styleId}")
     public void delete(@PathVariable long styleId) {
         colorService.delete(styleId);
     }

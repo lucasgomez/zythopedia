@@ -12,6 +12,7 @@ import org.hibernate.PropertyValueException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,10 @@ public class DrinkService {
         this.producerRepository = producerRepository;
         this.styleRepository = styleRepository;
         this.drinkMapper = drinkMapper;
+    }
+
+    public List<Drink> findAll() {
+        return drinkRepository.findAll();
     }
 
     public Collection<Drink> createNewDrinks(Collection<CreateBoughtDrinkDto> unreferencedBoughtDrinks) {

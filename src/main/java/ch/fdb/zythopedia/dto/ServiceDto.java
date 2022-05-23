@@ -13,6 +13,6 @@ import lombok.experimental.Accessors;
 public class ServiceDto {
     private Long id;
     private Long volumeInCl;
-    private Double price;
+    private Double sellingPrice;
     private Availability availability;
 }

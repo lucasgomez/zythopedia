@@ -27,14 +27,14 @@ public class PricesCalculatorReaderService {
         return rows.stream()
                 .map(this::buildServiceDto)
                 .filter(dto -> Objects.nonNull(dto.getId()))
-                .filter(dto -> Objects.nonNull(dto.getPrice()))
+                .filter(dto -> Objects.nonNull(dto.getSellingPrice()))
                 .collect(Collectors.toList());
     }
 
     private ServiceDto buildServiceDto(Row row) {
         return ServiceDto.builder()
                 .id(getCellLongContent(row, PRICE_CALCULATOR_SERVICE_ID_COLUMN_NUM))
-                .price(getCellDoubleContent(row, PRICE_CALCULATOR_PRICE_COLUMN_NUM))
+                .sellingPrice(getCellDoubleContent(row, PRICE_CALCULATOR_PRICE_COLUMN_NUM))
                 .build();
     }
 }
