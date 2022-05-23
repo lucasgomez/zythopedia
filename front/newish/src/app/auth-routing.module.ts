@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { OktaCallbackComponent } from '@okta/okta-angular';
-import { HomeComponent } from './home/home.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { OKTA_CONFIG, OktaAuthModule } from '@okta/okta-angular';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { OKTA_CONFIG, OktaAuthModule, OktaCallbackComponent } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
+import { HomeComponent } from './home/home.component';
 import { AuthInterceptor } from './shared/okta/auth.interceptor';
 
 const oktaConfig = {
