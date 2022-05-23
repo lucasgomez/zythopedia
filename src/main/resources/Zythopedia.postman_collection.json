@@ -1,0 +1,839 @@
+{
+	"info": {
+		"_postman_id": "218a22ef-b084-420e-b739-ef5aa4feba14",
+		"name": "Zythopedia",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Style",
+			"item": [
+				{
+					"name": "Get all styles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create style",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Albert\",\n    \"description\": \"Bière de fermentation haute\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/style/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update style",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Bière\",\n    \"description\": \"Bière de fermentation basse\",\n    \"parentStyleId\": \"1337\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/style/1337",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1337"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete style",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/1338",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1338"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Drink",
+			"item": [
+				{
+					"name": "Get all styles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/drink/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"drink",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create style",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lager\",\n    \"description\": \"Bière de fermentation basse\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/drink/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"drink",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update style",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Lager\",\n    \"description\": \"Bière de fermentation basse\",\n    \"parentStyleId\": \"1337\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/style/1339",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1339"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete style",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/1338",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1338"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Color",
+			"item": [
+				{
+					"name": "Get all styles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/color/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"color",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create style",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nwwoire\",\n    \"description\": \"Couleur de la bière dans laquelle d'autres céréales troublent l'aspect, lui donnant une apparence plus opaque\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/color/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"color",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update style",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Noire\",\n    \"description\": \"Bière dans laquelle une part plus importante de céréale torrefiée lui donne sa couleur foncée\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/color/1346",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"color",
+								"1346"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete style",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/color/1347",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"color",
+								"1347"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Origin",
+			"item": [
+				{
+					"name": "Get all origins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/origin/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"origin",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create style",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"France\",\n    \"shortName\": \"FR\",\n    \"flag\": \"🇫🇷\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/origin/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"origin",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update style",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"France\",\n    \"shortName\": \"FR\",\n    \"flag\": \"🇫🇷\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/origin/1349",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"origin",
+								"1349"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete style",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/origin/1348",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"origin",
+								"1348"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Producer",
+			"item": [
+				{
+					"name": "Get all origins",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/producer/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"producer",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create style",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"St-Crux\",\n    \"originShortName\": \"FR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/producer/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"producer",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update style",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"St-Crucienne\",\n    \"originId\": 1349\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/producer/1354",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"producer",
+								"1354"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete style",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/producer/1355",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"producer",
+								"1355"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Import",
+			"item": [
+				{
+					"name": "Amstein order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/git/perso/zythopedia/src/test/resources/amstein_import.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/import/order/amstein",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"import",
+								"order",
+								"amstein"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Amstein catalog",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/git/perso/zythopedia/src/test/resources/amstein_catalog.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/import/catalog/amstein",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"import",
+								"catalog",
+								"amstein"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Drink data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/git/perso/zythopedia/src/test/resources/drinkData_uptodate.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/import/data",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"import",
+								"data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Prices",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/git/perso/zythopedia/src/test/resources/priceCalculator.xlsx"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/import/calculator",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"import",
+								"calculator"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Export",
+			"item": [
+				{
+					"name": "Calculator",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/export/calculator",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"export",
+								"calculator"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Drinks data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/edition/2022/export/data",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"edition",
+								"2022",
+								"export",
+								"data"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lists",
+			"item": [
+				{
+					"name": "By color",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/color/1563/drink",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"color",
+								"1563",
+								"drink"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "By producer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/producer/1601/drink",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"producer",
+								"1601",
+								"drink"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "By origin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/origin/1597/drink",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"origin",
+								"1597",
+								"drink"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "By style",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/1585/drink",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1585",
+								"drink"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "By service method",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/style/1585/drink",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"style",
+								"1585",
+								"drink"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
