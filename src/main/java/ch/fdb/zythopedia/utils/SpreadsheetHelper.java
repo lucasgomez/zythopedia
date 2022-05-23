@@ -60,6 +60,7 @@ public final class SpreadsheetHelper {
             case NUMERIC:
                 return true;
             case _NONE:
+            case BLANK:
                 return false;
             default:
                 throw new IllegalArgumentException(String.format("Too lazy to care about %s", cell.getCellType()));

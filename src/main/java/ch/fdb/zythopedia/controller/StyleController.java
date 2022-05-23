@@ -1,7 +1,7 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.dto.StyleDto;
+import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
 import ch.fdb.zythopedia.service.StyleService;
 import lombok.extern.slf4j.Slf4j;
