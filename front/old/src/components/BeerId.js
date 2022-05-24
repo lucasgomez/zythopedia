@@ -1,12 +1,12 @@
-import { Component } from 'react';
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import React, { Component } from 'react';
+import { Card, Col, Container, Row, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import StrengthRadar from './StrengthRadar';
 import Emoji from './Emoji';
 import { API_ROOT } from '../data/apiConfig';
 
 class BeerId extends Component {
-  constructor(props: any) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -133,10 +133,10 @@ class BeerId extends Component {
             </Card>
           </div>
 
-          {beer.bottleBars && beer.bottleBars.map((bar: any) =>
+          {beer.bottleBars && beer.bottleBars.map((bar) =>
             <BarDisplay bar={bar} beer={beer} type="bottle" cardClassName={barCardClassName}/>
           )}
-          {beer.tapBars && beer.tapBars.map((bar: any) =>
+          {beer.tapBars && beer.tapBars.map((bar) =>
             <BarDisplay bar={bar} beer={beer} type="tap" cardClassName={barCardClassName}/>
           )}
         </Row>

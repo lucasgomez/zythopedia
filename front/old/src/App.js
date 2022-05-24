@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import Manager from './components/Manager';
 import AllBeersId from './components/AllBeersId';
 import BottleBarDisplay from './components/BottleBarDisplay';

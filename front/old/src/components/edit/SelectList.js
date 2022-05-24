@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { API_ROOT } from '../../data/apiConfig';
 import { ReactstrapSelect } from 'reactstrap-formik';
 import { Field } from 'formik';

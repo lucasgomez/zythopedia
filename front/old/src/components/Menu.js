@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Button, Nav, Navbar, OverlayTrigger, Popover } from 'react-bootstrap';
 import ButtonsList from './ButtonsList';
 import { Redirect } from 'react-router-dom';

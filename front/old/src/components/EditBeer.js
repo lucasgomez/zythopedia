@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { ReactstrapInput, ReactstrapSelect } from 'reactstrap-formik';
 import SelectList from './edit/SelectList';
@@ -8,10 +8,11 @@ import { Link, Redirect } from 'react-router-dom';
 import Emoji from './Emoji';
 import BarsCheckboxes from './edit/BarsCheckboxes';
 import axios from 'axios';
+import * as yup from 'yup';
 
 class EditBeer extends Component {
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
 
     this.state = {

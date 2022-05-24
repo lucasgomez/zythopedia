@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Badge, Card, Col, Container, Row } from 'react-bootstrap';
 import Emoji from './Emoji';
 import { API_ROOT } from '../data/apiConfig';
@@ -6,7 +6,7 @@ import { API_ROOT } from '../data/apiConfig';
 
 class TapBeersDisplay extends Component {
 
-  constructor(props: any) {
+  constructor(props) {
     super(props);
 
     this.state = {
