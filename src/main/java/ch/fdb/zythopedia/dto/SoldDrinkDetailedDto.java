@@ -8,16 +8,18 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SoldDrinkLightDto {
+public class SoldDrinkDetailedDto {
     private Long id;
     private String name;
-    private Long producerId;
-    private String producerName;
+    private String description;
     private Double abv;
-    private Long colorId;
-    private String colorName;
-    private Long styleId;
-    private String styleName;
+    private ProducerDto producer;
+    private ColorDto color;
+    private StyleDto style;
+    private Long sourness;
+    private Long bitterness;
+    private Long sweetness;
+    private Long hoppiness;
     private Availability availability;
     private List<ServiceDto> services;
 }

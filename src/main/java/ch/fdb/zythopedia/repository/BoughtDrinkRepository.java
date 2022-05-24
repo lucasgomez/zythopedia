@@ -23,4 +23,6 @@ public interface BoughtDrinkRepository extends JpaRepository<BoughtDrink, Long> 
     List<BoughtDrink> findByDrinkProducerOriginIdAndEditionName(Long originId, String currentEditionName);
 
     List<BoughtDrink> findByServiceMethodAndEditionName(ServiceMethod serviceMethod, String currentEditionName);
+
+    Optional<BoughtDrink> findByDrinkId(Long drinkId);
 }

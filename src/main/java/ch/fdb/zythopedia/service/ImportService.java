@@ -140,7 +140,7 @@ public class ImportService {
         processDataToImport("Colors", drinkDataReaderService.getDrinkRows(workbook),
                 drinkDataReaderService::readDrinks,
                 drinkDataReaderService::readDrinksToDelete,
-                drinkService::update, drinkService::create, colorService::delete);
+                drinkService::update, drinkService::create, boughtDrinkService::deleteByDrinkId);
 
     }
 

@@ -1,10 +1,15 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.IdOrNameDto;
+import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
+import ch.fdb.zythopedia.dto.mapper.SoldDrinkDetailedDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Edition;
+import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.repository.BoughtDrinkRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
@@ -20,13 +25,16 @@ import java.util.stream.Collectors;
 @Service
 public class BoughtDrinkService {
 
-    public static final double CENTS_PRECISION = 0.01d;
+    private static final double CENTS_PRECISION = 0.01d;
+
     private BoughtDrinkRepository boughtDrinkRepository;
+    private SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper;
     private ServiceService serviceService;
     private EditionService editionService;
 
-    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, ServiceService serviceService, EditionService editionService) {
+    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
+        this.soldDrinkDetailedDtoMapper = soldDrinkDetailedDtoMapper;
         this.serviceService = serviceService;
         this.editionService = editionService;
     }
@@ -132,5 +140,25 @@ public class BoughtDrinkService {
 
     public List<BoughtDrink> findCurrentEditionByServiceMethod(ServiceMethod serviceMethod) {
         return boughtDrinkRepository.findByServiceMethodAndEditionName(serviceMethod, editionService.getCurrentEditionName());
+    }
+
+    public Optional<ch.fdb.zythopedia.dto.SoldDrinkDetailedDto> findById(Long boughtDrinkId) {
+        return boughtDrinkRepository.findById(boughtDrinkId)
+                .map(soldDrinkDetailedDtoMapper::toDto);
+    }
+
+    @Transactional
+    public Optional<SoldDrinkDetailedDto> updataAvailability(Long boughDrinkId, Availability availability) {
+        return boughtDrinkRepository.findById(boughDrinkId)
+                .map(boughtDrink -> boughtDrink.setAvailability(availability))
+                .map(soldDrinkDetailedDtoMapper::toDto);
+    }
+
+    public Void deleteByDrinkId(Long drinkId, IdOrNameDto unused) {
+        var boughtDrinkToDelete = boughtDrinkRepository.findByDrinkId(drinkId)
+                .orElseThrow(() -> new EntityNotFoundException(drinkId, "boughtDrink"));
+        boughtDrinkToDelete.getServices().forEach(service -> serviceService.delete(service));
+        boughtDrinkRepository.delete(boughtDrinkToDelete);
+        return null;
     }
 }

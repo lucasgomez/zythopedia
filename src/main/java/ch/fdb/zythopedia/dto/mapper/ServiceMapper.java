@@ -5,6 +5,6 @@ import ch.fdb.zythopedia.entity.Service;
 import org.mapstruct.Mapper;
 
 @Mapper
-public interface ServiceDtoMapper {
+public interface ServiceMapper {
     ServiceDto toDto(Service service);
 }

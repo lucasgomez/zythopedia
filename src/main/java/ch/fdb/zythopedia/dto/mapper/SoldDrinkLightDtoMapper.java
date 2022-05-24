@@ -5,7 +5,7 @@ import ch.fdb.zythopedia.entity.BoughtDrink;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(uses = {ServiceDtoMapper.class})
+@Mapper(uses = {ServiceMapper.class})
 public interface SoldDrinkLightDtoMapper {
     @Mapping(target="name", source="drink.name")
     @Mapping(target="producerId", source="drink.producer.id")

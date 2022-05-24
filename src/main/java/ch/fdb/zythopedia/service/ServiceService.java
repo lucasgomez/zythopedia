@@ -51,4 +51,8 @@ public class ServiceService {
                 .map(serviceRepository::save)
                 .orElse(null);
     }
+
+    public void delete(Service service) {
+        serviceRepository.delete(service);
+    }
 }

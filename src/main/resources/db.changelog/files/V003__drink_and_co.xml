@@ -103,4 +103,12 @@
             </column>
         </addColumn>
     </changeSet>
+
+    <changeSet author="lg" id="V003.07">
+        <addColumn tableName="BOUGHT_DRINK">
+            <column name="AVAILABILITY" type="VARCHAR2(255)" defaultValue="AVAILABLE">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.entity;
 
+import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -42,6 +43,10 @@ public class BoughtDrink {
     @Column(name = "SERVICE_METHOD", nullable = false)
     @Enumerated(EnumType.STRING)
     private ServiceMethod serviceMethod;
+
+    @Column(name = "AVAILABILITY", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Availability availability;
 
     @Column(name = "RETURNABLE")
     private Boolean returnable;
