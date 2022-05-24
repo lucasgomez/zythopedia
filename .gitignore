@@ -3,6 +3,8 @@
 .idea
 *.log
 
+front/newish/node_modules/
+front/newish/.angular/cache
 front/old/node_modules/
 front/old/dist
 

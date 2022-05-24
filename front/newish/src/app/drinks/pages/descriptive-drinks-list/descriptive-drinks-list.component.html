@@ -1,0 +1,53 @@
+<ng-container *ngIf="drinks$ | async as drinks">
+    <h3 class="mt-0">{{title}} {{drinks.title}}</h3>
+    <div class="text-700 mb-5">{{drinks.description}}</div>
+
+    <div class="border-round surface-card">
+        <p-table [value]="drinks.content" responsiveLayout="stack">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name">
+                        Nom <p-sortIcon field="name"></p-sortIcon>
+                        <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="abv">
+                        Alc. <p-sortIcon field="abv"></p-sortIcon>
+                        <p-columnFilter type="number" field="abv" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="styleName">
+                        Type <p-sortIcon field="styleName"></p-sortIcon>
+                        <p-columnFilter type="text" field="styleName" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="colorName">
+                        Color <p-sortIcon field="colorName"></p-sortIcon>
+                        <p-columnFilter type="text" field="colorName" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="producerName">
+                        Producteur <p-sortIcon field="producerName"></p-sortIcon>
+                        <p-columnFilter type="text" field="producerName" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="availability">
+                        Dispo. <p-sortIcon field="availability"></p-sortIcon>
+                        <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
+                    </th>
+                </tr>
+                <tr>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-drink>
+                <tr>
+                    <td>{{drink.name}}</td>
+                    <td>{{drink.abv | abv}}</td>
+                    <td>{{drink.styleName}}</td>
+                    <td>{{drink.colorName}}</td>
+                    <td>{{drink.producerName}}</td>
+                    <td>{{drink.availability | availability}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</ng-container>
+<ng-template #loading>
+    Chargement en cours...
+</ng-template>
