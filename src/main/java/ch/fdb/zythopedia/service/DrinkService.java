@@ -107,4 +107,8 @@ public class DrinkService {
                         .flatMap(repository::findByName)
                         .orElse(null));
     }
+
+    public Optional<Drink> findById(Long drinkId) {
+        return drinkRepository.findById(drinkId);
+    }
 }

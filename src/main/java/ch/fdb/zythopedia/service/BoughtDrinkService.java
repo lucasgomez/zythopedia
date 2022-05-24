@@ -3,6 +3,7 @@ package ch.fdb.zythopedia.service;
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
+import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkDetailedDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
@@ -31,12 +32,14 @@ public class BoughtDrinkService {
     private SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper;
     private ServiceService serviceService;
     private EditionService editionService;
+    private DrinkService drinkService;
 
-    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService) {
+    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService, DrinkService drinkService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
         this.soldDrinkDetailedDtoMapper = soldDrinkDetailedDtoMapper;
         this.serviceService = serviceService;
         this.editionService = editionService;
+        this.drinkService = drinkService;
     }
 
     @Transactional
@@ -65,15 +68,25 @@ public class BoughtDrinkService {
                 || Optional.ofNullable(boughtDrink.getVolumeInCl()).filter(volume -> 0 < volume).isPresent();
     }
 
-    private BoughtDrink createBoughtDrink(Pair<CreateBoughtDrinkDto, Drink> boughtDrinkToCreate, Edition currentEdition) {
-        return BoughtDrink.builder()
-                .code(boughtDrinkToCreate.getFirst().getCode())
-                .serviceMethod(boughtDrinkToCreate.getFirst().getServiceMethod())
-                .returnable(boughtDrinkToCreate.getFirst().getReturnable())
-                .buyingPrice(boughtDrinkToCreate.getFirst().getBuyingPrice())
-                .drink(boughtDrinkToCreate.getSecond())
+    private BoughtDrink createBoughtDrink(Pair<CreateBoughtDrinkDto, Drink> boughtDrinkToCreate, Edition edition) {
+        return createBoughtDrink(boughtDrinkToCreate.getFirst(), boughtDrinkToCreate.getSecond(), edition);
+    }
+
+    private BoughtDrink createBoughtDrink(CreateBoughtDrinkDto boughtDrinkToCreate, Drink drink, Edition currentEdition) {
+        var created = boughtDrinkRepository.save(BoughtDrink.builder()
+                .code(boughtDrinkToCreate.getCode())
+                .serviceMethod(boughtDrinkToCreate.getServiceMethod())
+                .returnable(boughtDrinkToCreate.getReturnable())
+                .buyingPrice(boughtDrinkToCreate.getBuyingPrice())
+                .drink(drink)
+                .volumeInCl(boughtDrinkToCreate.getVolumeInCl())
+                .availability(Availability.AVAILABLE)
+                .returnable(false)
                 .edition(currentEdition)
-                .build();
+                .build());
+
+        createServiceIfNeeded(Collections.singleton(created));
+        return created;
     }
 
     public Collection<BoughtDrink> findAll() {
@@ -154,11 +167,62 @@ public class BoughtDrinkService {
                 .map(soldDrinkDetailedDtoMapper::toDto);
     }
 
+    @Transactional
     public Void deleteByDrinkId(Long drinkId, IdOrNameDto unused) {
         var boughtDrinkToDelete = boughtDrinkRepository.findByDrinkId(drinkId)
-                .orElseThrow(() -> new EntityNotFoundException(drinkId, "boughtDrink"));
-        boughtDrinkToDelete.getServices().forEach(service -> serviceService.delete(service));
-        boughtDrinkRepository.delete(boughtDrinkToDelete);
+                .orElseThrow(() -> new EntityNotFoundException(drinkId, "boughtDrink (by drinkId)"));
+        delete(boughtDrinkToDelete);
         return null;
+    }
+
+    @Transactional
+    public void delete(Long boughtDrinkId) {
+        var boughtDrinkToDelete = boughtDrinkRepository.findById(boughtDrinkId)
+                .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
+        delete(boughtDrinkToDelete);
+    }
+
+    private void delete(BoughtDrink boughtDrinkToDelete) {
+        boughtDrinkToDelete.getServices()
+                .forEach(serviceService::delete);
+        boughtDrinkRepository.delete(boughtDrinkToDelete);
+    }
+
+    @Transactional
+    public SoldDrinkDetailedDto create(String drinkName, Double buyingPrice, ServiceMethod serviceMethod,
+                                       String code, Long volumeInCl, String producerName, String styleName,
+                                       String colorName) {
+        var createdDrink = drinkService.createDrink(CreateDrinkDto.builder()
+                .name(drinkName)
+                .producerName(producerName)
+                .styleName(styleName)
+                .colorName(colorName)
+                .build());
+
+        var boughtDrinkToCreate = CreateBoughtDrinkDto.builder()
+                .code(code)
+                .serviceMethod(serviceMethod)
+                .volumeInCl(volumeInCl)
+                .buyingPrice(buyingPrice)
+                .build();
+
+        return soldDrinkDetailedDtoMapper.toDto(
+                createBoughtDrink(boughtDrinkToCreate, createdDrink, editionService.getCurrentEdition()));
+    }
+
+    public SoldDrinkDetailedDto create(Long drinkId, Double buyingPrice, ServiceMethod serviceMethod,
+                                       String code, Long volumeInCl) {
+        var drink = drinkService.findById(drinkId)
+                .orElseThrow(() -> new EntityNotFoundException(drinkId, "drink"));
+
+        var boughtDrinkToCreate = CreateBoughtDrinkDto.builder()
+                .code(code)
+                .serviceMethod(serviceMethod)
+                .volumeInCl(volumeInCl)
+                .buyingPrice(buyingPrice)
+                .build();
+
+        return soldDrinkDetailedDtoMapper.toDto(
+                createBoughtDrink(boughtDrinkToCreate, drink, editionService.getCurrentEdition()));
     }
 }

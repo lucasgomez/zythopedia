@@ -137,7 +137,7 @@ public class ImportService {
     }
 
     private void processDrinksToImport(Workbook workbook) {
-        processDataToImport("Colors", drinkDataReaderService.getDrinkRows(workbook),
+        processDataToImport("Drinks", drinkDataReaderService.getDrinkRows(workbook),
                 drinkDataReaderService::readDrinks,
                 drinkDataReaderService::readDrinksToDelete,
                 drinkService::update, drinkService::create, boughtDrinkService::deleteByDrinkId);
