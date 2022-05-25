@@ -19,11 +19,10 @@ export class BeamerDisplayComponent implements OnInit {
     ) {
     }
 
-    private readonly RELOAD_DELAY = 30000;
+    private readonly RELOAD_DELAY = 20000;
 
     ngOnInit(): void {
         this.drinks$ = timer(1000, this.RELOAD_DELAY).pipe(
-            tap(() => console.log("relead")),
             tap(() => this.showTap = !this.showTap),
             map(() => this.showTap ? 'tap' : 'bottle'),
             switchMap(service => this.listService.findAvailableTapBeers$(service))
