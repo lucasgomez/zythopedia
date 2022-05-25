@@ -23,8 +23,8 @@ public class BoughtDrinkController {
     }
 
     @GetMapping("/boughtdrink/{boughtDrinkId}/availability/{availability}")
-    public SoldDrinkDetailedDto changeAvailability(@PathVariable Long boughtDrinkId, @PathVariable(value = "availability") Availability availability) {
-        return boughtDrinkService.updataAvailability(boughtDrinkId, availability)
+    public SoldDrinkDetailedDto changeAvailability(@PathVariable Long boughtDrinkId, @PathVariable(value = "availability") String availability) {
+        return boughtDrinkService.updataAvailability(boughtDrinkId, Availability.from(availability))
                 .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
     }
 
