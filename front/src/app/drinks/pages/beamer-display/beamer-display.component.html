@@ -1,0 +1,22 @@
+<ng-container *ngIf="drinks$ | async as drinks else loading">
+    <p-dataView [value]="drinks" layout="grid">
+        <ng-template let-drink pTemplate="gridItem">
+            <div class="col-12 md:col-3">
+                <div>
+                    <b>{{drink.name}}</b> {{drink.producerName}} {{drink.originFlag}}
+                </div>
+                <div>
+                    {{drink.abv}}% {{drink.styleName}} ({{drink.colorName}})
+                </div>
+                <div class="flex align-items-center">
+                    <div *ngFor="let service of drink.services">
+                        <p-chip label="{{buildPriceDisplay(service)}}"></p-chip>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </p-dataView>
+</ng-container>
+<ng-template #loading>
+    <p>Chargement en cours...</p>
+</ng-template>

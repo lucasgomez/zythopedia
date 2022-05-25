@@ -9,6 +9,8 @@ export interface Drink {
     name: string;
     producerId: number;
     producerName: string;
+    originFlag: string;
+    originShortName: string;
     colorId: number;
     colorName: string;
     styleId: number;
