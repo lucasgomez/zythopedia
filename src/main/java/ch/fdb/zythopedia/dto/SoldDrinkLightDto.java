@@ -13,6 +13,8 @@ public class SoldDrinkLightDto {
     private String name;
     private Long producerId;
     private String producerName;
+    private String originFlag;
+    private String originShortName;
     private Double abv;
     private Long colorId;
     private String colorName;

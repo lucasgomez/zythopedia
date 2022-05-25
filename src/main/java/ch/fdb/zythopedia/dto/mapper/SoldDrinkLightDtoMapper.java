@@ -15,5 +15,7 @@ public interface SoldDrinkLightDtoMapper {
     @Mapping(target="colorName", source="drink.color.name")
     @Mapping(target="styleId", source="drink.style.id")
     @Mapping(target="styleName", source="drink.style.name")
+    @Mapping(target="originFlag", source="drink.producer.origin.flag")
+    @Mapping(target="originShortName", source="drink.producer.origin.shortName")
     SoldDrinkLightDto toDto(BoughtDrink entity);
 }
