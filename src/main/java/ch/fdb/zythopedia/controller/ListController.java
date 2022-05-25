@@ -1,8 +1,11 @@
 package ch.fdb.zythopedia.controller;
 
 import ch.fdb.zythopedia.dto.DescriptiveList;
+import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.SoldDrinkLightDto;
 import ch.fdb.zythopedia.enums.ServiceMethod;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
+import ch.fdb.zythopedia.service.BoughtDrinkService;
 import ch.fdb.zythopedia.service.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -13,12 +16,21 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
+@CrossOrigin(origins={"*"}, allowCredentials="true")
 public class ListController {
 
     private ListService listService;
+    private BoughtDrinkService boughtDrinkService;
 
-    public ListController(ListService listService) {
+    public ListController(ListService listService, BoughtDrinkService boughtDrinkService) {
         this.listService = listService;
+        this.boughtDrinkService = boughtDrinkService;
+    }
+
+    @GetMapping(value = "/boughtdrink/{boughtDrinkId}/detail")
+    public SoldDrinkDetailedDto getDetailedDrink(@PathVariable Long boughtDrinkId) {
+        return boughtDrinkService.findById(boughtDrinkId)
+                .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
     }
 
     @GetMapping("/drink")

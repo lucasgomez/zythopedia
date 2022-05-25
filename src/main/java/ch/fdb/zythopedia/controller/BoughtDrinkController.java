@@ -22,12 +22,6 @@ public class BoughtDrinkController {
         this.boughtDrinkService = boughtDrinkService;
     }
 
-    @GetMapping(value = "/boughtdrink/{boughtDrinkId}/detail")
-    public SoldDrinkDetailedDto getDetailedDrink(@PathVariable Long boughtDrinkId) {
-        return boughtDrinkService.findById(boughtDrinkId)
-                .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
-    }
-
     @PatchMapping("/boughtdrink/{boughtDrinkId}/availability")
     public SoldDrinkDetailedDto changeAvailability(@PathVariable Long boughtDrinkId, @PathParam(value = "availability") Availability availability) {
         return boughtDrinkService.updataAvailability(boughtDrinkId, availability)
