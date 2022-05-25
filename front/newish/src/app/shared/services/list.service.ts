@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { DescriptiveList } from '../models/DescriptiveList';
 import { Drink } from '../models/Drink';
 
-const API_URL = '/api';
+const API_URL = `${environment.BASE_URL}/api/`;
 
 @Injectable({
     providedIn: 'root'
