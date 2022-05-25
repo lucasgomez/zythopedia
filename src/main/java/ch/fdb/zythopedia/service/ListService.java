@@ -4,7 +4,10 @@ import ch.fdb.zythopedia.dto.DescriptiveList;
 import ch.fdb.zythopedia.dto.SoldDrinkLightDto;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkLightDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.NamedEntity;
+import ch.fdb.zythopedia.entity.Style;
+import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.repository.ColorRepository;
@@ -12,18 +15,23 @@ import ch.fdb.zythopedia.repository.OriginRepository;
 import ch.fdb.zythopedia.repository.ProducerRepository;
 import ch.fdb.zythopedia.repository.StyleRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ListService {
 
+    @Value("${service.drinks.stylesIdsToIgnoreInDisplay}")
+    private List<Long> stylesIdsToIgnoreInDisplay;
     private BoughtDrinkService boughtDrinkService;
     private SoldDrinkLightDtoMapper soldDrinkLightDtoMapper;
     private ColorRepository colorRepository;
@@ -63,6 +71,27 @@ public class ListService {
                         .map(soldDrinkLightDtoMapper::toDto)
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    public List<SoldDrinkLightDto> getAvailableTapBeers() {
+        return getAvailableBeers(ServiceMethod.TAP);
+    }
+
+    public List<SoldDrinkLightDto> getAvailableBottledBeers() {
+        return getAvailableBeers(ServiceMethod.BOTTLE);
+    }
+
+    private List<SoldDrinkLightDto> getAvailableBeers(ServiceMethod serviceMethod) {
+        return boughtDrinkService.getCurrentEditionBoughtDrinks(serviceMethod, Availability.AVAILABLE).stream()
+                .filter(boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getStyle)
+                        .map(Style::getId)
+                        .filter(Predicate.not(stylesIdsToIgnoreInDisplay::contains))
+                        .isPresent())
+                .map(soldDrinkLightDtoMapper::toDto)
+                .sorted(Comparator.comparing(SoldDrinkLightDto::getName))
+                .collect(Collectors.toList());
     }
 
     private DescriptiveList<SoldDrinkLightDto> findByListTypeId(Long listTypeId, CrudRepository<? extends NamedEntity, Long> repository,

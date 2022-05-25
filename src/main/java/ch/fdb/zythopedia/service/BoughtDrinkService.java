@@ -129,6 +129,11 @@ public class BoughtDrinkService {
         return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition());
     }
 
+    public List<BoughtDrink> getCurrentEditionBoughtDrinks(ServiceMethod serviceMethod, Availability availability) {
+        return boughtDrinkRepository.findByServiceMethodAndEditionNameAndAvailability(
+                serviceMethod, editionService.getCurrentEdition().getName(), availability);
+    }
+
     public Collection<BoughtDrink> getBoughtDrinks(String editionName) {
         var edition = editionService.findEdition(editionName)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Edition %s does not exist. Yet.", editionName)));

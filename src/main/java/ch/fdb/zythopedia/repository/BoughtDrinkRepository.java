@@ -2,6 +2,7 @@ package ch.fdb.zythopedia.repository;
 
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Edition;
+import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -23,6 +24,8 @@ public interface BoughtDrinkRepository extends JpaRepository<BoughtDrink, Long> 
     List<BoughtDrink> findByDrinkProducerOriginIdAndEditionName(Long originId, String currentEditionName);
 
     List<BoughtDrink> findByServiceMethodAndEditionName(ServiceMethod serviceMethod, String currentEditionName);
+
+    List<BoughtDrink> findByServiceMethodAndEditionNameAndAvailability(ServiceMethod serviceMethod, String currentEditionName, Availability availability);
 
     Optional<BoughtDrink> findByDrinkId(Long drinkId);
 }
