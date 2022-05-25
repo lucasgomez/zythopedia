@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable, switchMap, tap, timer } from 'rxjs';
 import { Drink } from '../../../shared/models/Drink';
 import { Service } from '../../../shared/models/Service';
 import { ListService } from '../../../shared/services/list.service';
@@ -12,30 +12,26 @@ import { ListService } from '../../../shared/services/list.service';
 export class BeamerDisplayComponent implements OnInit {
 
     drinks$!: Observable<Drink[]>;
+    private showTap = true;
 
     constructor(
         private readonly listService: ListService
     ) {
     }
 
+    private readonly RELOAD_DELAY = 30000;
+
     ngOnInit(): void {
-        this.drinks$ = this.listService.findAvailableTapBeers$();
+        this.drinks$ = timer(1000, this.RELOAD_DELAY).pipe(
+            tap(() => console.log("relead")),
+            tap(() => this.showTap = !this.showTap),
+            map(() => this.showTap ? 'tap' : 'bottle'),
+            switchMap(service => this.listService.findAvailableTapBeers$(service))
+        );
     }
 
     buildPriceDisplay(service: Service): string {
         return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
-    }
-
-    buildProducerUrl(drink: Drink): string {
-        return `/drinks/producers/${drink.producerId}`;
-    }
-
-    buildColorUrl(drink: Drink): string {
-        return `/drinks/colors/${drink.colorId}`;
-    }
-
-    buildStyleUrl(drink: Drink): string {
-        return `/drinks/styles/${drink.styleId}`;
     }
 
 }
