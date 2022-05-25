@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { DescriptiveList } from '../models/DescriptiveList';
 import { Drink } from '../models/Drink';
 
-const API_URL = `${environment.BASE_URL}/api/`;
+const API_URL = `${environment.BASE_URL}/api`;
 
 @Injectable({
     providedIn: 'root'
