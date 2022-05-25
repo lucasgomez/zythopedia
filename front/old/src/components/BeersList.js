@@ -224,7 +224,7 @@ class BeersList extends Component {
                 show: hasBottle && expandedView,
               },{
                 Header: 'Prix',
-                accessor: 'bottleSellingPrice',columns
+                accessor: 'bottleSellingPrice',
                 Cell: row => this.formatPrice(row.value),
                 sortable: true,
                 minWidth: 30,

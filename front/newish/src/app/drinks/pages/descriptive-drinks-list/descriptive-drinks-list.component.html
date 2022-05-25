@@ -1,8 +1,8 @@
-<ng-container *ngIf="drinks$ | async as drinks">
+<ng-container *ngIf="drinks$ | async as drinks else loading">
     <h3 class="mt-0">{{title}} {{drinks.title}}</h3>
-    <div class="text-700 mb-5">{{drinks.description}}</div>
+    <div *ngIf="drinks.description" class="text-700 mb-5">{{drinks.description}}</div>
 
-    <div class="border-round surface-card">
+    <div class="border-round surface-card shadow-1">
         <p-table [value]="drinks.content" responsiveLayout="stack">
             <ng-template pTemplate="header">
                 <tr>
@@ -41,11 +41,11 @@
             </ng-template>
             <ng-template pTemplate="body" let-drink>
                 <tr>
-                    <td>{{drink.name}}</td>
+                    <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></td>
                     <td>{{drink.abv | abv}}</td>
-                    <td><a [href]="buildStyleUrl(drink)">{{drink.styleName}}</a></td>
-                    <td><a [href]="buildColorUrl(drink)">{{drink.colorName}}</a></td>
-                    <td><a [href]="buildProducerUrl(drink)">{{drink.producerName}}</a></td>
+                    <td><a [routerLink]="buildStyleUrl(drink)">{{drink.styleName}}</a></td>
+                    <td><a [routerLink]="buildColorUrl(drink)">{{drink.colorName}}</a></td>
+                    <td><a [routerLink]="buildProducerUrl(drink)">{{drink.producerName}}</a></td>
                     <td>{{drink.availability | availability}}</td>
                     <td>{{buildPricesDisplay(drink)}}</td>
                 </tr>
@@ -54,5 +54,5 @@
     </div>
 </ng-container>
 <ng-template #loading>
-    Chargement en cours...
+    <p>Chargement en cours...</p>
 </ng-template>
