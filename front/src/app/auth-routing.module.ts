@@ -17,7 +17,7 @@ const oktaConfig = {
 const oktaAuth = new OktaAuth(oktaConfig);
 
 const routes: Routes = [
-    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: '', redirectTo: '/drinks', pathMatch: 'full' },
     {
         path: 'home',
         component: HomeComponent
