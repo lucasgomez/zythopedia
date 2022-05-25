@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DescriptiveList } from '../models/DescriptiveList';
@@ -12,6 +12,12 @@ const API_URL = '/api';
 export class ListService {
 
     constructor(private readonly http: HttpClient) {
+    }
+
+    findByServiceType(serviceType: 'TAP' | 'BOTTLE'): Observable<DescriptiveList<Drink>> {
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/drink`, {
+            params: new HttpParams().append('service', serviceType)
+        });
     }
 
     findByColor(colorId: number): Observable<DescriptiveList<Drink>> {

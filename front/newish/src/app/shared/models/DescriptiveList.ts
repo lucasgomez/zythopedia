@@ -1,5 +1,5 @@
 export interface DescriptiveList<T> {
     title: string;
-    description: string;
+    description?: string;
     content: T[];
 }
