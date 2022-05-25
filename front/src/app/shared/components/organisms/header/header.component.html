@@ -56,27 +56,5 @@
                 </ng-template>
             </ng-container>
         </ul>
-        <ul class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row border-top-1 surface-border lg:border-top-none">
-            <!--<li>
-                <div class="flex px-6 p-3 lg:px-3 lg:py-2">
-                        <span class="p-input-icon-left w-full">
-                            <i class="pi pi-search"></i>
-                            <input type="text" pInputText placeholder="Search"
-                                   class="bg-gray-200 border-gray-200 w-full"/>
-                        </span>
-                </div>
-            </li>-->
-            <li *ngIf="authState$ | async as auth" class="border-top-1 surface-border lg:border-top-none">
-                <a pRipple
-                   class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:surface-100 font-medium border-round cursor-pointer transition-colors transition-duration-150"
-                   [pTooltip]="auth.isAuthenticated ? 'Se déconnecter' : 'Se connecter'"
-                   tooltipPosition="bottom"
-                    (click)="loginButton(auth)">
-                    <i [ngClass]="auth.isAuthenticated ? 'mdi-logout' : 'mdi-login'"
-                       class="mdi text-base lg:text-2xl mr-3 lg:mr-0"></i>
-                    <div class="block lg:hidden text-900 font-medium">{{auth.isAuthenticated ? 'Se déconnecter' : 'Se connecter'}}</div>
-                </a>
-            </li>
-        </ul>
     </div>
 </div>
