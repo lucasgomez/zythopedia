@@ -30,6 +30,10 @@
                         Dispo. <p-sortIcon field="availability"></p-sortIcon>
                         <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
                     </th>
+                    <th pSortableColumn="prices">
+                        Prix (vol.) <p-sortIcon field="prices"></p-sortIcon>
+                        <p-columnFilter type="text" field="prices" display="menu"></p-columnFilter>
+                    </th>
                 </tr>
                 <tr>
 
@@ -39,10 +43,11 @@
                 <tr>
                     <td>{{drink.name}}</td>
                     <td>{{drink.abv | abv}}</td>
-                    <td>{{drink.styleName}}</td>
-                    <td>{{drink.colorName}}</td>
-                    <td>{{drink.producerName}}</td>
+                    <td><a [href]="buildStyleUrl(drink)">{{drink.styleName}}</a></td>
+                    <td><a [href]="buildColorUrl(drink)">{{drink.colorName}}</a></td>
+                    <td><a [href]="buildProducerUrl(drink)">{{drink.producerName}}</a></td>
                     <td>{{drink.availability | availability}}</td>
+                    <td>{{buildPricesDisplay(drink)}}</td>
                 </tr>
             </ng-template>
         </p-table>

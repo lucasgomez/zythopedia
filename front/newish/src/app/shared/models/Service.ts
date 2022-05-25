@@ -2,7 +2,7 @@ import { Availability } from './Availability';
 
 export interface Service {
     id: number;
-    volume: number;
+    volumeInCl: number;
     sellingPrice: number;
     availability: Availability;
 }

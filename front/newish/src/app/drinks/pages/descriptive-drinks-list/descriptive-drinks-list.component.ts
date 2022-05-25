@@ -24,4 +24,20 @@ export class DescriptiveDrinksListComponent implements OnInit {
         this.drinks$ = this.route.data.pipe(pluck('drinks'));
     }
 
+    buildPricesDisplay(drink: Drink): string {
+        return drink.services.map(service => `${service.sellingPrice}.- (${service.volumeInCl}cl)`).join(" / ");
+    }
+
+    buildProducerUrl(drink: Drink): string {
+        return `/drinks/producers/${drink.producerId}`;
+    }
+
+    buildColorUrl(drink: Drink): string {
+        return `/drinks/colors/${drink.colorId}`;
+    }
+
+    buildStyleUrl(drink: Drink): string {
+        return `/drinks/styles/${drink.styleId}`;
+    }
+
 }
