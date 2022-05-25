@@ -19,7 +19,7 @@ public class ZythopediaApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://soif.fetedelabiere.ch", "http://localhost:8080");
+						.allowedOrigins("http://soif.fetedelabiere.ch", "http://localhost:4200");
 			}
 		};
 	}
