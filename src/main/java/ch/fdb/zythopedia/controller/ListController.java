@@ -16,7 +16,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
-@CrossOrigin(origins={"*"}, allowCredentials="true")
 public class ListController {
 
     private ListService listService;
