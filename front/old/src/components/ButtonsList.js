@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { NavDropdown } from 'react-bootstrap';
 import { API_ROOT } from '../data/apiConfig';
 

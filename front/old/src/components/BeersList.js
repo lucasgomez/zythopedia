@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Emoji from './Emoji';
@@ -224,7 +224,7 @@ class BeersList extends Component {
                 show: hasBottle && expandedView,
               },{
                 Header: 'Prix',
-                accessor: 'bottleSellingPrice',
+                accessor: 'bottleSellingPrice',columns
                 Cell: row => this.formatPrice(row.value),
                 sortable: true,
                 minWidth: 30,

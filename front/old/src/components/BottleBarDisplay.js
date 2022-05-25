@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Card, Container, Row } from 'react-bootstrap';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';

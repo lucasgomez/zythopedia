@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { ReactstrapRadio } from 'reactstrap-formik';
 import { Field } from 'formik';
 

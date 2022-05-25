@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Dropdown, DropdownButton, Modal } from 'react-bootstrap';
 import Emoji from '../Emoji';

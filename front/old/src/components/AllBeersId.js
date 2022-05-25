@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Container } from 'react-bootstrap';
 import BeerIdDisplay from './BeerIdDisplay';
 import { API_ROOT } from '../data/apiConfig';

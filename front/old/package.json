@@ -19,7 +19,7 @@
     "reactstrap-formik": "^1.0.8",
     "styled-components": "^4.2.0",
     "superagent": "^4.1.0",
-    "yup": "^0.26.10"
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",

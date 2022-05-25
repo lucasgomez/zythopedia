@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Nav } from 'react-bootstrap';
 import Emoji from './Emoji';
 import { API_ROOT } from '../data/apiConfig';

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Route, Switch } from 'react-router-dom';
 import BeersList from './BeersList';
