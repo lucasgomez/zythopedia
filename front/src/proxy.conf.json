@@ -1,0 +1,8 @@
+{
+  "/api/*": {
+    "target": "http://drinks.elveteek.ch",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}

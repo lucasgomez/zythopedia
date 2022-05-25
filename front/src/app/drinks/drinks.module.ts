@@ -10,9 +10,9 @@ import { DrinksByProducerResolver } from '../shared/resolvers/drinks-by-producer
 import { DrinksByStyleResolver } from '../shared/resolvers/drinks-by-style.resolver';
 import { DrinksResolver } from '../shared/resolvers/drinks.resolver';
 import { SharedModule } from '../shared/shared.module';
+import { StrengthRadarComponent } from './molecules/strength-radar/strength-radar.component';
 import { DescriptiveDrinksListComponent } from './pages/descriptive-drinks-list/descriptive-drinks-list.component';
 import { DrinkComponent } from './pages/drink/drink.component';
-import { StrengthRadarComponent } from './molecules/strength-radar/strength-radar.component';
 
 @NgModule({
     declarations: [

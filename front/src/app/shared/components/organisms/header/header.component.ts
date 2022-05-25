@@ -2,7 +2,6 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { OKTA_AUTH, OktaAuthStateService } from '@okta/okta-angular';
 import { AuthState, OktaAuth } from '@okta/okta-auth-js';
 import { MenuItem } from 'primeng/api';
-import { Menu } from 'primeng/menu';
 import { combineLatest, map, Observable } from 'rxjs';
 import { ColorService } from '../../../services/color.service';
 import { OriginService } from '../../../services/origin.service';
