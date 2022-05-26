@@ -16,12 +16,14 @@ import { SharedModule } from '../shared/shared.module';
 import { StrengthRadarComponent } from './molecules/strength-radar/strength-radar.component';
 import { BeamerDisplayComponent } from './pages/beamer-display/beamer-display.component';
 import { DescriptiveDrinksListComponent } from './pages/descriptive-drinks-list/descriptive-drinks-list.component';
+import { DogModeComponent } from './pages/dog-mode/dog-mode.component';
 import { DrinkComponent } from './pages/drink/drink.component';
 
 @NgModule({
     declarations: [
         DescriptiveDrinksListComponent,
         BeamerDisplayComponent,
+        DogModeComponent,
         DrinkComponent,
         StrengthRadarComponent
     ],
@@ -37,8 +39,13 @@ import { DrinkComponent } from './pages/drink/drink.component';
             {
                 path: 'beamer',
                 component: BeamerDisplayComponent,
-                resolve: { drinks: DrinksResolver },
                 data: { title: 'Liste de prix' }
+            },
+            {
+                path: 'dogmode',
+                component: DogModeComponent,
+                resolve: { drinks: DrinksResolver },
+                data: { title: 'doG Mode' }
             },
             {
                 path: 'colors/:colorId',

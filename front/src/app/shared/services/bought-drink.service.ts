@@ -17,4 +17,8 @@ export class BoughtDrinkService {
     getDrink(drinkId: number): Observable<DetailedDrink> {
         return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/detail`);
     }
+
+    changeAvailability(drinkId: number, availability: string): Observable<DetailedDrink> {
+        return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/availability/${availability}`);
+    }
 }

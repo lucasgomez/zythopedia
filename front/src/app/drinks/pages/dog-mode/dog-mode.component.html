@@ -1,0 +1,49 @@
+<ng-container *ngIf="drinks$ | async as drinks else loading">
+    <div class="border-round surface-card shadow-1">
+        <p-table [value]="drinks.content" responsiveLayout="stack">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="name">
+                        Nom <p-sortIcon field="name"></p-sortIcon>
+                        <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="producerName">
+                        Producteur <p-sortIcon field="producerName"></p-sortIcon>
+                        <p-columnFilter type="text" field="producerName" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="service">
+                        Service <p-sortIcon field="serviceMethod"></p-sortIcon>
+                        <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="availability">
+                        Dispo. <p-sortIcon field="availability"></p-sortIcon>
+                        <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
+                    </th>
+                    <th pSortableColumn="actions">
+                        Actions <p-sortIcon field="actions"></p-sortIcon>
+                        <p-columnFilter type="text" field="actions" display="menu"></p-columnFilter>
+                    </th>
+                </tr>
+                <tr>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-drink>
+                <tr>
+                    <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></td>
+                    <td>{{drink.producerName}}</td>
+                    <td>{{drink.services.length > 1 ? 'TAP' : 'BOTTLE'}}</td>
+                    <td>{{drink.availability | availability}}</td>
+                    <td>
+                        <button *ngFor="let availability of availabilities" [id]="availability" (click)="changeAvailability(drink, availability)">
+                            {{availability}}
+                        </button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</ng-container>
+<ng-template #loading>
+    <p>Chargement en cours...</p>
+</ng-template>
