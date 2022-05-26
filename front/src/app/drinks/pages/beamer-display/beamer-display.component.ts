@@ -12,6 +12,8 @@ import { ListService } from '../../../shared/services/list.service';
 export class BeamerDisplayComponent implements OnInit {
 
     drinks$!: Observable<Drink[]>;
+    pageCounter = 0;
+    maxPages = 0;
     private showTap = true;
 
     constructor(
@@ -20,13 +22,26 @@ export class BeamerDisplayComponent implements OnInit {
     }
 
     private readonly RELOAD_DELAY = 20000;
+    private readonly MAX_PAGE_TILES = 20;
 
     ngOnInit(): void {
         this.drinks$ = timer(1000, this.RELOAD_DELAY).pipe(
             tap(() => this.showTap = !this.showTap),
             map(() => this.showTap ? 'tap' : 'bottle'),
-            switchMap(service => this.listService.findAvailableTapBeers$(service))
+            switchMap(service => this.listService.findAvailableTapBeers$(service)),
+            tap(drinks => this.incrementPageCounter(drinks)),
+            map(drinks => this.filterForBottles(drinks))
         );
+    }
+
+    incrementPageCounter(drinks: Drink[]): void {
+        if (!this.showTap) {
+            this.pageCounter++;
+            this.maxPages = Math.ceil(drinks.length / this.MAX_PAGE_TILES);
+            if (this.pageCounter >= this.maxPages) {
+                this.pageCounter = 0;
+            }
+        }
     }
 
     buildPriceDisplay(service: Service): string {
@@ -34,7 +49,18 @@ export class BeamerDisplayComponent implements OnInit {
     }
 
     getTitle(): string {
-        return this.showTap ? 'Pressions' : 'Bouteilles';
+        return this.showTap ? 'Pressions' : `Bouteilles ${this.pageCounter+1}/${this.maxPages}`;
     }
 
+    private filterForBottles(drinks: Drink[]): Drink[] {
+        if (this.showTap) {
+            return drinks;
+        }
+        const firstItem = this.pageCounter * this.MAX_PAGE_TILES;
+        const lastItem = (this.pageCounter + 1) * this.MAX_PAGE_TILES;
+        if (lastItem > drinks.length) {
+            return drinks.slice(-1 * this.MAX_PAGE_TILES);
+        }
+        return drinks.slice(firstItem, lastItem);
+    }
 }
