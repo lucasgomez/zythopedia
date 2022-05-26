@@ -24,7 +24,7 @@ export class BeamerDisplayComponent implements OnInit, OnDestroy {
     }
 
     private readonly RELOAD_DELAY = 20000;
-    private readonly MAX_PAGE_TILES = 20;
+    private readonly MAX_PAGE_TILES = 24;
 
     ngOnInit(): void {
         this.headerDisplayService.changeHeaderDisplay(false);
