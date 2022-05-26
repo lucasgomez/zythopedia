@@ -3,7 +3,7 @@
     <div *ngIf="drinks.description" class="text-700 mb-5">{{drinks.description}}</div>
 
     <div class="border-round surface-card shadow-1">
-        <p-table [value]="drinks.content" responsiveLayout="stack" sortField="availability">
+        <p-table [value]="drinks.content" responsiveLayout="scroll" sortField="availability">
             <ng-template pTemplate="header">
                 <tr>
                     <th pSortableColumn="name">
