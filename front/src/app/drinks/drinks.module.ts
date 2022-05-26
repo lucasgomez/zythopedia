@@ -6,10 +6,12 @@ import { ChipModule } from 'primeng/chip';
 import { DataViewModule } from 'primeng/dataview';
 import { RippleModule } from 'primeng/ripple';
 import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
 import { DrinkResolver } from '../shared/resolvers/drink.resolver';
 import { DrinksByColorResolver } from '../shared/resolvers/drinks-by-color.resolver';
 import { DrinksByOriginResolver } from '../shared/resolvers/drinks-by-origin.resolver';
 import { DrinksByProducerResolver } from '../shared/resolvers/drinks-by-producer.resolver';
+import { DrinksByServiceResolver } from '../shared/resolvers/drinks-by-service.resolver';
 import { DrinksByStyleResolver } from '../shared/resolvers/drinks-by-style.resolver';
 import { DrinksResolver } from '../shared/resolvers/drinks.resolver';
 import { SharedModule } from '../shared/shared.module';
@@ -54,6 +56,12 @@ import { DrinkComponent } from './pages/drink/drink.component';
                 data: { title: 'Boissons de couleur' }
             },
             {
+                path: 'services/:service',
+                component: DescriptiveDrinksListComponent,
+                resolve: { drinks: DrinksByServiceResolver },
+                data: { title: 'Boisson servie en' }
+            },
+            {
                 path: 'styles/:styleId',
                 component: DescriptiveDrinksListComponent,
                 resolve: { drinks: DrinksByStyleResolver },
@@ -82,6 +90,7 @@ import { DrinkComponent } from './pages/drink/drink.component';
         RippleModule,
         CardModule,
         ChipModule,
+        TagModule,
         DataViewModule
     ],
 })

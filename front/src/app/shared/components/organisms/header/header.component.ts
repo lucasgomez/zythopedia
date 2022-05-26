@@ -17,6 +17,9 @@ export class HeaderComponent implements OnInit {
 
     items$!: Observable<MenuItem[]>;
     authState$!: Observable<AuthState>;
+    serviceMethods = [
+        {label: 'Pressions', value: 'TAP'},
+        {label: 'Bouteilles', value: 'BOTTLE'}];
 
     constructor(
         @Inject(OKTA_AUTH) private readonly oktaAuth: OktaAuth,
@@ -38,6 +41,12 @@ export class HeaderComponent implements OnInit {
         ]).pipe(
             map(([producers, origins, styles, colors]) => [
                 { label: 'Toutes', icon: 'mdi mdi-format-list-text', routerLink: '/drinks' },
+                {
+                    label: 'Par service', icon: 'mdi mdi-chemical-weapon',
+                    items: this.serviceMethods.map(serviceMethod => ({
+                        label: serviceMethod.label, routerLink: `/drinks/services/${serviceMethod.value}`
+                    }))
+                },
                 {
                     label: 'Par couleur', icon: 'mdi mdi-palette',
                     items: colors.sort((a, b) => a.name.localeCompare(b.name)).map(c => ({

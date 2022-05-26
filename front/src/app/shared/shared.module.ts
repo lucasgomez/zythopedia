@@ -9,6 +9,7 @@ import { RippleModule } from 'primeng/ripple';
 import { StyleClassModule } from 'primeng/styleclass';
 import { HeaderComponent } from './components/organisms/header/header.component';
 import { AbvPipe } from './pipes/abv.pipe';
+import { AvailabilityColorPipe } from './pipes/availability-color.pipe';
 import { AvailabilityPipe } from './pipes/availability.pipe';
 
 @NgModule({
@@ -27,6 +28,7 @@ import { AvailabilityPipe } from './pipes/availability.pipe';
         HeaderComponent,
         AbvPipe,
         AvailabilityPipe,
+        AvailabilityColorPipe,
     ],
     exports: [
         CommonModule,
@@ -35,6 +37,7 @@ import { AvailabilityPipe } from './pipes/availability.pipe';
         HeaderComponent,
         AbvPipe,
         AvailabilityPipe,
+        AvailabilityColorPipe,
     ]
 })
 export class SharedModule {
