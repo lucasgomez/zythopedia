@@ -1,6 +1,6 @@
 <ng-container *ngIf="drinks$ | async as drinks else loading">
+    <h3 class="title">{{getTitle()}}</h3>
     <p-dataView [value]="drinks" layout="grid" >
-
         <ng-template let-drink pTemplate="gridItem">
             <div class="col-3">
                 <div class="product-grid-item card">

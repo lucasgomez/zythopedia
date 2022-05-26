@@ -33,4 +33,8 @@ export class BeamerDisplayComponent implements OnInit {
         return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
     }
 
+    getTitle(): string {
+        return this.showTap ? 'Pressions' : 'Bouteilles';
+    }
+
 }
