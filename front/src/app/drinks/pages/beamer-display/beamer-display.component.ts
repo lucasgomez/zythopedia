@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { map, Observable, switchMap, tap, timer } from 'rxjs';
 import { Drink } from '../../../shared/models/Drink';
 import { Service } from '../../../shared/models/Service';
+import { HeaderDisplayService } from '../../../shared/services/header-display.service';
 import { ListService } from '../../../shared/services/list.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { ListService } from '../../../shared/services/list.service';
     templateUrl: './beamer-display.component.html',
     styleUrls: ['./beamer-display.component.css']
 })
-export class BeamerDisplayComponent implements OnInit {
+export class BeamerDisplayComponent implements OnInit, OnDestroy {
 
     drinks$!: Observable<Drink[]>;
     pageCounter = 0;
@@ -17,7 +18,8 @@ export class BeamerDisplayComponent implements OnInit {
     private showTap = true;
 
     constructor(
-        private readonly listService: ListService
+        private readonly listService: ListService,
+        private readonly headerDisplayService: HeaderDisplayService,
     ) {
     }
 
@@ -25,6 +27,7 @@ export class BeamerDisplayComponent implements OnInit {
     private readonly MAX_PAGE_TILES = 20;
 
     ngOnInit(): void {
+        this.headerDisplayService.changeHeaderDisplay(false);
         this.drinks$ = timer(1000, this.RELOAD_DELAY).pipe(
             tap(() => this.showTap = !this.showTap),
             map(() => this.showTap ? 'tap' : 'bottle'),
@@ -32,6 +35,10 @@ export class BeamerDisplayComponent implements OnInit {
             tap(drinks => this.incrementPageCounter(drinks)),
             map(drinks => this.filterForBottles(drinks))
         );
+    }
+
+    ngOnDestroy() {
+        this.headerDisplayService.changeHeaderDisplay(true);
     }
 
     incrementPageCounter(drinks: Drink[]): void {

@@ -4,6 +4,7 @@ import { AuthState, OktaAuth } from '@okta/okta-auth-js';
 import { MenuItem } from 'primeng/api';
 import { combineLatest, map, Observable } from 'rxjs';
 import { ColorService } from '../../../services/color.service';
+import { HeaderDisplayService } from '../../../services/header-display.service';
 import { OriginService } from '../../../services/origin.service';
 import { ProducerService } from '../../../services/producer.service';
 import { StyleService } from '../../../services/style.service';
@@ -20,6 +21,7 @@ export class HeaderComponent implements OnInit {
     serviceMethods = [
         {label: 'Pressions', value: 'TAP'},
         {label: 'Bouteilles', value: 'BOTTLE'}];
+    displayHeader$!: Observable<boolean>;
 
     constructor(
         @Inject(OKTA_AUTH) private readonly oktaAuth: OktaAuth,
@@ -28,10 +30,12 @@ export class HeaderComponent implements OnInit {
         private readonly originService: OriginService,
         private readonly styleService: StyleService,
         private readonly colorService: ColorService,
+        private readonly headerDisplayService: HeaderDisplayService,
     ) {
     }
 
     ngOnInit(): void {
+        this.displayHeader$ = this.headerDisplayService.mustDisplayHeader();
         this.authState$ = this.authService.authState$;
         this.items$ = combineLatest([
             this.producerService.findAll(),

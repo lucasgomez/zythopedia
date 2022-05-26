@@ -1,5 +1,6 @@
-<div class="surface-overlay py-3 px-6 flex align-items-center justify-content-between relative lg:static"
-     style="min-height: 80px">
+<div *ngIf="displayHeader$ | async"
+        class="surface-overlay py-3 px-6 flex align-items-center justify-content-between relative lg:static"
+        style="min-height: 80px">
     <img src="assets/elephant_vin.png" alt="Image" height="75" class="-mb-3 mr-0 lg:mr-6">
     <a pRipple class="cursor-pointer block lg:hidden text-700 ml-auto" pStyleClass="@next" enterClass="hidden"
        leaveToClass="hidden" [hideOnOutsideClick]="true">

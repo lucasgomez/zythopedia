@@ -1,5 +1,5 @@
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <h3 class="title">{{getTitle()}}</h3>
+    <div class="title">{{getTitle()}}</div>
     <p-dataView [value]="drinks" layout="grid" >
         <ng-template let-drink pTemplate="gridItem">
             <div class="col-3">
@@ -8,7 +8,7 @@
                         <div>
                             <span class="product-category">{{drink.styleName}} ({{drink.abv}}%)</span>
                         </div>
-                        <span [class]="'product-category'   ">{{drink.colorName}}</span>
+                        <span class="product-category">{{drink.colorName}}</span>
                     </div>
                     <div class="product-grid-item-content">
                         <div class="product-name">{{drink.name}}</div>
