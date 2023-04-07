@@ -11,8 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellDoubleContent;
-import static ch.fdb.zythopedia.utils.SpreadsheetHelper.getCellLongContent;
+import static ch.fdb.zythopedia.utils.SpreadsheetHelper.*;
 
 @Slf4j
 @Service
@@ -20,6 +19,8 @@ public class PricesCalculatorReaderService {
 
     public static final int PRICE_CALCULATOR_SERVICE_ID_COLUMN_NUM = 0;
     public static final int PRICE_CALCULATOR_PRICE_COLUMN_NUM = 11;
+    public static final int PRICE_CALCULATOR_PRODUCER_NAME_COLUMN_NUM = 2;
+    public static final int PRICE_CALCULATOR_DRINK_NAME_COLUMN_NUM = 4;
 
     public Collection<ServiceDto> readServices(Workbook workbook) {
         var sheet = workbook.getSheetAt(0);
@@ -35,6 +36,8 @@ public class PricesCalculatorReaderService {
         return ServiceDto.builder()
                 .id(getCellLongContent(row, PRICE_CALCULATOR_SERVICE_ID_COLUMN_NUM))
                 .sellingPrice(getCellDoubleContent(row, PRICE_CALCULATOR_PRICE_COLUMN_NUM))
+                .drinkName(getCellStringContent(row, PRICE_CALCULATOR_DRINK_NAME_COLUMN_NUM))
+                .producerName(getCellStringContent(row, PRICE_CALCULATOR_PRODUCER_NAME_COLUMN_NUM))
                 .build();
     }
 }
