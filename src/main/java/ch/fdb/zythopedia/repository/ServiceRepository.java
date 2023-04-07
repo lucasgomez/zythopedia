@@ -10,4 +10,6 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
 
     List<Service> findByBoughtDrink(BoughtDrink boughtDrink);
 
+    List<Service> findByBoughtDrinkDrinkNameAndBoughtDrinkDrinkProducerNameAndVolumeInCl(String drinkName, String producerName, Long volumeInCl);
+
 }
