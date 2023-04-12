@@ -33,6 +33,20 @@ public class ImporterTestHelper {
             1585L, "India Pale Ale",
             1588L, "Lager / Premium"
     );
+    public static final Map<Long, String> PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT = Map.of(
+            1631L, "Stone Brewing",
+            1610L, "Stone Brewing  USA",
+            1626L, "CRAK Brewery",
+            1617L, "Beavertown Brewery",
+            1595L, "Boon"
+    );
+
+    public static final Map<Long, String> ORIGINS_OLD_NAME_BY_ID_FROM_IMPORT = Map.of(
+            1616L, "Angleterre",
+            1590L, "Corse",
+            1600L, "Ecosse",
+            1609L, "Etats-Unis"
+    );
 
     public static MockMultipartFile openFileFromResources(String fileName) {
         try (var file = ImporterTestHelper.class.getResourceAsStream(String.format("/%s", fileName))){

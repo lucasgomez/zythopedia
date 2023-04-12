@@ -3,6 +3,8 @@ package ch.fdb.zythopedia.controller;
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.ServiceDto;
 import ch.fdb.zythopedia.entity.Color;
+import ch.fdb.zythopedia.entity.Origin;
+import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.repository.*;
 import ch.fdb.zythopedia.service.DrinkDataReaderService;
@@ -46,6 +48,7 @@ class ImportControllerTest {
     public static final String API_IMPORT_DATA = "/api/import/data";
     public static final String API_IMPORT_ORDER_AMSTEIN = "/api/import/order/amstein";
     public static final String API_IMPORT_CATALOG_AMSTEIN = "/api/import/catalog/amstein";
+    public static final String API_IMPORT_CALCULATOR = "/api/import/calculator";
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -125,7 +128,9 @@ class ImportControllerTest {
                         .collect(Collectors.toList()));
 
         var calculatorFile = ImporterTestHelper.openFileFromResources(ImporterTestHelper.PRICE_CALCULATOR_XLSX);
-        postFile("/api/import/calculator", calculatorFile);
+
+        fail("Not finished yet!");
+        postFile(API_IMPORT_CALCULATOR, calculatorFile);
 
     }
 
@@ -145,32 +150,67 @@ class ImportControllerTest {
         var realDrinkDataReaderService = new DrinkDataReaderService();
         mockColorReading(realDrinkDataReaderService);
         mockStyleReading(realDrinkDataReaderService);
+        mockProducerReading(realDrinkDataReaderService);
 
         // Check initial status for colors
-        var aromatiseeId = colorRepository.findByName("Aromatisée").map(Color::getId).orElseThrow();
-        var noireId = colorRepository.findByName("Noir").map(Color::getId).orElseThrow();
+        var deletedColor = colorRepository.findByName("Aromatisée").map(Color::getId).orElseThrow();
+        var renamedColor = colorRepository.findByName("Noir").map(Color::getId).orElseThrow();
         assertTrue(Strings.isEmpty(colorRepository.findByName("Brune").orElseThrow().getDescription()), "Brune color should not have description yet");
 
         // Check initial status for styles
-        var nestleId = styleRepository.findByName("NESTLE WATERS (SUISSE) SA").map(Style::getId).orElseThrow();
-        var ipaId = styleRepository.findByName("India Pale Ale").map(Style::getId).orElseThrow();
-        var lager = styleRepository.findByName("Lager / Premium").orElseThrow();
-        assertTrue(Strings.isEmpty(lager.getDescription()), "Lager style should not have description yet");
+        var deletedStyle = styleRepository.findByName("NESTLE WATERS (SUISSE) SA").map(Style::getId).orElseThrow();
+        var updatedNameStyle = styleRepository.findByName("India Pale Ale").map(Style::getId).orElseThrow();
+        var updatedDescriptionStyle = styleRepository.findByName("Lager / Premium").orElseThrow();
+        assertTrue(Strings.isEmpty(updatedDescriptionStyle.getDescription()), "Lager style should not have description yet");
+
+        // Check initial status for producers
+        var deletedOrigin = originRepository.findByName("Corse").map(Origin::getId).orElseThrow();
+
 
         var file = ImporterTestHelper.openFileFromResources(ImporterTestHelper.DRINK_DATA_XLSX);
         postFile(API_IMPORT_DATA, file);
 
         // Assert changes for color
-        assertTrue(colorRepository.findById(aromatiseeId).isEmpty(), "Color should be deleted");
+        assertTrue(colorRepository.findById(deletedColor).isEmpty(), "Color should be deleted");
         assertTrue(colorRepository.findByName("Blanche").isPresent(), "Color should be added");
-        assertEquals("Noire", colorRepository.findById(noireId).map(Color::getName).orElse("Not found"), "Color should be added");
+        assertEquals("Noire", colorRepository.findById(renamedColor).map(Color::getName).orElse("Not found"), "Color should be added");
         assertFalse(Strings.isEmpty(colorRepository.findByName("Brune").orElseThrow().getDescription()), "Brune color should have description now");
 
         // Assert changes for style
-        assertTrue(styleRepository.findById(nestleId).isEmpty(), "Style should be deleted");
+        assertTrue(styleRepository.findById(deletedStyle).isEmpty(), "Style should be deleted");
         assertTrue(styleRepository.findByName("Triple Wet Hopped Kölsch").isPresent(), "Style should be added");
-        assertEquals("IPA", styleRepository.findById(ipaId).map(Style::getName).orElse("Not found"), "Style name should be updated");
-        assertFalse(Strings.isEmpty(styleRepository.findById(lager.getId()).map(Style::getDescription).orElse("Not found")), "Style description should be updated");
+        assertEquals("IPA", styleRepository.findById(updatedNameStyle).map(Style::getName).orElse("Not found"), "Style name should be updated");
+        assertFalse(Strings.isEmpty(styleRepository.findById(updatedDescriptionStyle.getId()).map(Style::getDescription).orElse("Not found")), "Style description should be updated");
+    }
+
+    private void mockProducerReading(DrinkDataReaderService realDrinkDataReaderService) {
+        var allProducersIdByOldName = producerRepository.findAll().stream()
+                .collect(Collectors.toMap(
+                        Producer::getName,
+                        Producer::getId));
+
+        when(drinkDataReaderService.readProducers(anyCollection())).thenAnswer(invocationOnMock -> {
+            var producersRead = realDrinkDataReaderService.readProducers((Collection<Row>) invocationOnMock.getArgument(0, Collection.class));
+            return producersRead.stream()
+                    .map(producer -> producer.setId(translateIdFromImport(producer.getId(), allProducersIdByOldName, ImporterTestHelper.PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT)))
+                    .collect(Collectors.toList());
+        });
+
+        when(drinkDataReaderService.readProducersToDeleteWithReplacement(anyCollection()))
+                .thenAnswer(invocationOnMock -> {
+
+                    var producersRead = realDrinkDataReaderService.readProducersToDeleteWithReplacement(
+                            (Collection<Row>) invocationOnMock.getArgument(0, Collection.class));
+                    return producersRead.entrySet().stream()
+                            .collect(Collectors.toMap(
+                                    longIdOrNameDtoEntry -> translateIdFromImport(
+                                            longIdOrNameDtoEntry.getKey(),
+                                            allProducersIdByOldName,
+                                            ImporterTestHelper.PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT),
+                                    longIdOrNameDtoEntry -> translateProducersIdFromImport(
+                                            longIdOrNameDtoEntry.getValue(),
+                                            allProducersIdByOldName)));
+                });
     }
 
     private void mockStyleReading(DrinkDataReaderService realDrinkDataReaderService) {
@@ -231,6 +271,16 @@ class ImportControllerTest {
         when(drinkDataReaderService.readColorsToDeleteWithReplacement(anyCollection()))
                 .thenAnswer(invocation -> realDrinkDataReaderService
                         .readColorsToDeleteWithReplacement((Collection<Row>) invocation.getArgument(0, Collection.class)));
+    }
+
+    private IdOrNameDto translateProducersIdFromImport(IdOrNameDto producerIdFromImport, Map<String, Long> allColorsIdByName) {
+        return IdOrNameDto.builder()
+                .id(Optional.of(producerIdFromImport)
+                            .map(IdOrNameDto::getId)
+                            .map(id -> allColorsIdByName.get(ImporterTestHelper.PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT.get(id)))
+                            .orElse(null))
+                .name(producerIdFromImport.getName())
+                .build();
     }
 
     private IdOrNameDto translateStyleIdFromImport(IdOrNameDto colorIdFromImport, Map<String, Long> allColorsIdByName) {
