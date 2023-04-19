@@ -1,0 +1,918 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
+-- Dumped by pg_dump version 14.3 (Ubuntu 14.3-1.pgdg20.04+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+ALTER TABLE ONLY public.style DROP CONSTRAINT fk_style_parent;
+ALTER TABLE ONLY public.service DROP CONSTRAINT fk_service__bought_drink;
+ALTER TABLE ONLY public.producer DROP CONSTRAINT fk_producer_origin__origin;
+ALTER TABLE ONLY public.drink DROP CONSTRAINT fk_drink__style;
+ALTER TABLE ONLY public.drink DROP CONSTRAINT fk_drink__producer;
+ALTER TABLE ONLY public.drink DROP CONSTRAINT fk_drink__color;
+ALTER TABLE ONLY public.bought_drink DROP CONSTRAINT fk_bought_drink__edition;
+ALTER TABLE ONLY public.bought_drink DROP CONSTRAINT fk_bought_drink__drink;
+ALTER TABLE ONLY public.style DROP CONSTRAINT uk_style__name;
+ALTER TABLE ONLY public.service DROP CONSTRAINT uk_service__bought_drink_volume_in_cl;
+ALTER TABLE ONLY public.producer DROP CONSTRAINT uk_producer__name;
+ALTER TABLE ONLY public.origin DROP CONSTRAINT uk_origin__short_name;
+ALTER TABLE ONLY public.origin DROP CONSTRAINT uk_origin__name;
+ALTER TABLE ONLY public.edition DROP CONSTRAINT uk_edition__name;
+ALTER TABLE ONLY public.drink DROP CONSTRAINT uk_drink__name_producer;
+ALTER TABLE ONLY public.color DROP CONSTRAINT uk_color__name;
+ALTER TABLE ONLY public.bought_drink DROP CONSTRAINT uk_bought_drink__name;
+ALTER TABLE ONLY public.style DROP CONSTRAINT pk_style;
+ALTER TABLE ONLY public.service DROP CONSTRAINT pk_service;
+ALTER TABLE ONLY public.producer DROP CONSTRAINT pk_producer;
+ALTER TABLE ONLY public.origin DROP CONSTRAINT pk_origin;
+ALTER TABLE ONLY public.edition DROP CONSTRAINT pk_edition;
+ALTER TABLE ONLY public.drink DROP CONSTRAINT pk_drink;
+ALTER TABLE ONLY public.color DROP CONSTRAINT pk_color;
+ALTER TABLE ONLY public.bought_drink DROP CONSTRAINT pk_bought_drink;
+ALTER TABLE ONLY public.databasechangeloglock DROP CONSTRAINT databasechangeloglock_pkey;
+DROP TABLE public.style;
+DROP TABLE public.service;
+DROP TABLE public.producer;
+DROP TABLE public.origin;
+DROP SEQUENCE public.hibernate_sequence;
+DROP TABLE public.edition;
+DROP TABLE public.drink;
+DROP TABLE public.databasechangeloglock;
+DROP TABLE public.databasechangelog;
+DROP TABLE public.color;
+DROP TABLE public.bought_drink;
+DROP EXTENSION adminpack;
+--
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: bought_drink; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.bought_drink (
+    id bigint NOT NULL,
+    code character varying(255),
+    edition_fk bigint NOT NULL,
+    drink_fk bigint NOT NULL,
+    buying_price double precision NOT NULL,
+    volume_in_cl bigint,
+    service_method character varying(255) NOT NULL,
+    returnable boolean DEFAULT false NOT NULL,
+    availability character varying(255) DEFAULT 'AVAILABLE'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.bought_drink OWNER TO postgres;
+
+--
+-- Name: color; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.color (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(2000)
+);
+
+
+ALTER TABLE public.color OWNER TO postgres;
+
+--
+-- Name: databasechangelog; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.databasechangelog (
+    id character varying(255) NOT NULL,
+    author character varying(255) NOT NULL,
+    filename character varying(255) NOT NULL,
+    dateexecuted timestamp without time zone NOT NULL,
+    orderexecuted integer NOT NULL,
+    exectype character varying(10) NOT NULL,
+    md5sum character varying(35),
+    description character varying(255),
+    comments character varying(255),
+    tag character varying(255),
+    liquibase character varying(20),
+    contexts character varying(255),
+    labels character varying(255),
+    deployment_id character varying(10)
+);
+
+
+ALTER TABLE public.databasechangelog OWNER TO postgres;
+
+--
+-- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.databasechangeloglock (
+    id integer NOT NULL,
+    locked boolean NOT NULL,
+    lockgranted timestamp without time zone,
+    lockedby character varying(255)
+);
+
+
+ALTER TABLE public.databasechangeloglock OWNER TO postgres;
+
+--
+-- Name: drink; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.drink (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(2000),
+    abv double precision,
+    producer_fk bigint,
+    color_fk bigint,
+    style_fk bigint,
+    sourness character varying(255),
+    bitterness character varying(255),
+    sweetness character varying(255),
+    hoppiness character varying(255)
+);
+
+
+ALTER TABLE public.drink OWNER TO postgres;
+
+--
+-- Name: edition; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.edition (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.edition OWNER TO postgres;
+
+--
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.hibernate_sequence
+    START WITH 1337
+    INCREMENT BY 1
+    MINVALUE 1337
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.hibernate_sequence OWNER TO postgres;
+
+--
+-- Name: origin; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.origin (
+    id bigint NOT NULL,
+    name character varying(255),
+    short_name character varying(4) NOT NULL,
+    flag character varying(255)
+);
+
+
+ALTER TABLE public.origin OWNER TO postgres;
+
+--
+-- Name: producer; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.producer (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    origin_fk bigint
+);
+
+
+ALTER TABLE public.producer OWNER TO postgres;
+
+--
+-- Name: service; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.service (
+    id bigint NOT NULL,
+    selling_price double precision,
+    volume_in_cl bigint NOT NULL,
+    bought_drink_fk bigint
+);
+
+
+ALTER TABLE public.service OWNER TO postgres;
+
+--
+-- Name: style; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.style (
+    id bigint NOT NULL,
+    name character varying(255) NOT NULL,
+    description character varying(2000),
+    parent_fk bigint
+);
+
+
+ALTER TABLE public.style OWNER TO postgres;
+
+--
+-- Data for Name: bought_drink; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.bought_drink (id, code, edition_fk, drink_fk, buying_price, volume_in_cl, service_method, returnable, availability) FROM stdin;
+1409	DELTR200FU	1405	1340	6.98	100	TAP	f	AVAILABLE
+1456	DUV66033VP	1405	1387	2.21	33	BOTTLE	f	AVAILABLE
+1442	RIELIB033VP	1405	1373	2.28	33	BOTTLE	f	AVAILABLE
+1467	ELVJU200FU	1405	1398	6.3	100	TAP	f	AVAILABLE
+1465	FALAP300FU	1405	1396	5.56	100	TAP	f	AVAILABLE
+1458	NEBEM033VP	1405	1389	2.92	33	BOTTLE	f	AVAILABLE
+1698	VAGYE033VP	1405	1695	3.05	33	BOTTLE	f	AVAILABLE
+1454	WESBR200FU	1405	1385	6.62	100	TAP	f	AVAILABLE
+1426	OHNIT044BO	1405	1357	2.11	44	BOTTLE	f	AVAILABLE
+1418	PECHR200FU	1405	1349	8.27	100	TAP	f	AVAILABLE
+1429	COMME300FU	1405	1360	3.3	100	TAP	f	AVAILABLE
+1700	VAGHO033VP	1405	1696	3.05	33	BOTTLE	f	AVAILABLE
+1411	PEDAM033VP	1405	1342	3.02	33	BOTTLE	f	AVAILABLE
+1435	DUBOU033VP	1405	1366	2.79	33	BOTTLE	f	AVAILABLE
+1468	WESBL033VC	1405	1399	2.5	33	BOTTLE	t	AVAILABLE
+1450	BEMGO050BO	1405	1381	1.99	50	BOTTLE	f	AVAILABLE
+1444	TIMOK037VP	1405	1375	5.36	37	BOTTLE	f	AVAILABLE
+1415	LAYCA044BO	1405	1346	2.73	44	BOTTLE	f	AVAILABLE
+1433	CHOUF200FU	1405	1364	6.93	100	TAP	f	AVAILABLE
+1428	NECOI300FU	1405	1359	7.22	100	TAP	f	AVAILABLE
+1430	OHAIS300FU	1405	1361	5.55	100	TAP	f	AVAILABLE
+1423	ORVBL033VC	1405	1354	2.33	33	BOTTLE	t	AVAILABLE
+1462	CRIPE050PE	1405	1393	0.69	50	BOTTLE	f	AVAILABLE
+1439	BRZER033VP	1405	1370	2.48	33	BOTTLE	f	AVAILABLE
+1464	PIETR033V3	1405	1395	2.49	33	BOTTLE	f	AVAILABLE
+1425	PORST033VP	1405	1356	2.64	33	BOTTLE	f	AVAILABLE
+1470	NEBMC033VP	1405	1401	3.29	33	BOTTLE	f	AVAILABLE
+1460	STONE035VP	1405	1391	2.46	35	BOTTLE	f	AVAILABLE
+1436	OHAIR300FU	1405	1367	5.55	100	TAP	f	AVAILABLE
+1407	CUVTR200FU	1405	1338	6.16	100	TAP	f	AVAILABLE
+1453	BEABT033VP	1405	1384	2.6	33	BOTTLE	f	AVAILABLE
+1472	STFSA200FU	1405	1403	4.81	100	TAP	f	AVAILABLE
+1459	GRTRI025VP	1405	1390	2.42	25	BOTTLE	f	AVAILABLE
+1441	RIIPA300FU	1405	1372	4.56	100	TAP	f	AVAILABLE
+1422	NESCI050PE	1405	1353	1.17	50	BOTTLE	f	AVAILABLE
+1451	CRANZ040BO	1405	1382	4.13	40	BOTTLE	f	AVAILABLE
+1446	LIEFR200FU	1405	1377	6.34	100	TAP	f	AVAILABLE
+1432	CHIDO200FU	1405	1363	6.68	100	TAP	f	AVAILABLE
+1421	RIEFU300FU	1405	1352	3.27	100	TAP	f	AVAILABLE
+1466	STFTR200FU	1405	1397	6.64	100	TAP	f	AVAILABLE
+1417	CHAQR150FU	1405	1348	4.53	100	TAP	f	AVAILABLE
+1416	LCHOR033VP	1405	1347	2.89	33	BOTTLE	f	AVAILABLE
+1447	BOOMG037VP	1405	1378	5.2	37	BOTTLE	f	AVAILABLE
+1424	BEAPC075VP	1405	1355	13.06	75	BOTTLE	f	AVAILABLE
+1420	PEZOR033VP	1405	1351	3.02	33	BOTTLE	f	AVAILABLE
+1452	LUPFR200FU	1405	1383	6.45	100	TAP	f	AVAILABLE
+1443	VADBR033VP	1405	1374	2.54	33	BOTTLE	f	AVAILABLE
+1455	NEBZE200FU	1405	1386	4.73	100	TAP	f	AVAILABLE
+1445	ABFEB033VP	1405	1376	3.01	33	BOTTLE	f	AVAILABLE
+1408	STOAB300FU	1405	1339	7.25	100	TAP	f	AVAILABLE
+1461	HAZYJ200FU	1405	1392	7.3	100	TAP	f	AVAILABLE
+1449	KBSEI033VP	1405	1380	2.31	33	BOTTLE	f	AVAILABLE
+1469	PUNIP300FU	1405	1400	5.76	100	TAP	f	AVAILABLE
+1419	SHNSP300FU	1405	1350	4.12	100	TAP	f	AVAILABLE
+1410	PECMA033VP	1405	1341	3.6	33	BOTTLE	f	AVAILABLE
+1406	BRFEV200FU	1405	1337	10.29	100	TAP	f	AVAILABLE
+1427	LINLA200FU	1405	1358	7.22	100	TAP	f	AVAILABLE
+1434	POKOS033BO	1405	1365	2.87	33	BOTTLE	f	AVAILABLE
+1473	NEBST033VP	1405	1404	2.53	33	BOTTLE	f	AVAILABLE
+1440	BARBA033VC	1405	1371	2.64	33	BOTTLE	t	AVAILABLE
+1448	POGOS033BO	1405	1379	2.87	33	BOTTLE	f	AVAILABLE
+1414	ANDHW300FU	1405	1345	4.37	100	TAP	f	AVAILABLE
+1471	PRENU033BO	1405	1402	2.53	33	BOTTLE	f	AVAILABLE
+1438	WITT200FU	1405	1369	4.16	100	TAP	f	AVAILABLE
+1457	DEARG200FU	1405	1388	7.06	100	TAP	f	AVAILABLE
+1702	VAGVA033VP	1405	1697	3.05	33	BOTTLE	f	AVAILABLE
+1413	LIEFR025VP	1405	1344	1.6	25	BOTTLE	f	AVAILABLE
+1437	PECOI033VP	1405	1368	3.02	33	BOTTLE	f	AVAILABLE
+1463	ODBVA033VP	1405	1394	2.4	33	BOTTLE	f	SOON
+1692	VIKOL033PE	1405	1689	1.58	\N	BOTTLE	f	AVAILABLE
+1704		1405	1683	2.25	33	BOTTLE	f	AVAILABLE
+1710	GMB33	1405	1709	2.25	33	BOTTLE	f	AVAILABLE
+\.
+
+
+--
+-- Data for Name: color; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.color (id, name, description) FROM stdin;
+1561	Rousse / Ambrée	La légère torrefaction des céréales donne une teinte plus rougeoyante à la Bière
+1562	Fruitée / Aromatisée	Les fruits où une maturation particulière marquent fortement la couleur de la boisson
+1565	Brune	La présence d’une part de céréales torrefiées donnent une teinte plus foncée
+1563	Blonde	Couleur dorée et généralement limpide
+1676	Blanche	Une part d’autre céréales telles que le blé donne un liquide plus trouble et plus clair
+1566	Noire	Une part plus importante de céréales torrefiées donnent une teinte noire et quasiment opaque
+1687	Rosé	Je vois la vie en rose lorsque je la regarde au travers de mon verre. Il faudrait peut être pas me laisser rédiger les descriptions des couleurs lorsque j’en ai un à la main…
+\.
+
+
+--
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) FROM stdin;
+V001.01	lg	db.changelog/files/V001__style.xml	2022-05-22 22:04:13.581042	1	EXECUTED	8:b59bda4ca1a0c661bc4dd6420136e126	createSequence sequenceName=HIBERNATE_SEQUENCE		\N	4.5.0	\N	\N	3249853500
+V001.02	lg	db.changelog/files/V001__style.xml	2022-05-22 22:04:13.587195	2	EXECUTED	8:4b349403d3205532b0351d1c8a06ba56	createTable tableName=STYLE		\N	4.5.0	\N	\N	3249853500
+V001.03	lg	db.changelog/files/V001__style.xml	2022-05-22 22:04:13.591639	3	EXECUTED	8:cd86d5f5795541ca3e9eb4e742e3c216	addColumn tableName=STYLE; addForeignKeyConstraint baseTableName=STYLE, constraintName=FK_STYLE_PARENT, referencedTableName=STYLE		\N	4.5.0	\N	\N	3249853500
+V001.04	lg	db.changelog/files/V001__style.xml	2022-05-22 22:04:13.595745	4	EXECUTED	8:4a18929a1eb7a18e9d75eb0955288539	addUniqueConstraint constraintName=UK_STYLE__NAME, tableName=STYLE		\N	4.5.0	\N	\N	3249853500
+V002.01	lg	db.changelog/files/V002__color_and_producers.xml	2022-05-22 22:04:13.602214	5	EXECUTED	8:eb316862e467850079d84549f8be3900	createTable tableName=COLOR; addUniqueConstraint constraintName=UK_COLOR__NAME, tableName=COLOR		\N	4.5.0	\N	\N	3249853500
+V002.02	lg	db.changelog/files/V002__color_and_producers.xml	2022-05-22 22:04:13.610683	6	EXECUTED	8:bd0f248e3910ccf60a21ddded612162c	createTable tableName=ORIGIN; addUniqueConstraint constraintName=UK_ORIGIN__NAME, tableName=ORIGIN; addUniqueConstraint constraintName=UK_ORIGIN__SHORT_NAME, tableName=ORIGIN		\N	4.5.0	\N	\N	3249853500
+V002.03	lg	db.changelog/files/V002__color_and_producers.xml	2022-05-22 22:04:13.618092	7	EXECUTED	8:e5dfbb211f336ee5e8ad2e979403dad0	createTable tableName=PRODUCER; addForeignKeyConstraint baseTableName=PRODUCER, constraintName=FK_PRODUCER_ORIGIN__ORIGIN, referencedTableName=ORIGIN; addUniqueConstraint constraintName=UK_PRODUCER__NAME, tableName=PRODUCER		\N	4.5.0	\N	\N	3249853500
+V003.01	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.623873	8	EXECUTED	8:3c1c54a7b772aa8b9ae4e8a285d4101a	createTable tableName=EDITION; addUniqueConstraint constraintName=UK_EDITION__NAME, tableName=EDITION		\N	4.5.0	\N	\N	3249853500
+V003.02	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.635574	9	EXECUTED	8:707f1b50c332228f7725131ab71533a5	createTable tableName=DRINK; addUniqueConstraint constraintName=UK_DRINK__NAME_PRODUCER, tableName=DRINK; addForeignKeyConstraint baseTableName=DRINK, constraintName=FK_DRINK__PRODUCER, referencedTableName=PRODUCER; addForeignKeyConstraint baseTab...		\N	4.5.0	\N	\N	3249853500
+V003.03	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.646291	10	EXECUTED	8:7a0d4c183a5f804cae2dd1ffc8022c82	createTable tableName=BOUGHT_DRINK; addUniqueConstraint constraintName=UK_BOUGHT_DRINK__NAME, tableName=BOUGHT_DRINK; addForeignKeyConstraint baseTableName=BOUGHT_DRINK, constraintName=FK_BOUGHT_DRINK__EDITION, referencedTableName=EDITION; addFore...		\N	4.5.0	\N	\N	3249853500
+V003.04	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.65463	11	EXECUTED	8:8ef1fbd99a8e5140fc9cbe82570c792d	createTable tableName=SERVICE; addUniqueConstraint constraintName=UK_SERVICE__BOUGHT_DRINK_VOLUME_IN_CL, tableName=SERVICE; addForeignKeyConstraint baseTableName=SERVICE, constraintName=FK_SERVICE__BOUGHT_DRINK, referencedTableName=BOUGHT_DRINK		\N	4.5.0	\N	\N	3249853500
+V003.05	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.659148	12	EXECUTED	8:d4d6042df9def85da32ae7d0299a0409	addColumn tableName=DRINK		\N	4.5.0	\N	\N	3249853500
+V003.06	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-22 22:04:13.662455	13	EXECUTED	8:4f7f9372788cd7db3971434f14c7e6f3	addColumn tableName=BOUGHT_DRINK		\N	4.5.0	\N	\N	3249853500
+V003.07	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-23 18:59:58.931006	14	EXECUTED	8:8ad7b9d80d23f8be8d1e279e3aac55e5	addColumn tableName=BOUGHT_DRINK		\N	4.5.0	\N	\N	3325198884
+\.
+
+
+--
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin;
+1	f	\N	\N
+\.
+
+
+--
+-- Data for Name: drink; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.drink (id, name, description, abv, producer_fk, color_fk, style_fk, sourness, bitterness, sweetness, hoppiness) FROM stdin;
+1369	Wittekop	Bière jaune pâle trouble de type blanche belge classique au léger goût de levure et de coriandre pour un arôme doux, légèrement épicé et une saveur citronnée	5	1599	1563	1574	LOW	MILD	STRONG	MILD
+1344	Liefmans Fruitesse 0.0	Le classique bière aux arômes de fruits rouges mais sans alcool !	0	1613	1562	1575	LOW	MILD	STRONG	LOW
+1364	Chouffe Blonde	Bière de nains à la couleur dorée, douce au goût et légèrement amère avec un final sec et frais aux arôme de pêche et un alcool qu'on ne reconnaît que le lendemain matin.	8	1628	1563	1572	LOW	MILD	MILD	MILD
+1400	Punk IPA	Un houblonnage aux arômes amers mais fruités de mangue, pamplemousse et caramel. Réveille le punk qui sommeille.	5.4	1601	1563	1585	LOW	MILD	MILD	STRONG
+1377	Liefmans Fruitesse	Bière aux arômes de fruits rouges (fraise, framboise, cerise et myrtille), douce et rafraichissante.	3.8	1613	1562	1577	MILD	LOW	STRONG	LOW
+1351	La Pêcherie Zora	Bière ambrée à la robe caramel, maltée, ronde et à la fine gazéification.	5	1611	1561	1589	LOW	MILD	MILD	MILD
+1360	Riegele Blonde	Bière dorée et légère aux arômes épicés pour un équilibre parfait. L'une des meilleures lager!	5.2	1624	1563	1588	LOW	MILD	STRONG	MILD
+1366	Duchesse de Bourgogne	De couleur rubis, fruitée et aigre doux au nez pour un goût aigre doux et légèrement fruité dû au vieillissement en fûts de chêne.	6.2	1612	1565	1577	MILD	LOW	STRONG	LOW
+1354	Orval Blonde sur Lie	Trappiste ambrée grâce à l'adjonction de sucre candi, elle possède une amertume caractéristique.	6.2	1636	1563	1581	LOW	STRONG	LOW	STRONG
+1347	Cidre Rosé	Une robe rose pour un nez délicat, frais et fruité et un goût légèrement acidulé mais demi-sec.	4.5	1684	1687	1587	\N	\N	\N	\N
+1348	Charles Quint Rouge Rubis	Une Strong Ale à la robe rubis rouge profond et à l’arôme fruité.	8.5	1627	1561	1572	LOW	LOW	STRONG	STRONG
+1341	Cuvée Magique	Bière blonde à la robe dorée, odeur de raisin et note maltée et légèrement houblonnée.	7.4	1611	1562	1572	LOW	LOW	STRONG	MILD
+1368	Coin-Coin	Une bière blonde bitter avec une note de pain et de l’amertume.	4.8	1611	1563	1586	LOW	MILD	LOW	MILD
+1390	Grisette Triple	Bière blonde à la fine amertume.	8	1629	1563	1570	LOW	MILD	MILD	STRONG
+1382	CR/AK New Zealand	Nez aux arômes tropicaux et citrique avec une pointe de douceur houblonnée pour une douceur en bouche masquant la teneur alcoolique.	7	1626	1563	1585	LOW	MILD	LOW	STRONG
+1388	Delirium Argentum	Bière corsée et intense. Avec l’amertume épicée rappelant les agrumes, elles donnent à cette bière un arrière-goût complexe, très agréable, frais, plein et amer.	7	1622	1561	1585	MILD	STRONG	MILD	STRONG
+1349	Pecheresse	Bière légère, fraiche et fruitée à la saveur vive et corsée.	2.5	1596	1562	1567	MILD	LOW	STRONG	LOW
+1374	Val-Dieu Brune	Première bière de la brasserie, elle se boit mieux tempérée, autour des 10°C. Avec des arômes de café et de Mokka, et un goût de malt torréfié bien équilibré.	8	1614	1565	1569	LOW	MILD	MILD	MILD
+1398	Elvis Juice	Une IPA infusée au jus et zeste de grapefruit pour une amertume piquante et une base de malt caramélisé suivi d'intenses vagues résineuses et orangées.	5.1	1601	1562	1585	MILD	MILD	MILD	STRONG
+1373	Riegele IPA Liberis 2+3	Une bière IPA non filtrée à la robe or-orange et sans alcool.	0.4	1624	1563	1575	LOW	MILD	MILD	STRONG
+1342	La Dame du Lac	Bière blanche avec une subtile odeur de coriandre et d’agrume et en bouche un fond d’épices.	5.2	1611	1563	1574	MILD	LOW	MILD	MILD
+1402	Pohjala Prenzlauerberg Null	Bière ambrée sans alcool, riche et crémeuse. Brassée avec des framboises, elle en garde une trace sensible.	0.5	1593	1561	1575	MILD	LOW	LOW	LOW
+1353	Nestea Citron	Sérieux? Vous allez lire les descriptifs de toutes les minérales?	0	\N	\N	1576	\N	\N	\N	\N
+1372	Riegele IPA Simco	Indian Pale Ale à la robe rousse, houblonnée à froid avec du houblon Simcoe.	5	1624	1561	1585	LOW	STRONG	MILD	STRONG
+1380	Session IPA	Une bière de type IPA avec un nez épicé et un surprenant goût malté pour une bière légère.	4.5	1630	1563	1585	LOW	MILD	MILD	STRONG
+1401	Malt Capone	Fermentée avec un bourbon américain et des gousses de vanilles, sa mousse onctueuse et ses notes torréfiées lui donne un corps profond et complexe.	7	1598	1566	1568	MILD	MILD	MILD	MILD
+1338	Cuvee Des Trolls	Bière de type Strong Ale, légèrement houblonnée et parfumée d’agrume.	7	1607	1563	1572	LOW	MILD	STRONG	STRONG
+1370	BRLO Zero.5	Une IPA faible en alcool aux notes citronnée et houblonnées	0.5	1619	1563	1575	MILD	LOW	LOW	MILD
+1393	Cristalp gazeuse	Mais qui peut bien lire la description d’une eau gazeuse? Elle est liquide, transparente et a subi l’adjonction de gaz carbonique dissous.	0	\N	\N	1576	\N	\N	\N	\N
+1358	Lindemans Lambiek	Le lambic, Bière spontanée à la base de tant de spécialités acides belges comme les faros (avec du sucre candi), gueuzes (assemblages de lambics d’âge variés) ou krieks (adjonction de cerises), se déguste ici tout seul. A découvrir, que l’on aime ou non les Bières acides	6	1596	1562	1567	LOW	LOW	LOW	LOW
+1337	Overworks Hybrid Henchman	Avec une adjonction de moût de raisin, cet Bière hybride développe des arômes de brett, plutôt secs et acides	6.3	1601	1562	1567	MILD	MILD	MILD	MILD
+1355	Apple Cider	Cidre ukrainien à la robe paille foncée intense avec un agréable goût de pomme.	7.5	1681	1563	1587	\N	\N	\N	\N
+1689	Vivi Kola	\N	0	1693	\N	1576	\N	\N	\N	\N
+1343	Red Bull *	\N	\N	\N	\N	1576	\N	\N	\N	\N
+1359	Neck Oil	\N	4.3	1617	1563	1585	LOW	STRONG	LOW	MILD
+1362	Coca-Cola	\N	0	\N	\N	1576	\N	\N	\N	\N
+1395	Pietra	Brassée avec de la farine de châtaigne pour une bière dense et moelleuse à l'arôme intense soulignée par une fine amertume sur un nez aux notes de miel et de fumé léger.	6	1591	1561	1588	LOW	MILD	STRONG	MILD
+1367	O'Hara's Irish Red NITRO	Robe cuivrée et tête blanche, cette authentique bière irlandaise présente un arôme caramélisé et grillé.	4.3	1604	1561	1589	LOW	MILD	MILD	MILD
+1345	Hefe Weissbier	Dorée comme le miel clair avec des arômes de fruits genre banane et melon. La douceur s'équilibre avec une légère acidité élégante accompagnés de la subtile amertume du houblon.	5.5	1634	1563	1574	MILD	MILD	STRONG	MILD
+1356	Porn Star	Bière ambrée à la bouche ronde et généreuse avec un solide houblonnage pour des arômes de pêche et ananas.	6.1	1605	1561	1585	LOW	STRONG	MILD	MILD
+1389	Embuscade	Explosive grâce à ces houblons nord-américain aux arômes de fruits exotiques (mangue, papaye, ananas) avec un petit côté résineux.	6.5	1598	1563	1585	LOW	STRONG	MILD	MILD
+1375	Timmermans Oude Kriek	Un nez de cerise très marqué dans une robe couleur rubis pou une entrée en bouche légèrement corsée qui se développe dans la rondeur fruitée délicatement contrebalancé par l'acidité du lambic.	5.5	1635	1562	1567	STRONG	LOW	STRONG	LOW
+1399	Westmalle Tripel	Un nez aux parfums fruités de banane mûre et une bouche ronde et plein avec une subtile note sucrée, soutenue par un arôme de fruit légèrement amer qui mène à un final long, sec et agréablement amer.	9.5	1615	1563	1581	LOW	MILD	MILD	MILD
+1385	Westmalle Dubbel	Une robe rouge-brun foncé coiffée d’une mousse épaisse de couleur crème. Au nez, on perçoit les esters et l’arôme fruité avec des touches de banane mûre pour une saveur à la fois fruitée et légèrement amère, avec une longue finale sèche.	7	1615	1565	1581	MILD	MILD	MILD	MILD
+1361	O'Hara's Irish Stout	Stout de style ancien à la une robe noir profond et belle mousse beige et moelleuse aux arômes riches et complexes de café et légère note de réglisse. Saveur grillée, corsée et onctueuse. Amertume presque acide d'expresso sur la langue.	4.3	1604	1566	1578	LOW	STRONG	STRONG	MILD
+1371	Barbar au miel	Bière blonde forte, au nez une touche d’hydromel, 	8	1621	1562	1572	LOW	LOW	STRONG	LOW
+1340	Delirium Tremens	Bière blonde pâle avec une forte touche d’alcool. Le goût est caractérisé par sa rondeur.	8.5	1622	1563	1572	LOW	MILD	MILD	STRONG
+1376	Febris	Bière d’une couleur ambrée soutenue aux notes de malts caramélisés.	5.15	1620	1561	1569	LOW	MILD	MILD	STRONG
+1339	Stone Arrogant Bastard Ale	This is an aggressive beer. Cette bière maltée possède une très forte amertume, amplifiée par une note café et de pin. Elle n’est pas pour tous le monde !	7.2	1631	1565	1572	LOW	STRONG	LOW	LOW
+1392	Hazy Jane 5%	Une New England IPA jaune opaque aux notes de fruits tropicaux et à noyau (ananas, mandarine, notes de noix de coco). Savoureuse et légère.	5	1601	1563	1573	LOW	LOW	MILD	STRONG
+1378	Mariage Parfait Gueuze	Bière mêlant lambic vieilli (3ans) et lambic jeune en un parfait mariage des saveurs pour une douce mise en bouche avec un corps aux notes de vanille et un arrière goût acidulé. Comme quoi, il existe de bonnes lambics !	8	1595	1563	1567	STRONG	LOW	MILD	LOW
+1384	St.Bernardus Abt 12	Bière forte et foncée à l’arôme très fruité. Elle décline des saveurs complexes et se distingue par une belle longueur douce-amère en bouche.	10	1623	1565	1569	LOW	MILD	MILD	LOW
+1363	Chimay Dorée	Bière trappiste de robe dorée, touche fruitée de types muscat et raisin sec provenant du houblon.	4.8	1606	1563	1581	MILD	MILD	MILD	MILD
+1379	Pohjala Orange Gose	Bière à la robe orange dorée et au parfum d’agrumes avec des notes exotiques de coriandre et une pointe de goyave.	5.5	1593	1562	1579	MILD	LOW	LOW	LOW
+1394	Valona Officina Della Birra	Bière dorée et délicatement voilée, elle est intense et charpentée. Elle possède un bon équilibre entre le houblon et son ingrédient particulier, la «Farina Bona».	5.5	1602	1563	1589	LOW	MILD	MILD	MILD
+1350	Spitfire	La seule bière agrée par la Royal Air Force est dotée d'une robe ambre foncé pour un nez fruité, aux notes houblonnée et de caramel. En bouche, elle est épicée, houblonnée et amère.	4.2	1632	1561	1586	LOW	STRONG	MILD	MILD
+1365	Pohjala Kosmos	Une bière jaune trouble opaque. Au nez une prédominance de fruits exotiques. En bouche, prédominance des houblons sucrés et saveurs tropicales.	5.5	1593	1563	1585	LOW	MILD	LOW	MILD
+1352	Riegele Feines Urhell	Bière rafraîchissante riche et finement maltée. Un classique.	4.7	1624	1563	1588	MILD	MILD	MILD	MILD
+1403	St-Feuillien Saison	Bière de fermentation haute (Ale), refermentée en bouteille et non filtrée. C’est une bière aromatique tout en nuance et à l’amertume bien marquée.	6.5	1629	1563	1571	MILD	MILD	STRONG	VERY_STRONG
+1397	St-Feuillien Triple	Bière refermentée en bouteille à la robe ambre pâle qui révèle un caractère spécialement malté. Au nez, une combinaison unique de houblons aromatiques, d’épices et de senteurs typiques de la fermentation.	8	1629	1563	1569	MILD	MILD	STRONG	VERY_STRONG
+1391	Stone Neverending Haze IPA	Une Hazy session IPA de couleur orangé doré, trouble, aux arômes floraux et de baies. Une salade de saveurs allant du citron vert à l’orange suivi d’arômes d’avoine, de citron et de carambole.	4	1610	1563	1573	LOW	LOW	LOW	MILD
+1404	Stirling	Pale Ale de couleur cuivrée. Au nez des notes d’agrumes, fruit de la passion, mandarine, pamplemousse. En bouche, très rafraîchissante avec une amertume équilibrée et légère.	5.3	1598	1561	1589	LOW	STRONG	MILD	MILD
+1346	Layer Cake	Bière de type Stout aromatisée au marshmallow et au chocolat. Amère et douce, cette bière forte se boit mieux à 10°C.	7	1601	1562	1578	LOW	MILD	STRONG	LOW
+1383	Lupulus Fructus	Bière de couleur rouge opalescente à la mouse rosée. Son arôme et son goût sont dominés par les fruits mais sur fond de notes acidulées.	4.8	1633	1562	1589	MILD	MILD	STRONG	LOW
+1387	Duvel 6.66	Le démon (duvel en flammand) s’est échappé dans cette version spéciale de la Duvel classique avec l’utilisation de 6 houblons et un taux d’alcool de 6.66%. Plus douce en bouche mais avec un houblonnage plus marqué. Helles yeah!	6.6	1608	1563	1572	LOW	LOW	MILD	STRONG
+1357	O'Hara's Nitro Stout	Avec une mousse crémeuse, cette stout développe d’agréables arômes torrefiés dans une robe d’un noire d’ébène. J’en fais pas trop, c’est juste qu’elle est bonne.	4.3	1604	1566	1578	LOW	LOW	LOW	LOW
+1386	Zepp	Hommage à la tradition des Pils, cette bière de fermentation basse produite dans la région lausannoise au bouquet printanier finit sur une bouche sèche et une légère amertume.	4.8	1598	1563	1686	LOW	LOW	LOW	LOW
+1396	Falling Apple Irish Cider	Cidre demi-sec à la robe de paille dorée et forte odeur de pulpe de pomme fraîche et riche. La saveur correspond à l'arôme. Agréablement aromatisé avec une légère amertume initiale qui laisse place à une douceur lente et persistante.	5	1604	1563	1587	\N	\N	\N	\N
+1381	Apfelwein Gold	Doux et fruité, ce cidre est sans arômes ajoutés, colorants ni édulcorants. Végétalien et naturellement sans gluten.	5	1685	1563	1587	\N	\N	\N	\N
+1683	Grano Maté Classique	Cette limonade pétillante ni trop amère ni trop sucrée à base de yerba mate est la version moderne et locale (Vevey) de l’infusion d’originaire amérindienne	0	1682	\N	1576	\N	\N	\N	\N
+1697	La Vagabonde	Un houblonnage marqué mais qui reste raisonnable pour un corps rond et fruité	6.5	1694	1561	1585	\N	\N	\N	\N
+1696	L’Horizon	D’une robe or pâle, cette bière aux notes de miel et de céréales toastées est rafraîchissante avec un doux équilibre	4.5	1694	1563	1589	\N	\N	\N	\N
+1695	La Yéti	Des notes de girofle et de banane pour une bière onctueuse au style bavarois	5.5	1694	1676	1574	\N	\N	\N	\N
+1709	Grano Maté La Bomba	Version pimpée au gingembre et à la lime de la limonade à base de maté	0	1682	\N	1576	\N	\N	\N	\N
+\.
+
+
+--
+-- Data for Name: edition; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.edition (id, name) FROM stdin;
+1405	2022
+\.
+
+
+--
+-- Data for Name: origin; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.origin (id, name, short_name, flag) FROM stdin;
+1616	Angleterre	ENG	🏴󠁧󠁢󠁥󠁮󠁧󠁿
+1592	Estonie	ES	🇪🇪
+1609	Etats-Unis	USA	🇺🇸
+1618	Allemagne	DE	🇩🇪
+1625	Italie	IT	🇮🇹
+1594	Belgique	BE	🇧🇪
+1677	France	FR	🇫🇷
+1597	Suisse	CH	🇨🇭
+1603	Irlande	IR	🇮🇪
+1600	Ecosse	SCO	🏴󠁧󠁢󠁳󠁣󠁴󠁿
+1680	Ukraine	UK	🇺🇦
+\.
+
+
+--
+-- Data for Name: producer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.producer (id, name, origin_fk) FROM stdin;
+1593	Põhjala Brewery	1592
+1595	Boon	1594
+1596	Lindemans	1594
+1598	La Nébuleuse SA	1597
+1599	Brassée en Belgique pour AMSTEIN	1594
+1601	BrewDog	1600
+1602	Officina della Birra	1597
+1604	Carlow Brewing Company	1603
+1605	Hoppy People	1597
+1606	Abbaye de Scourmont	1594
+1607	Dubuisson Frères	1594
+1608	Duvel Moortgat	1594
+1610	Stone Brewing  USA	1609
+1611	Brasserie de la pêcherie	1597
+1612	Verhaeghe Vichte	1594
+1613	Liefmans	1594
+1614	Brasserie du Val-Dieu	1594
+1615	Abbaye des Trappistes de Westmalle	1594
+1617	Beavertown Brewery	1616
+1619	BRLO	1618
+1620	Brasserie de l'Abbaye de St-Maurice	1597
+1621	Lefebvre	1594
+1622	Huyghe	1594
+1623	Sint Bernardus	1594
+1624	Brauerei S.Riegele	1618
+1626	CRAK Brewery	1625
+1627	Brasserie Haacht	1594
+1628	Brasserie d'Achouffe	1594
+1629	St-Feuillien	1594
+1630	Kitchen Brew	1597
+1631	Stone Brewing	1609
+1632	Shepherd Neame	1616
+1633	Lupulus	1594
+1634	Klosterbrauerei Andechs	1618
+1635	Timmermans	1594
+1636	Orval	1594
+1591	Pietra	1677
+1681	Berryland	1680
+1682	Grano Maté	1597
+1684	La Chouette	1677
+1685	Bembel-With-Care	1618
+1693	Vivi Kola	1597
+1694	Brasserie des Vagabonds	1597
+\.
+
+
+--
+-- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.service (id, selling_price, volume_in_cl, bought_drink_fk) FROM stdin;
+1639	4	50	1462
+1642	4	50	1422
+1498	5	30	1421
+1507	4.5	30	1429
+1641	5	25	1413
+1495	5	30	1419
+1522	4.5	30	1438
+1486	5	30	1414
+1489	8	30	1417
+1525	5	30	1441
+1537	5	30	1455
+1558	6	30	1472
+1653	9	50	1450
+1638	7	44	1426
+1499	9	50	1421
+1508	8	50	1429
+1519	5	30	1436
+1510	5	30	1430
+1546	5	30	1465
+1657	6.5	33	1456
+1555	5.5	30	1469
+1673	5.5	33	1442
+1665	6	33	1449
+1648	7	33	1423
+1668	6	33	1463
+1477	6	30	1407
+1649	6.5	25	1459
+1645	6	35	1460
+1552	6	30	1467
+1659	5.5	33	1439
+1528	6	30	1446
+1671	6	33	1464
+1652	8	33	1468
+1531	6	30	1452
+1640	6	33	1473
+1674	6	33	1471
+1667	7.5	33	1443
+1534	6.5	30	1454
+1549	6.5	30	1466
+1650	9	33	1453
+1513	6.5	30	1432
+1655	6	33	1425
+1666	7	33	1440
+1496	9	50	1419
+1516	6.5	30	1433
+1523	8	50	1438
+1637	7	44	1415
+1483	8	30	1409
+1540	6.5	30	1457
+1663	7	33	1435
+1504	6	30	1428
+1501	6	30	1427
+1480	6.5	30	1408
+1487	9	50	1414
+1543	6.5	30	1461
+1658	7	33	1434
+1670	7	33	1448
+1643	7	33	1416
+1651	6.5	33	1458
+1490	12	50	1417
+1526	9	50	1441
+1656	7	33	1445
+1646	6.5	33	1437
+1661	6.5	33	1420
+1647	7	33	1411
+1538	9	50	1455
+1559	10	50	1472
+1492	7	30	1418
+1644	7.5	33	1470
+1664	7.5	33	1410
+1520	9	50	1436
+1511	9	50	1430
+1547	9	50	1465
+1556	9.5	50	1469
+1478	10	50	1407
+1474	6.5	30	1406
+1553	10	50	1467
+1654	8.5	40	1451
+1529	10	50	1446
+1532	10	50	1452
+1535	11	50	1454
+1550	11	50	1466
+1514	11	50	1432
+1517	11	50	1433
+1484	12	50	1409
+1541	11	50	1457
+1505	10	50	1428
+1502	10	50	1427
+1481	11	50	1408
+1544	11	50	1461
+1660	10	37	1447
+1669	10	37	1444
+1493	12	50	1418
+1500	28	140	1421
+1509	22.5	140	1429
+1475	11	50	1406
+1497	26	140	1419
+1524	23	140	1438
+1488	26	140	1414
+1491	33	140	1417
+1527	26	140	1441
+1539	26	140	1455
+1560	28	140	1472
+1521	26	140	1436
+1512	26	140	1430
+1548	26	140	1465
+1557	27	140	1469
+1479	28	140	1407
+1554	28	140	1467
+1530	28	140	1446
+1533	28	140	1452
+1536	30	140	1454
+1551	30	140	1466
+1515	29	140	1432
+1518	30	140	1433
+1485	33	140	1409
+1542	31	140	1457
+1675	30	75	1424
+1506	28	140	1428
+1503	28	140	1427
+1482	31	140	1408
+1545	30	140	1461
+1494	34	140	1418
+1476	30	140	1406
+1699	6.5	33	1698
+1703	6.5	33	1702
+666	3.5	33	1692
+1701	6.5	33	1700
+1705	3.5	33	1704
+1711	3.5	33	1710
+\.
+
+
+--
+-- Data for Name: style; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.style (id, name, description, parent_fk) FROM stdin;
+1567	Lambic/Bière acide/Berliner Weisse	\N	\N
+1568	Porter	\N	\N
+1569	Abbaye	\N	\N
+1570	Triple	\N	\N
+1571	Saison	\N	\N
+1572	Strong Ale	\N	\N
+1573	New England IPA	\N	\N
+1574	Bière de froment / Blanche / Weissbier	\N	\N
+1575	Sans alcool	\N	\N
+1577	Oud Bruin	\N	\N
+1578	Stout	\N	\N
+1579	Gose	\N	\N
+1581	Trappiste	\N	\N
+1585	India Pale Ale	\N	\N
+1586	Bitter	\N	\N
+1588	Lager / Premium	\N	\N
+1589	Pale Ale	\N	\N
+1587	Cidre	\N	\N
+1576	Minérale	\N	\N
+1686	Pils	\N	\N
+\.
+
+
+--
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.hibernate_sequence', 1711, true);
+
+
+--
+-- Name: databasechangeloglock databasechangeloglock_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.databasechangeloglock
+    ADD CONSTRAINT databasechangeloglock_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: bought_drink pk_bought_drink; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bought_drink
+    ADD CONSTRAINT pk_bought_drink PRIMARY KEY (id);
+
+
+--
+-- Name: color pk_color; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.color
+    ADD CONSTRAINT pk_color PRIMARY KEY (id);
+
+
+--
+-- Name: drink pk_drink; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drink
+    ADD CONSTRAINT pk_drink PRIMARY KEY (id);
+
+
+--
+-- Name: edition pk_edition; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.edition
+    ADD CONSTRAINT pk_edition PRIMARY KEY (id);
+
+
+--
+-- Name: origin pk_origin; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.origin
+    ADD CONSTRAINT pk_origin PRIMARY KEY (id);
+
+
+--
+-- Name: producer pk_producer; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.producer
+    ADD CONSTRAINT pk_producer PRIMARY KEY (id);
+
+
+--
+-- Name: service pk_service; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.service
+    ADD CONSTRAINT pk_service PRIMARY KEY (id);
+
+
+--
+-- Name: style pk_style; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.style
+    ADD CONSTRAINT pk_style PRIMARY KEY (id);
+
+
+--
+-- Name: bought_drink uk_bought_drink__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bought_drink
+    ADD CONSTRAINT uk_bought_drink__name UNIQUE (code, edition_fk);
+
+
+--
+-- Name: color uk_color__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.color
+    ADD CONSTRAINT uk_color__name UNIQUE (name);
+
+
+--
+-- Name: drink uk_drink__name_producer; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drink
+    ADD CONSTRAINT uk_drink__name_producer UNIQUE (name, producer_fk);
+
+
+--
+-- Name: edition uk_edition__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.edition
+    ADD CONSTRAINT uk_edition__name UNIQUE (name);
+
+
+--
+-- Name: origin uk_origin__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.origin
+    ADD CONSTRAINT uk_origin__name UNIQUE (name);
+
+
+--
+-- Name: origin uk_origin__short_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.origin
+    ADD CONSTRAINT uk_origin__short_name UNIQUE (short_name);
+
+
+--
+-- Name: producer uk_producer__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.producer
+    ADD CONSTRAINT uk_producer__name UNIQUE (name);
+
+
+--
+-- Name: service uk_service__bought_drink_volume_in_cl; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.service
+    ADD CONSTRAINT uk_service__bought_drink_volume_in_cl UNIQUE (bought_drink_fk, volume_in_cl);
+
+
+--
+-- Name: style uk_style__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.style
+    ADD CONSTRAINT uk_style__name UNIQUE (name);
+
+
+--
+-- Name: bought_drink fk_bought_drink__drink; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bought_drink
+    ADD CONSTRAINT fk_bought_drink__drink FOREIGN KEY (drink_fk) REFERENCES public.drink(id);
+
+
+--
+-- Name: bought_drink fk_bought_drink__edition; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.bought_drink
+    ADD CONSTRAINT fk_bought_drink__edition FOREIGN KEY (edition_fk) REFERENCES public.edition(id);
+
+
+--
+-- Name: drink fk_drink__color; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drink
+    ADD CONSTRAINT fk_drink__color FOREIGN KEY (color_fk) REFERENCES public.color(id);
+
+
+--
+-- Name: drink fk_drink__producer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drink
+    ADD CONSTRAINT fk_drink__producer FOREIGN KEY (producer_fk) REFERENCES public.producer(id);
+
+
+--
+-- Name: drink fk_drink__style; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.drink
+    ADD CONSTRAINT fk_drink__style FOREIGN KEY (style_fk) REFERENCES public.style(id);
+
+
+--
+-- Name: producer fk_producer_origin__origin; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.producer
+    ADD CONSTRAINT fk_producer_origin__origin FOREIGN KEY (origin_fk) REFERENCES public.origin(id);
+
+
+--
+-- Name: service fk_service__bought_drink; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.service
+    ADD CONSTRAINT fk_service__bought_drink FOREIGN KEY (bought_drink_fk) REFERENCES public.bought_drink(id);
+
+
+--
+-- Name: style fk_style_parent; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.style
+    ADD CONSTRAINT fk_style_parent FOREIGN KEY (parent_fk) REFERENCES public.style(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
