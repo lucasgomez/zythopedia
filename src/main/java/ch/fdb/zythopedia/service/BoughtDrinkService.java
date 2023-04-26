@@ -107,6 +107,11 @@ public class BoughtDrinkService {
 
     public Set<BoughtDrink> updateBoughtDrinksVolume(Collection<CreateBoughtDrinkDto> drinksToUpdate) {
         var allBoughtDrinksByCode = boughtDrinkRepository.findAll().stream()
+                .filter(boughtDrink -> Optional.of(boughtDrink)
+                        .map(BoughtDrink::getEdition)
+                        .map(Edition::getName)
+                        .filter(editionName -> editionName.equals(editionService.getCurrentEditionName()))
+                        .isPresent())
                 .collect(Collectors.toMap(BoughtDrink::getCode, boughtDrink -> boughtDrink));
         var updatedBoughtDrinks = drinksToUpdate.stream()
                 .map(drinkToUpdate -> Optional.ofNullable(allBoughtDrinksByCode.get(drinkToUpdate.getCode()))
