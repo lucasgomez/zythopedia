@@ -1,13 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { OKTA_AUTH, OktaAuthStateService } from '@okta/okta-angular';
-import { AuthState, OktaAuth } from '@okta/okta-auth-js';
-import { MenuItem } from 'primeng/api';
-import { combineLatest, map, Observable } from 'rxjs';
-import { ColorService } from '../../../services/color.service';
-import { HeaderDisplayService } from '../../../services/header-display.service';
-import { OriginService } from '../../../services/origin.service';
-import { ProducerService } from '../../../services/producer.service';
-import { StyleService } from '../../../services/style.service';
+import {Component, OnInit} from '@angular/core';
+import {MenuItem} from 'primeng/api';
+import {combineLatest, map, Observable} from 'rxjs';
+import {ColorService} from '../../../services/color.service';
+import {HeaderDisplayService} from '../../../services/header-display.service';
+import {OriginService} from '../../../services/origin.service';
+import {ProducerService} from '../../../services/producer.service';
+import {StyleService} from '../../../services/style.service';
 
 @Component({
     selector: 'app-header',
@@ -17,15 +15,12 @@ import { StyleService } from '../../../services/style.service';
 export class HeaderComponent implements OnInit {
 
     items$!: Observable<MenuItem[]>;
-    authState$!: Observable<AuthState>;
     serviceMethods = [
         {label: 'Pressions', value: 'TAP'},
         {label: 'Bouteilles', value: 'BOTTLE'}];
     displayHeader$!: Observable<boolean>;
 
     constructor(
-        @Inject(OKTA_AUTH) private readonly oktaAuth: OktaAuth,
-        private readonly authService: OktaAuthStateService,
         private readonly producerService: ProducerService,
         private readonly originService: OriginService,
         private readonly styleService: StyleService,
@@ -36,7 +31,6 @@ export class HeaderComponent implements OnInit {
 
     ngOnInit(): void {
         this.displayHeader$ = this.headerDisplayService.mustDisplayHeader();
-        this.authState$ = this.authService.authState$;
         this.items$ = combineLatest([
             this.producerService.findAll(),
             this.originService.findAll(),
@@ -77,15 +71,6 @@ export class HeaderComponent implements OnInit {
                 },
             ])
         )
-    }
-
-    loginButton(authState: AuthState): void {
-        if (authState.isAuthenticated) {
-            this.oktaAuth.signOut().catch(console.error);
-            return;
-        }
-
-        this.oktaAuth.signInWithRedirect().catch(console.error);
     }
 }
 
