@@ -110,5 +110,8 @@
       }
     }
   },
-  "defaultProject": "zythopedia"
+  "defaultProject": "zythopedia",
+  "cli": {
+    "analytics": false
+  }
 }
