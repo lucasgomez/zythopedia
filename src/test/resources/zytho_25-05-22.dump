@@ -73,7 +73,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: bought_drink; Type: TABLE; Schema: public; Owner: postgres
+-- Name: bought_drink; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.bought_drink (
@@ -89,10 +89,10 @@ CREATE TABLE public.bought_drink (
 );
 
 
-ALTER TABLE public.bought_drink OWNER TO postgres;
+ALTER TABLE public.bought_drink OWNER TO zythopedia;
 
 --
--- Name: color; Type: TABLE; Schema: public; Owner: postgres
+-- Name: color; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.color (
@@ -102,10 +102,10 @@ CREATE TABLE public.color (
 );
 
 
-ALTER TABLE public.color OWNER TO postgres;
+ALTER TABLE public.color OWNER TO zythopedia;
 
 --
--- Name: databasechangelog; Type: TABLE; Schema: public; Owner: postgres
+-- Name: databasechangelog; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.databasechangelog (
@@ -126,10 +126,10 @@ CREATE TABLE public.databasechangelog (
 );
 
 
-ALTER TABLE public.databasechangelog OWNER TO postgres;
+ALTER TABLE public.databasechangelog OWNER TO zythopedia;
 
 --
--- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: postgres
+-- Name: databasechangeloglock; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.databasechangeloglock (
@@ -140,10 +140,10 @@ CREATE TABLE public.databasechangeloglock (
 );
 
 
-ALTER TABLE public.databasechangeloglock OWNER TO postgres;
+ALTER TABLE public.databasechangeloglock OWNER TO zythopedia;
 
 --
--- Name: drink; Type: TABLE; Schema: public; Owner: postgres
+-- Name: drink; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.drink (
@@ -161,10 +161,10 @@ CREATE TABLE public.drink (
 );
 
 
-ALTER TABLE public.drink OWNER TO postgres;
+ALTER TABLE public.drink OWNER TO zythopedia;
 
 --
--- Name: edition; Type: TABLE; Schema: public; Owner: postgres
+-- Name: edition; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.edition (
@@ -173,10 +173,10 @@ CREATE TABLE public.edition (
 );
 
 
-ALTER TABLE public.edition OWNER TO postgres;
+ALTER TABLE public.edition OWNER TO zythopedia;
 
 --
--- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: hibernate_sequence; Type: SEQUENCE; Schema: public; Owner: zythopedia
 --
 
 CREATE SEQUENCE public.hibernate_sequence
@@ -187,10 +187,10 @@ CREATE SEQUENCE public.hibernate_sequence
     CACHE 1;
 
 
-ALTER TABLE public.hibernate_sequence OWNER TO postgres;
+ALTER TABLE public.hibernate_sequence OWNER TO zythopedia;
 
 --
--- Name: origin; Type: TABLE; Schema: public; Owner: postgres
+-- Name: origin; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.origin (
@@ -201,10 +201,10 @@ CREATE TABLE public.origin (
 );
 
 
-ALTER TABLE public.origin OWNER TO postgres;
+ALTER TABLE public.origin OWNER TO zythopedia;
 
 --
--- Name: producer; Type: TABLE; Schema: public; Owner: postgres
+-- Name: producer; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.producer (
@@ -214,10 +214,10 @@ CREATE TABLE public.producer (
 );
 
 
-ALTER TABLE public.producer OWNER TO postgres;
+ALTER TABLE public.producer OWNER TO zythopedia;
 
 --
--- Name: service; Type: TABLE; Schema: public; Owner: postgres
+-- Name: service; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.service (
@@ -228,10 +228,10 @@ CREATE TABLE public.service (
 );
 
 
-ALTER TABLE public.service OWNER TO postgres;
+ALTER TABLE public.service OWNER TO zythopedia;
 
 --
--- Name: style; Type: TABLE; Schema: public; Owner: postgres
+-- Name: style; Type: TABLE; Schema: public; Owner: zythopedia
 --
 
 CREATE TABLE public.style (
@@ -242,10 +242,10 @@ CREATE TABLE public.style (
 );
 
 
-ALTER TABLE public.style OWNER TO postgres;
+ALTER TABLE public.style OWNER TO zythopedia;
 
 --
--- Data for Name: bought_drink; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: bought_drink; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.bought_drink (id, code, edition_fk, drink_fk, buying_price, volume_in_cl, service_method, returnable, availability) FROM stdin;
@@ -325,7 +325,7 @@ COPY public.bought_drink (id, code, edition_fk, drink_fk, buying_price, volume_i
 
 
 --
--- Data for Name: color; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: color; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.color (id, name, description) FROM stdin;
@@ -340,7 +340,7 @@ COPY public.color (id, name, description) FROM stdin;
 
 
 --
--- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: databasechangelog; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.databasechangelog (id, author, filename, dateexecuted, orderexecuted, exectype, md5sum, description, comments, tag, liquibase, contexts, labels, deployment_id) FROM stdin;
@@ -362,7 +362,7 @@ V003.07	lg	db.changelog/files/V003__drink_and_co.xml	2022-05-23 18:59:58.931006	
 
 
 --
--- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: databasechangeloglock; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin;
@@ -371,7 +371,7 @@ COPY public.databasechangeloglock (id, locked, lockgranted, lockedby) FROM stdin
 
 
 --
--- Data for Name: drink; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: drink; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.drink (id, name, description, abv, producer_fk, color_fk, style_fk, sourness, bitterness, sweetness, hoppiness) FROM stdin;
@@ -453,7 +453,7 @@ COPY public.drink (id, name, description, abv, producer_fk, color_fk, style_fk, 
 
 
 --
--- Data for Name: edition; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: edition; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.edition (id, name) FROM stdin;
@@ -462,7 +462,7 @@ COPY public.edition (id, name) FROM stdin;
 
 
 --
--- Data for Name: origin; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: origin; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.origin (id, name, short_name, flag) FROM stdin;
@@ -481,7 +481,7 @@ COPY public.origin (id, name, short_name, flag) FROM stdin;
 
 
 --
--- Data for Name: producer; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: producer; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.producer (id, name, origin_fk) FROM stdin;
@@ -532,7 +532,7 @@ COPY public.producer (id, name, origin_fk) FROM stdin;
 
 
 --
--- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: service; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.service (id, selling_price, volume_in_cl, bought_drink_fk) FROM stdin;
@@ -670,7 +670,7 @@ COPY public.service (id, selling_price, volume_in_cl, bought_drink_fk) FROM stdi
 
 
 --
--- Data for Name: style; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: style; Type: TABLE DATA; Schema: public; Owner: zythopedia
 --
 
 COPY public.style (id, name, description, parent_fk) FROM stdin;
@@ -698,14 +698,14 @@ COPY public.style (id, name, description, parent_fk) FROM stdin;
 
 
 --
--- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: hibernate_sequence; Type: SEQUENCE SET; Schema: public; Owner: zythopedia
 --
 
 SELECT pg_catalog.setval('public.hibernate_sequence', 1711, true);
 
 
 --
--- Name: databasechangeloglock databasechangeloglock_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: databasechangeloglock databasechangeloglock_pkey; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.databasechangeloglock
@@ -713,7 +713,7 @@ ALTER TABLE ONLY public.databasechangeloglock
 
 
 --
--- Name: bought_drink pk_bought_drink; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: bought_drink pk_bought_drink; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.bought_drink
@@ -721,7 +721,7 @@ ALTER TABLE ONLY public.bought_drink
 
 
 --
--- Name: color pk_color; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: color pk_color; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.color
@@ -729,7 +729,7 @@ ALTER TABLE ONLY public.color
 
 
 --
--- Name: drink pk_drink; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: drink pk_drink; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.drink
@@ -737,7 +737,7 @@ ALTER TABLE ONLY public.drink
 
 
 --
--- Name: edition pk_edition; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: edition pk_edition; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.edition
@@ -745,7 +745,7 @@ ALTER TABLE ONLY public.edition
 
 
 --
--- Name: origin pk_origin; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: origin pk_origin; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.origin
@@ -753,7 +753,7 @@ ALTER TABLE ONLY public.origin
 
 
 --
--- Name: producer pk_producer; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: producer pk_producer; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.producer
@@ -761,7 +761,7 @@ ALTER TABLE ONLY public.producer
 
 
 --
--- Name: service pk_service; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: service pk_service; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.service
@@ -769,7 +769,7 @@ ALTER TABLE ONLY public.service
 
 
 --
--- Name: style pk_style; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: style pk_style; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.style
@@ -777,7 +777,7 @@ ALTER TABLE ONLY public.style
 
 
 --
--- Name: bought_drink uk_bought_drink__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: bought_drink uk_bought_drink__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.bought_drink
@@ -785,7 +785,7 @@ ALTER TABLE ONLY public.bought_drink
 
 
 --
--- Name: color uk_color__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: color uk_color__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.color
@@ -793,7 +793,7 @@ ALTER TABLE ONLY public.color
 
 
 --
--- Name: drink uk_drink__name_producer; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: drink uk_drink__name_producer; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.drink
@@ -801,7 +801,7 @@ ALTER TABLE ONLY public.drink
 
 
 --
--- Name: edition uk_edition__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: edition uk_edition__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.edition
@@ -809,7 +809,7 @@ ALTER TABLE ONLY public.edition
 
 
 --
--- Name: origin uk_origin__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: origin uk_origin__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.origin
@@ -817,7 +817,7 @@ ALTER TABLE ONLY public.origin
 
 
 --
--- Name: origin uk_origin__short_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: origin uk_origin__short_name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.origin
@@ -825,7 +825,7 @@ ALTER TABLE ONLY public.origin
 
 
 --
--- Name: producer uk_producer__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: producer uk_producer__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.producer
@@ -833,7 +833,7 @@ ALTER TABLE ONLY public.producer
 
 
 --
--- Name: service uk_service__bought_drink_volume_in_cl; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: service uk_service__bought_drink_volume_in_cl; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.service
@@ -841,7 +841,7 @@ ALTER TABLE ONLY public.service
 
 
 --
--- Name: style uk_style__name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: style uk_style__name; Type: CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.style
@@ -849,7 +849,7 @@ ALTER TABLE ONLY public.style
 
 
 --
--- Name: bought_drink fk_bought_drink__drink; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: bought_drink fk_bought_drink__drink; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.bought_drink
@@ -857,7 +857,7 @@ ALTER TABLE ONLY public.bought_drink
 
 
 --
--- Name: bought_drink fk_bought_drink__edition; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: bought_drink fk_bought_drink__edition; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.bought_drink
@@ -865,7 +865,7 @@ ALTER TABLE ONLY public.bought_drink
 
 
 --
--- Name: drink fk_drink__color; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: drink fk_drink__color; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.drink
@@ -873,7 +873,7 @@ ALTER TABLE ONLY public.drink
 
 
 --
--- Name: drink fk_drink__producer; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: drink fk_drink__producer; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.drink
@@ -881,7 +881,7 @@ ALTER TABLE ONLY public.drink
 
 
 --
--- Name: drink fk_drink__style; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: drink fk_drink__style; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.drink
@@ -889,7 +889,7 @@ ALTER TABLE ONLY public.drink
 
 
 --
--- Name: producer fk_producer_origin__origin; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: producer fk_producer_origin__origin; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.producer
@@ -897,7 +897,7 @@ ALTER TABLE ONLY public.producer
 
 
 --
--- Name: service fk_service__bought_drink; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: service fk_service__bought_drink; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.service
@@ -905,7 +905,7 @@ ALTER TABLE ONLY public.service
 
 
 --
--- Name: style fk_style_parent; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: style fk_style_parent; Type: FK CONSTRAINT; Schema: public; Owner: zythopedia
 --
 
 ALTER TABLE ONLY public.style
