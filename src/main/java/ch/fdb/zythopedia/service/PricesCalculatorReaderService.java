@@ -19,6 +19,7 @@ public class PricesCalculatorReaderService {
 
     public static final int PRICE_CALCULATOR_SERVICE_ID_COLUMN_NUM = 0;
     public static final int PRICE_CALCULATOR_PRICE_COLUMN_NUM = 11;
+    public static final int PRICE_CALCULATOR_VOLUME_IN_CL_COLUMN_NUM = 10;
     public static final int PRICE_CALCULATOR_PRODUCER_NAME_COLUMN_NUM = 2;
     public static final int PRICE_CALCULATOR_DRINK_NAME_COLUMN_NUM = 4;
 
@@ -37,6 +38,7 @@ public class PricesCalculatorReaderService {
                 .id(getCellLongContent(row, PRICE_CALCULATOR_SERVICE_ID_COLUMN_NUM))
                 .sellingPrice(getCellDoubleContent(row, PRICE_CALCULATOR_PRICE_COLUMN_NUM))
                 .drinkName(getCellStringContent(row, PRICE_CALCULATOR_DRINK_NAME_COLUMN_NUM))
+                .volumeInCl(getCellLongContent(row, PRICE_CALCULATOR_VOLUME_IN_CL_COLUMN_NUM))
                 .producerName(getCellStringContent(row, PRICE_CALCULATOR_PRODUCER_NAME_COLUMN_NUM))
                 .build();
     }

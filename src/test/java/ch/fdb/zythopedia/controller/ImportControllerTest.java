@@ -2,10 +2,7 @@ package ch.fdb.zythopedia.controller;
 
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.ServiceDto;
-import ch.fdb.zythopedia.entity.Color;
-import ch.fdb.zythopedia.entity.Origin;
-import ch.fdb.zythopedia.entity.Producer;
-import ch.fdb.zythopedia.entity.Style;
+import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.repository.*;
 import ch.fdb.zythopedia.service.DrinkDataReaderService;
 import ch.fdb.zythopedia.service.ImporterTestHelper;
@@ -116,11 +113,15 @@ class ImportControllerTest {
         var orderFile = ImporterTestHelper.openFileFromResources(ImporterTestHelper.AMSTEIN_ORDER_XLSX);
         postFile(API_IMPORT_ORDER_AMSTEIN, orderFile);
 
+        var catalogFile = ImporterTestHelper.openFileFromResources(ImporterTestHelper.AMSTEIN_CATALOG_XLSX);
+        postFile(API_IMPORT_CATALOG_AMSTEIN, catalogFile);
+
         var drinkDataFile = ImporterTestHelper.openFileFromResources(ImporterTestHelper.DRINK_DATA_XLSX);
         postFile(API_IMPORT_DATA, drinkDataFile);
 
-        assertFalse(serviceRepository.findAll().stream()
-                .anyMatch(service -> Objects.nonNull(service.getSellingPrice())));
+        assertTrue(serviceRepository.findAll().stream()
+                .allMatch(service -> Objects.isNull(service.getSellingPrice())),
+                "Selling price should be null before import");
 
         when(mockPricesCalculatorReaderService.readServices(any()))
                 .thenAnswer(invokation -> pricesCalculatorReaderService.readServices(ImporterTestHelper.openXLSXFromResources(ImporterTestHelper.PRICE_CALCULATOR_XLSX)).stream()
@@ -128,9 +129,19 @@ class ImportControllerTest {
                         .collect(Collectors.toList()));
 
         var calculatorFile = ImporterTestHelper.openFileFromResources(ImporterTestHelper.PRICE_CALCULATOR_XLSX);
-
-        fail("Not finished yet!");
         postFile(API_IMPORT_CALCULATOR, calculatorFile);
+
+        var pricedServices = serviceRepository.findAll().stream()
+                .filter(service -> Objects.nonNull(service.getSellingPrice()))
+                .collect(Collectors.toSet());
+        assertEquals(5L, pricedServices.size(),
+                "Selling price should be set after import for 5 drinks");
+        assertEquals(25.0, pricedServices.stream()
+                .filter(service -> service.getVolumeInCl() == 140L)
+                .map(Service::getSellingPrice)
+                .findFirst()
+                .orElse(0.0),
+                "Selling price for 140cl Lupulus should have been set to 25.0 after price import");
 
     }
 
@@ -164,8 +175,7 @@ class ImportControllerTest {
         assertTrue(Strings.isEmpty(updatedDescriptionStyle.getDescription()), "Lager style should not have description yet");
 
         // Check initial status for producers
-        var deletedOrigin = originRepository.findByName("Corse").map(Origin::getId).orElseThrow();
-
+        originRepository.findByName("Corse").map(Origin::getId).orElseThrow();
 
         var file = ImporterTestHelper.openFileFromResources(ImporterTestHelper.DRINK_DATA_XLSX);
         postFile(API_IMPORT_DATA, file);
