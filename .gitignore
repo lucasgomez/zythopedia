@@ -1,8 +1,9 @@
 *.iml
 /target
 .idea
+/tmp
 *.log
-
+src/test/resources/.~lock*
 front/dist/
 front/node_modules/
 front/.angular/cache
