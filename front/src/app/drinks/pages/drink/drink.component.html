@@ -49,9 +49,8 @@
                         <li class="text-900 line-height-3">{{service.volumeInCl}} cl</li>
                         <li class="text-300 mx-3">&mdash;</li>
                         <li class="text-500 font-medium mr-3">Prix</li>
-                        <li class="text-900 line-height-3">{{service.sellingPrice.toFixed(2)}} CHF</li>
+                        <li class="text-900 line-height-3">{{service?.sellingPrice?.toFixed(2)}} CHF</li>
                     </ul>
-                    <!--<button pButton pRipple icon="pi pi-download" label="Download" class="p-button-outlined mt-2 md:mt-0"></button>-->
                 </div>
             </div>
         </div>
