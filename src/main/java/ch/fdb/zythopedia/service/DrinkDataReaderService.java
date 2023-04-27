@@ -124,10 +124,10 @@ public class DrinkDataReaderService {
 
     public Map<Long, IdOrNameDto> readDrinksToDelete(Collection<Row> rows) {
         return rows.stream()
-                .filter(row -> Strings.isNotBlank(getCellStringContent(row, DRINK_TO_DELETE_COLUMN_NUM)))
+                .filter(row -> hasCellStringContent(row, DRINK_TO_DELETE_COLUMN_NUM))
                 .collect(Collectors.toMap(
                         row -> SpreadsheetHelper.getCellLongContent(row, DRINK_ID_COLUMN_NUM),
-                        row -> null));
+                        row -> IdOrNameDto.builder().build()));
     }
 
     public Map<Long, IdOrNameDto> readColorsToDeleteWithReplacement(Collection<Row> rows) {

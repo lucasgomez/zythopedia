@@ -83,6 +83,13 @@ public final class SpreadsheetHelper {
                 .orElse(null);
     }
 
+    public static boolean hasCellStringContent(Row row, int column_num) {
+        return Optional.ofNullable(row.getCell(column_num))
+                .map(Cell::getStringCellValue)
+                .filter(Strings::isNotEmpty)
+                .isPresent();
+    }
+
     public static Double getCellDoubleContent(Row row, int column_num) {
         return Optional.ofNullable(row.getCell(column_num))
                 .filter(cell -> CellType.NUMERIC == cell.getCellType())
