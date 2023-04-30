@@ -20,6 +20,8 @@ import { BeamerDisplayComponent } from './pages/beamer-display/beamer-display.co
 import { DescriptiveDrinksListComponent } from './pages/descriptive-drinks-list/descriptive-drinks-list.component';
 import { DogModeComponent } from './pages/dog-mode/dog-mode.component';
 import { DrinkComponent } from './pages/drink/drink.component';
+import {DrinkCardComponent} from "./pages/drink-card/drink-card.component";
+import {RandomComponent} from "./pages/random/random.component";
 
 @NgModule({
     declarations: [
@@ -27,6 +29,8 @@ import { DrinkComponent } from './pages/drink/drink.component';
         BeamerDisplayComponent,
         DogModeComponent,
         DrinkComponent,
+        DrinkCardComponent,
+        RandomComponent,
         StrengthRadarComponent
     ],
     imports: [
@@ -37,6 +41,10 @@ import { DrinkComponent } from './pages/drink/drink.component';
                 component: DescriptiveDrinksListComponent,
                 resolve: { drinks: DrinksResolver },
                 data: { title: 'Toutes les boissons' }
+            },
+            {
+                path: 'random',
+                component: RandomComponent
             },
             {
                 path: 'beamer',

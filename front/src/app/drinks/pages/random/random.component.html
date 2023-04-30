@@ -1,0 +1,11 @@
+<ng-container *ngIf="drinks$ | async as drinks else loading">
+    <h1>L'Oracle a parlé!</h1>
+    <img src="assets/elephant_oracle.png" alt="L'Oracle des Bières est un éléphant rose. Mais en plus sage.">
+    <p>Après consultation des Dieux et dégustations d'une mousse au passage, l'Oracle te recommande ces 3 Bières</p>
+    <div *ngFor="let drink of drinks" class="drink">
+        <drink-card [drink]="drink"></drink-card>
+    </div>
+</ng-container>
+<ng-template #loading>
+    <h2>L'Oracle réfléchit encore. La soif, tout ça...</h2>
+</ng-template>

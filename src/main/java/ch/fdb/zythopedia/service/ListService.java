@@ -1,6 +1,7 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.DescriptiveList;
+import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.SoldDrinkLightDto;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkLightDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,12 +34,12 @@ public class ListService {
 
     @Value("${service.drinks.stylesIdsToIgnoreInDisplay}")
     private List<Long> stylesIdsToIgnoreInDisplay;
-    private BoughtDrinkService boughtDrinkService;
-    private SoldDrinkLightDtoMapper soldDrinkLightDtoMapper;
-    private ColorRepository colorRepository;
-    private StyleRepository styleRepository;
-    private ProducerRepository producerRepository;
-    private OriginRepository originRepository;
+    private final BoughtDrinkService boughtDrinkService;
+    private final SoldDrinkLightDtoMapper soldDrinkLightDtoMapper;
+    private final ColorRepository colorRepository;
+    private final StyleRepository styleRepository;
+    private final ProducerRepository producerRepository;
+    private final OriginRepository originRepository;
 
     public ListService(BoughtDrinkService boughtDrinkService, SoldDrinkLightDtoMapper soldDrinkLightDtoMapper, ColorRepository colorRepository, StyleRepository styleRepository, ProducerRepository producerRepository, OriginRepository originRepository) {
         this.boughtDrinkService = boughtDrinkService;
@@ -108,5 +110,9 @@ public class ListService {
                 .description(listType.getDescription())
                 .content(list)
                 .build();
+    }
+
+    public Set<SoldDrinkDetailedDto> getRandom(Integer count) {
+        return boughtDrinkService.getRandom(count);
     }
 }

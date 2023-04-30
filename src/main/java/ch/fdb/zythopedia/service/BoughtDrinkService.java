@@ -26,13 +26,14 @@ import java.util.stream.Collectors;
 @Service
 public class BoughtDrinkService {
 
+    public static final Predicate<BoughtDrink> BOUGHT_DRINK_AVAILABLE = boughtDrink -> boughtDrink.getAvailability() == Availability.AVAILABLE;
     private static final double CENTS_PRECISION = 0.01d;
 
-    private BoughtDrinkRepository boughtDrinkRepository;
-    private SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper;
-    private ServiceService serviceService;
-    private EditionService editionService;
-    private DrinkService drinkService;
+    private final BoughtDrinkRepository boughtDrinkRepository;
+    private final SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper;
+    private final ServiceService serviceService;
+    private final EditionService editionService;
+    private final DrinkService drinkService;
 
     public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService, DrinkService drinkService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
@@ -60,7 +61,7 @@ public class BoughtDrinkService {
     private void createServiceIfNeeded(Collection<BoughtDrink> createdBoughtDrinks) {
         createdBoughtDrinks.stream()
                 .filter(this::isReadyForServiceCreation)
-                .forEach(boughtDrink -> serviceService.createNeededService(boughtDrink));
+                .forEach(serviceService::createNeededService);
     }
 
     private boolean isReadyForServiceCreation(BoughtDrink boughtDrink) {
@@ -234,5 +235,18 @@ public class BoughtDrinkService {
 
         return soldDrinkDetailedDtoMapper.toDto(
                 createBoughtDrink(boughtDrinkToCreate, drink, editionService.getCurrentEdition()));
+    }
+
+    public Set<SoldDrinkDetailedDto> getRandom(Integer count) {
+        return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition())
+                .stream()
+                .filter(BOUGHT_DRINK_AVAILABLE)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                    Collections.shuffle(collected);
+                    return collected.stream();
+                }))
+                .limit(Optional.ofNullable(count).orElse(1))
+                .map(soldDrinkDetailedDtoMapper::toDto)
+                .collect(Collectors.toSet());
     }
 }

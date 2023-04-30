@@ -12,14 +12,15 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ListController {
 
-    private ListService listService;
-    private BoughtDrinkService boughtDrinkService;
+    private final ListService listService;
+    private final BoughtDrinkService boughtDrinkService;
 
     public ListController(ListService listService, BoughtDrinkService boughtDrinkService) {
         this.listService = listService;
@@ -35,6 +36,11 @@ public class ListController {
     @GetMapping("/drink")
     public DescriptiveList<SoldDrinkLightDto> getDrinksByType(@RequestParam(name = "service") ServiceMethod serviceMethod) {
         return listService.findByServiceMethod(serviceMethod);
+    }
+
+    @GetMapping("/drink/random")
+    public Set<SoldDrinkDetailedDto> getRandom(@RequestParam(name = "count", required = false) Integer count) {
+        return listService.getRandom(count);
     }
 
     @GetMapping(value = "/color/{colorId}/drink")

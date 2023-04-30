@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { DescriptiveList } from '../models/DescriptiveList';
-import { Drink } from '../models/Drink';
+import {DetailedDrink, Drink} from '../models/Drink';
 
 const API_URL = `${environment.BASE_URL}/api`;
 
@@ -39,5 +39,11 @@ export class ListService {
 
     findAvailableTapBeers$(serviceMethod: string): Observable<Drink[]> {
         return this.http.get<Drink[]>(`${API_URL}/service/${serviceMethod}/beer/available`);
+    }
+
+    getRandom$(count: number) {
+        return this.http.get<DetailedDrink[]>(`${API_URL}/drink/random`, {
+            params: new HttpParams().append('count', count)
+        });
     }
 }
