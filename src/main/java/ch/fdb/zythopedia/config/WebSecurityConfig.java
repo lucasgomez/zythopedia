@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -21,6 +22,16 @@ import java.util.List;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig {
+
+    @Value("${users.admin.username}")
+    private String adminUsername;
+    @Value("${users.admin.password}")
+    private String adminPassword;
+    @Value("${users.manager.username}")
+    private String managerUsername;
+    @Value("${users.manager.password}")
+    private String managerPassword;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and()
@@ -38,13 +49,13 @@ public class WebSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails admin = User.withUsername("brewmaster")
-                .password(passwordEncoder.encode("motdepasse"))
+        UserDetails admin = User.withUsername(adminUsername)
+                .password(passwordEncoder.encode(adminPassword))
                 .roles("MANAGER", "ADMIN")
                 .build();
 
-        UserDetails barbar = User.withUsername("barbar")
-                .password(passwordEncoder.encode("motdepasse"))
+        UserDetails barbar = User.withUsername(managerUsername)
+                .password(passwordEncoder.encode(managerPassword))
                 .roles("MANAGER")
                 .build();
 
