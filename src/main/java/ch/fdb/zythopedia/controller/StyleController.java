@@ -41,21 +41,21 @@ public class StyleController {
     }
 
     @PostMapping(value = "/style")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public StyleDto create(@RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
                 styleService.create(createStyleDto));
     }
 
     @PutMapping(value = "/style/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public StyleDto update(@PathVariable long styleId, @RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
                 styleService.update(styleId, createStyleDto));
     }
 
     @DeleteMapping(value = "/style/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public void delete(@PathVariable long styleId) {
         styleService.delete(styleId);
     }

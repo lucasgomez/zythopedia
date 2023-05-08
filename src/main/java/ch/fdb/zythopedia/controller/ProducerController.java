@@ -41,21 +41,21 @@ public class ProducerController {
     }
 
     @PostMapping(value = "/producer")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public ProducerDto create(@RequestBody CreateProducerDto createProducerDto) {
         return producerMapper.toDto(
                 producerService.create(createProducerDto));
     }
 
     @PutMapping(value = "/producer/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public ProducerDto update(@PathVariable long styleId, @RequestBody CreateProducerDto createProducerDto) {
         return producerMapper.toDto(
                 producerService.update(styleId, createProducerDto));
     }
 
     @DeleteMapping(value = "/producer/{producerId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public void delete(@PathVariable long producerId) {
         producerService.delete(producerId);
     }

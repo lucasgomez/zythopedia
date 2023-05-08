@@ -41,21 +41,21 @@ public class ColorController {
     }
 
     @PostMapping
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public ColorDto create(@RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.create(createColorDto.getName(), createColorDto.getDescription()));
     }
 
     @PutMapping(value = "/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public ColorDto update(@PathVariable long styleId, @RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.update(styleId, createColorDto.getName(), createColorDto.getDescription()));
     }
 
     @DeleteMapping(value = "/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public void delete(@PathVariable long styleId) {
         colorService.delete(styleId);
     }

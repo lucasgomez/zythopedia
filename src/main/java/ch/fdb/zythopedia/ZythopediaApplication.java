@@ -13,15 +13,4 @@ public class ZythopediaApplication {
 		SpringApplication.run(ZythopediaApplication.class, args);
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("http://soif.fetedelabiere.ch", "http://localhost:4200");
-			}
-		};
-	}
-
 }

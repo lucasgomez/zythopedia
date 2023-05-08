@@ -25,9 +25,6 @@
                             <ng-template #subBranch let-items>
                                 <li *ngFor="let item of items" class="relative">
                                     <a pRipple
-                                       class="no-underline flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150"
-                                       pStyleClass="@next" enterClass="hidden" enterActiveClass="scalein"
-                                       leaveToClass="hidden" leaveActiveClass="fadeout" [hideOnOutsideClick]="true"
                                        [routerLink]="item.routerLink"
                                     >
                                         <i *ngIf="item.icon" [ngClass]="item.icon" class="mr-2"></i>

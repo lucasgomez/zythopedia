@@ -41,21 +41,21 @@ public class OriginController {
     }
 
     @PostMapping(value = "/origin")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public OriginDto create(@RequestBody CreateOriginDto createOriginDto) {
         return originMapper.toDto(
                 originService.create(createOriginDto));
     }
 
     @PutMapping(value = "/origin/{styleId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public OriginDto update(@PathVariable long styleId, @RequestBody CreateOriginDto createOriginDto) {
         return originMapper.toDto(
                 originService.update(styleId, createOriginDto));
     }
 
     @DeleteMapping(value = "/origin/{originId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public void delete(@PathVariable long originId) {
         originService.delete(originId);
     }

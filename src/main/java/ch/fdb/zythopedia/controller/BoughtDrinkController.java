@@ -24,14 +24,14 @@ public class BoughtDrinkController {
     }
 
     @GetMapping("/boughtdrink/{boughtDrinkId}/availability/{availability}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public SoldDrinkDetailedDto changeAvailability(@PathVariable Long boughtDrinkId, @PathVariable(value = "availability") String availability) {
         return boughtDrinkService.updataAvailability(boughtDrinkId, Availability.from(availability))
                 .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
     }
 
     @PostMapping("/boughtdrink")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public SoldDrinkDetailedDto create(@PathParam(value = "drinkName") String drinkName,
                                        @PathParam(value = "buyingPrice") Double buyingPrice,
                                        @PathParam(value = "serviceMethod") ServiceMethod serviceMethod,
@@ -45,7 +45,7 @@ public class BoughtDrinkController {
     }
 
     @PostMapping("/drink/{drinkId}/boughtdrink")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public SoldDrinkDetailedDto createBoughtDrink(@PathVariable Long drinkId,
                                        @PathParam(value = "code") String code,
                                        @PathParam(value = "buyingPrice") Double buyingPrice,
@@ -55,7 +55,7 @@ public class BoughtDrinkController {
     }
 
     @DeleteMapping("/{boughtDrinkId}")
-    @Secured("ROLE_USER")
+    @Secured("ROLE_MANAGER")
     public void delete(@PathVariable Long boughtDrinkId) {
         boughtDrinkService.delete(boughtDrinkId);
     }
