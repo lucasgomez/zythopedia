@@ -7,6 +7,7 @@ import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.service.BoughtDrinkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
@@ -16,19 +17,21 @@ import javax.websocket.server.PathParam;
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class BoughtDrinkController {
 
-    private BoughtDrinkService boughtDrinkService;
+    private final BoughtDrinkService boughtDrinkService;
 
     public BoughtDrinkController(BoughtDrinkService boughtDrinkService) {
         this.boughtDrinkService = boughtDrinkService;
     }
 
     @GetMapping("/boughtdrink/{boughtDrinkId}/availability/{availability}")
+    @Secured("ROLE_USER")
     public SoldDrinkDetailedDto changeAvailability(@PathVariable Long boughtDrinkId, @PathVariable(value = "availability") String availability) {
         return boughtDrinkService.updataAvailability(boughtDrinkId, Availability.from(availability))
                 .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
     }
 
     @PostMapping("/boughtdrink")
+    @Secured("ROLE_USER")
     public SoldDrinkDetailedDto create(@PathParam(value = "drinkName") String drinkName,
                                        @PathParam(value = "buyingPrice") Double buyingPrice,
                                        @PathParam(value = "serviceMethod") ServiceMethod serviceMethod,
@@ -42,6 +45,7 @@ public class BoughtDrinkController {
     }
 
     @PostMapping("/drink/{drinkId}/boughtdrink")
+    @Secured("ROLE_USER")
     public SoldDrinkDetailedDto createBoughtDrink(@PathVariable Long drinkId,
                                        @PathParam(value = "code") String code,
                                        @PathParam(value = "buyingPrice") Double buyingPrice,
@@ -51,6 +55,7 @@ public class BoughtDrinkController {
     }
 
     @DeleteMapping("/{boughtDrinkId}")
+    @Secured("ROLE_USER")
     public void delete(@PathVariable Long boughtDrinkId) {
         boughtDrinkService.delete(boughtDrinkId);
     }

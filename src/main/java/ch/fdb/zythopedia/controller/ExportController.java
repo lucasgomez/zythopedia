@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +20,20 @@ import java.nio.file.Files;
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ExportController {
 
-    private ExportService exportService;
+    private final ExportService exportService;
 
     public ExportController(ExportService exportService) {
         this.exportService = exportService;
     }
 
     @GetMapping("/export/calculator")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<ByteArrayResource> getCalculatorForCurrentEdition() {
         return buildResponseEntity(exportService.getCalculatorForCurrentEdition());
     }
 
     @GetMapping("/edition/{editionName}/export/data")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<ByteArrayResource> getDrinksData(@PathVariable String editionName) {
         return buildResponseEntity(exportService.getDrinksData(editionName));
     }

@@ -6,6 +6,7 @@ import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
 import ch.fdb.zythopedia.service.ProducerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ProducerController {
 
-    private ProducerService producerService;
-    private ProducerMapper producerMapper;
+    private final ProducerService producerService;
+    private final ProducerMapper producerMapper;
 
     public ProducerController(ProducerService styleService, ProducerMapper producerMapper) {
         this.producerService = styleService;
@@ -40,18 +41,21 @@ public class ProducerController {
     }
 
     @PostMapping(value = "/producer")
+    @Secured("ROLE_USER")
     public ProducerDto create(@RequestBody CreateProducerDto createProducerDto) {
         return producerMapper.toDto(
                 producerService.create(createProducerDto));
     }
 
     @PutMapping(value = "/producer/{styleId}")
+    @Secured("ROLE_USER")
     public ProducerDto update(@PathVariable long styleId, @RequestBody CreateProducerDto createProducerDto) {
         return producerMapper.toDto(
                 producerService.update(styleId, createProducerDto));
     }
 
     @DeleteMapping(value = "/producer/{producerId}")
+    @Secured("ROLE_USER")
     public void delete(@PathVariable long producerId) {
         producerService.delete(producerId);
     }

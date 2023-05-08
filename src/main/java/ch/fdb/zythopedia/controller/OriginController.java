@@ -6,6 +6,7 @@ import ch.fdb.zythopedia.dto.mapper.OriginMapper;
 import ch.fdb.zythopedia.service.OriginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class OriginController {
 
-    private OriginService originService;
-    private OriginMapper originMapper;
+    private final OriginService originService;
+    private final OriginMapper originMapper;
 
     public OriginController(OriginService styleService, OriginMapper originMapper) {
         this.originService = styleService;
@@ -40,18 +41,21 @@ public class OriginController {
     }
 
     @PostMapping(value = "/origin")
+    @Secured("ROLE_USER")
     public OriginDto create(@RequestBody CreateOriginDto createOriginDto) {
         return originMapper.toDto(
                 originService.create(createOriginDto));
     }
 
     @PutMapping(value = "/origin/{styleId}")
+    @Secured("ROLE_USER")
     public OriginDto update(@PathVariable long styleId, @RequestBody CreateOriginDto createOriginDto) {
         return originMapper.toDto(
                 originService.update(styleId, createOriginDto));
     }
 
     @DeleteMapping(value = "/origin/{originId}")
+    @Secured("ROLE_USER")
     public void delete(@PathVariable long originId) {
         originService.delete(originId);
     }

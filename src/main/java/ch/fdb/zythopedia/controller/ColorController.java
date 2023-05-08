@@ -6,6 +6,7 @@ import ch.fdb.zythopedia.dto.mapper.ColorMapper;
 import ch.fdb.zythopedia.service.ColorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api/color", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ColorController {
 
-    private ColorService colorService;
-    private ColorMapper colorMapper;
+    private final ColorService colorService;
+    private final ColorMapper colorMapper;
 
     public ColorController(ColorService styleService, ColorMapper colorMapper) {
         this.colorService = styleService;
@@ -40,18 +41,21 @@ public class ColorController {
     }
 
     @PostMapping
+    @Secured("ROLE_USER")
     public ColorDto create(@RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.create(createColorDto.getName(), createColorDto.getDescription()));
     }
 
     @PutMapping(value = "/{styleId}")
+    @Secured("ROLE_USER")
     public ColorDto update(@PathVariable long styleId, @RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.update(styleId, createColorDto.getName(), createColorDto.getDescription()));
     }
 
     @DeleteMapping(value = "/{styleId}")
+    @Secured("ROLE_USER")
     public void delete(@PathVariable long styleId) {
         colorService.delete(styleId);
     }

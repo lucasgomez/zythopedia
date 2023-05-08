@@ -6,6 +6,7 @@ import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
 import ch.fdb.zythopedia.service.StyleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class StyleController {
 
-    private StyleService styleService;
-    private StyleFlatMapper styleFlatMapper;
+    private final StyleService styleService;
+    private final StyleFlatMapper styleFlatMapper;
 
     public StyleController(StyleService styleService, StyleFlatMapper styleFlatMapper) {
         this.styleService = styleService;
@@ -40,18 +41,21 @@ public class StyleController {
     }
 
     @PostMapping(value = "/style")
+    @Secured("ROLE_USER")
     public StyleDto create(@RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
                 styleService.create(createStyleDto));
     }
 
     @PutMapping(value = "/style/{styleId}")
+    @Secured("ROLE_USER")
     public StyleDto update(@PathVariable long styleId, @RequestBody CreateStyleDto createStyleDto) {
         return styleFlatMapper.toDto(
                 styleService.update(styleId, createStyleDto));
     }
 
     @DeleteMapping(value = "/style/{styleId}")
+    @Secured("ROLE_USER")
     public void delete(@PathVariable long styleId) {
         styleService.delete(styleId);
     }
