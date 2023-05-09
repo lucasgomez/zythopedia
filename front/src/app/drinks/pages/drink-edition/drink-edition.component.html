@@ -1,0 +1,56 @@
+<div class="surface-card p-4 shadow-2 border-round">
+    <div class="font-medium text-3xl text-900 mb-3">{{drink.name}}</div>
+    <div *ngIf="drink.description" class="text-500 mb-5">{{drink.description}}</div>
+    <div class="grid grid-nogutter border-top-1 surface-border pt-2">
+        <div class="col-12 md:col-6 p-3" *ngIf="drink.producer">
+            <div class="text-500 font-medium mb-2">Producteur</div>
+            <a class="no-underline" [routerLink]="['/', 'drinks', 'producers', drink.producer.id]">
+                {{ drink.producer.name }}
+            </a>
+        </div>
+        <div class="col-12 md:col-6 p-3" *ngIf="drink.producer && drink.producer.origin">
+            <div class="text-500 font-medium mb-2">Origine</div>
+            <a class="no-underline" [routerLink]="['/', 'drinks', 'origins', drink.producer.origin.id]">
+                {{ drink.producer.origin.flag }} {{ drink.producer.origin.name }}
+            </a>
+        </div>
+        <div class="col-12 md:col-6 p-3" *ngIf="drink.color">
+            <div class="text-500 font-medium mb-2">Couleur</div>
+            <a class="no-underline" [routerLink]="['/', 'drinks', 'colors', drink.color.id]">
+                {{ drink.color.name }}
+            </a>
+        </div>
+        <div class="col-12 md:col-6 p-3" *ngIf="drink.style">
+            <div class="text-500 font-medium mb-2">Type</div>
+            <a class="no-underline" [routerLink]="['/', 'drinks', 'styles', drink.style.id]">
+                {{ drink.style.name }}
+            </a>
+        </div>
+        <div class="col-12 md:col-6 p-3">
+            <div class="text-500 font-medium mb-2">Alcoolémie</div>
+            <div class="text-900">{{drink.abv | abv}}</div>
+        </div>
+        <div class="col-12 md:col-6 p-3">
+            <div class="text-500 font-medium mb-2">Disponibilité</div>
+            <div class="text-900">{{drink.availability | availability}}</div>
+        </div>
+        <div class="col-12 md:col-2 p-3" *ngIf="drink.sourness !== undefined && drink.bitterness !== undefined && drink.sweetness !== undefined && drink.hoppiness !== undefined">
+            <div class="text-500 font-medium mb-2">Force</div>
+            <div class="text-900 line-height-3">
+                <app-strength-radar [drink]="drink"></app-strength-radar>
+            </div>
+        </div>
+        <div class="col-12 md:col-10 p-3">
+            <div class="text-500 font-medium mb-3">Quantités de service</div>
+            <div *ngFor="let service of drink.services" class="flex md:align-items-center md:justify-content-between border-top-1 surface-border p-3 flex-column md:flex-row">
+                <ul class="list-none p-0 m-0 flex align-items-end select-none flex-row">
+                    <li class="text-500 font-medium mr-3">Volume</li>
+                    <li class="text-900 line-height-3">{{service.volumeInCl}} cl</li>
+                    <li class="text-300 mx-3">&mdash;</li>
+                    <li class="text-500 font-medium mr-3">Prix</li>
+                    <li class="text-900 line-height-3">{{service?.sellingPrice?.toFixed(2)}} CHF</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

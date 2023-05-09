@@ -22,6 +22,7 @@ import { DogModeComponent } from './pages/dog-mode/dog-mode.component';
 import { DrinkComponent } from './pages/drink/drink.component';
 import {DrinkCardComponent} from "./pages/drink-card/drink-card.component";
 import {RandomComponent} from "./pages/random/random.component";
+import {DrinkEditionComponent} from "./pages/drink-edition/drink-edition.component";
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import {RandomComponent} from "./pages/random/random.component";
         DogModeComponent,
         DrinkComponent,
         DrinkCardComponent,
+        DrinkEditionComponent,
         RandomComponent,
         StrengthRadarComponent
     ],
