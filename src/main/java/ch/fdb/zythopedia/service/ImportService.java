@@ -99,9 +99,18 @@ public class ImportService {
                 .filter(Predicate.not(hasId()))
                 .collect(Collectors.toSet());
         log.info(String.format("%s to create %s", entityName, entitiesToCreate.size()));
-        var createdEntities = entitiesToCreate.stream()
-                .map(creater)
-                .collect(Collectors.toSet());
+
+        Set<E> createdEntities = new HashSet<>();
+        for (var entityToCreate : entitiesToCreate) {
+            try {
+                var createdEntity = creater.apply(entityToCreate);
+                createdEntities.add(createdEntity);
+            } catch (Exception exception) {
+                log.error(String.format("Error while creating %s %s, probably a duplicate (error : %s)",
+                        entityName, entityToCreate.getName(), exception.getMessage()));
+            }
+        }
+
         log.info(String.format("Created %s %s/%s", entityName, createdEntities.size(), entitiesToCreate.size()));
 
         var entitiesToDeleteWitheEntityToTransferTo = readerForDeletionWithReplacement.apply(originRows);
