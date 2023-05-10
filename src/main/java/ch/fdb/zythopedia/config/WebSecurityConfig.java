@@ -31,6 +31,8 @@ public class WebSecurityConfig {
     private String managerUsername;
     @Value("${users.manager.password}")
     private String managerPassword;
+    @Value("${stoopid.cors.allowed-origins}")
+    private List<String> allowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -64,7 +66,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://soif.fetedelabiere.ch", "http://localhost:4200", "http://localhost:8080"));
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("*"));
 
