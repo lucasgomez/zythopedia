@@ -38,6 +38,15 @@ public class DrinkService {
         return drinkRepository.findAll();
     }
 
+    public List<Drink> findDrinksWithNoService() {
+        return drinkRepository.findAll().stream()
+                .filter(drink -> Optional.of(drink)
+                        .map(Drink::getBoughtDrinks)
+                        .map(boughtDrinks -> boughtDrinks.isEmpty())
+                        .orElse(true))
+                .collect(Collectors.toList());
+    }
+
     public Collection<Drink> createNewDrinks(Collection<CreateBoughtDrinkDto> unreferencedBoughtDrinks) {
         return unreferencedBoughtDrinks.stream()
                 .map(this::mapFromBoughtDrink)

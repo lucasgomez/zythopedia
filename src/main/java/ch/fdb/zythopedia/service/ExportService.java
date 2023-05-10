@@ -29,6 +29,7 @@ public class ExportService {
     public static final List<String> PRICE_CALCULATOR_HEADERS = List.of("id", "boughtDrinkId", "producerName", "producerOriginName", "name", "colorName",
             "styleName", "abv", "buyingPrice", "serviceMethod", "volumeInCl", "sellingPrice",
             "projectedSellingPrice", "price per alc. cL", "Projected margin", "Absolute margin");
+    private DrinkService drinkService;
     private BoughtDrinkService boughtDrinkService;
     private StyleService styleService;
     private ProducerService producerService;
@@ -38,7 +39,8 @@ public class ExportService {
     private DrinkMapper drinkMapper;
     private SimpleDrinkMapper simpleDrinkMapper;
 
-    public ExportService(BoughtDrinkService boughtDrinkService, StyleService styleService, ProducerService producerService, OriginService originService, ColorService colorService, DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper, DrinkMapper drinkMapper, SimpleDrinkMapper simpleDrinkMapper) {
+    public ExportService(DrinkService drinkService, BoughtDrinkService boughtDrinkService, StyleService styleService, ProducerService producerService, OriginService originService, ColorService colorService, DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper, DrinkMapper drinkMapper, SimpleDrinkMapper simpleDrinkMapper) {
+        this.drinkService = drinkService;
         this.boughtDrinkService = boughtDrinkService;
         this.styleService = styleService;
         this.producerService = producerService;
@@ -69,7 +71,15 @@ public class ExportService {
                 .filter(Objects::nonNull)
                 .map(drinkMapper::toDto)
                 .collect(Collectors.toSet());
-        var workbook = buildDataExporterWorkbook(currentEditionDrinks);
+        var drinksWithNoService = drinkService.findDrinksWithNoService().stream()
+                .map(drinkMapper::toDto)
+                .collect(Collectors.toList());
+
+        var drinksToExport = new ArrayList<DrinkDto>();
+        drinksToExport.addAll(currentEditionDrinks);
+        drinksToExport.addAll(drinksWithNoService);
+
+        var workbook = buildDataExporterWorkbook(drinksToExport);
         return saveWorkbookInTempFolder(workbook, "drinkData");
     }
 
