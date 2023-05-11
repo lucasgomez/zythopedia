@@ -18,11 +18,11 @@ export class BoughtDrinkService {
         return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/detail`);
     }
 
-    changeAvailability(drinkId: number, availability: string): Observable<DetailedDrink> {
+    changeAvailability(drinkId: number, availability: string, user: string, password: string): Observable<DetailedDrink> {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type':  'application/json',
-                'Authorization': 'Basic ' + btoa('brewmaster:motdepasse')
+                'Authorization': 'Basic ' + btoa(`${user}:${password}`)
             })
         };
 
