@@ -1,8 +1,8 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { DescriptiveList } from '../models/DescriptiveList';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {DescriptiveList} from '../models/DescriptiveList';
 import {DetailedDrink, Drink} from '../models/Drink';
 
 const API_URL = `${environment.BASE_URL}`;
@@ -16,9 +16,7 @@ export class ListService {
     }
 
     findByServiceType(serviceType: 'TAP' | 'BOTTLE'): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}drink`, {
-            params: new HttpParams().append('service', serviceType)
-        });
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}service/${serviceType}/drink`);
     }
 
     findByColor(colorId: number): Observable<DescriptiveList<Drink>> {
@@ -42,8 +40,6 @@ export class ListService {
     }
 
     getRandom$(count: number) {
-        return this.http.get<DetailedDrink[]>(`${API_URL}drink/random`, {
-            params: new HttpParams().append('count', count)
-        });
+        return this.http.get<DetailedDrink[]>(`${API_URL}drink/random/${count}`);
     }
 }

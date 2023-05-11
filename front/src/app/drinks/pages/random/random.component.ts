@@ -3,7 +3,7 @@ import {Observable} from 'rxjs';
 import {DetailedDrink} from '../../../shared/models/Drink';
 import {ListService} from "../../../shared/services/list.service";
 
-const COUNT = 3;
+const COUNT = 2;
 
 @Component({
     selector: 'app-random',

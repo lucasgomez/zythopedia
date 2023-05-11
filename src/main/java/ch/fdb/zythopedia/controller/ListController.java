@@ -9,7 +9,10 @@ import ch.fdb.zythopedia.service.BoughtDrinkService;
 import ch.fdb.zythopedia.service.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
@@ -33,13 +36,18 @@ public class ListController {
                 .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
     }
 
-    @GetMapping("/drink")
-    public DescriptiveList<SoldDrinkLightDto> getDrinksByType(@RequestParam(name = "service") ServiceMethod serviceMethod) {
+    @GetMapping("/service/{serviceMethod}/drink")
+    public DescriptiveList<SoldDrinkLightDto> getDrinksByType(@PathVariable ServiceMethod serviceMethod) {
         return listService.findByServiceMethod(serviceMethod);
     }
 
     @GetMapping("/drink/random")
-    public Set<SoldDrinkDetailedDto> getRandom(@RequestParam(name = "count", required = false) Integer count) {
+    public Set<SoldDrinkDetailedDto> getOneRandom() {
+        return listService.getRandom(1);
+    }
+
+    @GetMapping("/drink/random/{count}")
+    public Set<SoldDrinkDetailedDto> getRandom(@PathVariable Integer count) {
         return listService.getRandom(count);
     }
 
