@@ -38,7 +38,7 @@
                         <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></td>
                         <td>{{drink.producerName}}</td>
                         <td>{{drink.services.length > 1 ? 'TAP' : 'BOTTLE'}}</td>
-                        <td>{{drink.availability | availability}}</td>
+                        <td>{{drink.availability | availabilityIcon}}</td>
                         <td>
                             <button *ngFor="let availability of availabilities" [id]="availability" (click)="changeAvailability(drink, availability)">
                                 {{availability}}

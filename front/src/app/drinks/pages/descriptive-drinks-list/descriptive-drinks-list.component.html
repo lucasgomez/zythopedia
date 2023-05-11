@@ -6,33 +6,26 @@
         <p-table [value]="drinks.content" responsiveLayout="scroll" sortField="availability">
             <ng-template pTemplate="header">
                 <tr>
+                    <th pSortableColumn="availability">
+                        Dispo. <p-sortIcon field="availability"></p-sortIcon>
+                    </th>
                     <th pSortableColumn="name">
                         Nom <p-sortIcon field="name"></p-sortIcon>
-                        <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
                     </th>
                     <th pSortableColumn="abv">
                         Alc. <p-sortIcon field="abv"></p-sortIcon>
-                        <p-columnFilter type="number" field="abv" display="menu"></p-columnFilter>
                     </th>
                     <th pSortableColumn="styleName">
                         Type <p-sortIcon field="styleName"></p-sortIcon>
-                        <p-columnFilter type="text" field="styleName" display="menu"></p-columnFilter>
                     </th>
                     <th pSortableColumn="colorName">
                         Color <p-sortIcon field="colorName"></p-sortIcon>
-                        <p-columnFilter type="text" field="colorName" display="menu"></p-columnFilter>
                     </th>
                     <th pSortableColumn="producerName">
                         Producteur <p-sortIcon field="producerName"></p-sortIcon>
-                        <p-columnFilter type="text" field="producerName" display="menu"></p-columnFilter>
-                    </th>
-                    <th pSortableColumn="availability">
-                        Dispo. <p-sortIcon field="availability"></p-sortIcon>
-                        <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
                     </th>
                     <th pSortableColumn="prices">
                         Prix (vol.) <p-sortIcon field="prices"></p-sortIcon>
-                        <p-columnFilter type="text" field="prices" display="menu"></p-columnFilter>
                     </th>
                 </tr>
                 <tr>
@@ -41,12 +34,12 @@
             </ng-template>
             <ng-template pTemplate="body" let-drink>
                 <tr>
+                    <td><p-badge size="large" severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
                     <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></td>
                     <td>{{drink.abv | abv}}</td>
                     <td><a [routerLink]="buildStyleUrl(drink)">{{drink.styleName}}</a></td>
                     <td><a [routerLink]="buildColorUrl(drink)">{{drink.colorName}}</a></td>
                     <td><a [routerLink]="buildProducerUrl(drink)">{{drink.producerName}}</a></td>
-                    <td><p-tag severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availability}}"></p-tag></td>
                     <td>{{buildPricesDisplay(drink)}}</td>
                 </tr>
             </ng-template>

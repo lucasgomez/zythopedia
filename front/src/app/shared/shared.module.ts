@@ -10,7 +10,8 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { HeaderComponent } from './components/organisms/header/header.component';
 import { AbvPipe } from './pipes/abv.pipe';
 import { AvailabilityColorPipe } from './pipes/availability-color.pipe';
-import { AvailabilityPipe } from './pipes/availability.pipe';
+import { AvailabilityIconPipe } from './pipes/availabilityIcon.pipe';
+import {AvailabilityLabelPipe} from "./pipes/availability-label.pipe";
 
 @NgModule({
     imports: [
@@ -27,7 +28,8 @@ import { AvailabilityPipe } from './pipes/availability.pipe';
     declarations: [
         HeaderComponent,
         AbvPipe,
-        AvailabilityPipe,
+        AvailabilityIconPipe,
+        AvailabilityLabelPipe,
         AvailabilityColorPipe,
     ],
     exports: [
@@ -36,7 +38,8 @@ import { AvailabilityPipe } from './pipes/availability.pipe';
         ReactiveFormsModule,
         HeaderComponent,
         AbvPipe,
-        AvailabilityPipe,
+        AvailabilityIconPipe,
+        AvailabilityLabelPipe,
         AvailabilityColorPipe,
     ]
 })

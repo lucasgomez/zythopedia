@@ -22,6 +22,7 @@ import { DogModeComponent } from './pages/dog-mode/dog-mode.component';
 import { DrinkComponent } from './pages/drink/drink.component';
 import {DrinkCardComponent} from "./pages/drink-card/drink-card.component";
 import {RandomComponent} from "./pages/random/random.component";
+import {BadgeModule} from "primeng/badge";
 
 @NgModule({
     declarations: [
@@ -39,8 +40,8 @@ import {RandomComponent} from "./pages/random/random.component";
             {
                 path: '',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksResolver },
-                data: { title: 'Toutes les boissons' }
+                resolve: {drinks: DrinksResolver},
+                data: {title: 'Toutes les boissons'}
             },
             {
                 path: 'random',
@@ -49,48 +50,48 @@ import {RandomComponent} from "./pages/random/random.component";
             {
                 path: 'beamer',
                 component: BeamerDisplayComponent,
-                data: { title: 'Liste de prix' }
+                data: {title: 'Liste de prix'}
             },
             {
                 path: 'dogmode',
                 component: DogModeComponent,
-                resolve: { drinks: DrinksResolver },
-                data: { title: 'doG Mode' }
+                resolve: {drinks: DrinksResolver},
+                data: {title: 'doG Mode'}
             },
             {
                 path: 'colors/:colorId',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksByColorResolver },
-                data: { title: 'Boissons de couleur' }
+                resolve: {drinks: DrinksByColorResolver},
+                data: {title: 'Boissons de couleur'}
             },
             {
                 path: 'services/:service',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksByServiceResolver },
-                data: { title: 'Boisson servie en' }
+                resolve: {drinks: DrinksByServiceResolver},
+                data: {title: 'Boisson servie en'}
             },
             {
                 path: 'styles/:styleId',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksByStyleResolver },
-                data: { title: 'Boissons de type' }
+                resolve: {drinks: DrinksByStyleResolver},
+                data: {title: 'Boissons de type'}
             },
             {
                 path: 'producers/:producerId',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksByProducerResolver },
-                data: { title: 'Boissons venant de' }
+                resolve: {drinks: DrinksByProducerResolver},
+                data: {title: 'Boissons venant de'}
             },
             {
                 path: 'origins/:originId',
                 component: DescriptiveDrinksListComponent,
-                resolve: { drinks: DrinksByOriginResolver },
-                data: { title: 'Boissons provenant de' }
+                resolve: {drinks: DrinksByOriginResolver},
+                data: {title: 'Boissons provenant de'}
             },
             {
                 path: ':drinkId',
                 component: DrinkComponent,
-                resolve: { drink: DrinkResolver }
+                resolve: {drink: DrinkResolver}
             }
         ]),
         TableModule,
@@ -99,7 +100,8 @@ import {RandomComponent} from "./pages/random/random.component";
         CardModule,
         ChipModule,
         TagModule,
-        DataViewModule
+        DataViewModule,
+        BadgeModule
     ],
 })
 export class DrinksModule {

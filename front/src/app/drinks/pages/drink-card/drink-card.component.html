@@ -32,7 +32,7 @@
         </div>
         <div class="col-12 md:col-6 p-3">
             <div class="text-500 font-medium mb-2">Disponibilité</div>
-            <div class="text-900">{{drink.availability | availability}}</div>
+            <div class="text-900">{{drink.availability | availabilityIcon}}</div>
         </div>
         <div class="col-12 md:col-2 p-3" *ngIf="drink.sourness !== undefined && drink.bitterness !== undefined && drink.sweetness !== undefined && drink.hoppiness !== undefined">
             <div class="text-500 font-medium mb-2">Force</div>

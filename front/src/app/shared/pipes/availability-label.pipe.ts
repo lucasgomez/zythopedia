@@ -2,20 +2,20 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Availability } from '../models/Availability';
 
 @Pipe({
-    name: 'availability'
+    name: 'availabilityLabel'
 })
-export class AvailabilityPipe implements PipeTransform {
+export class AvailabilityLabelPipe implements PipeTransform {
 
     transform(value: Availability | undefined): string {
         switch (value) {
             case 'SOON':
-                return 'Bientôt disponible';
+                return 'Prochainement disponible';
             case 'AVAILABLE':
-                return 'Disponible';
+                return 'En stock';
             case 'OUT_OF_STOCK':
-                return 'Épuisé';
+                return 'Terminée';
             default:
-                return 'Inconnu';
+                return 'Chais pas...';
         }
     }
 }
