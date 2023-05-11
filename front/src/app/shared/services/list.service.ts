@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { DescriptiveList } from '../models/DescriptiveList';
 import {DetailedDrink, Drink} from '../models/Drink';
 
-const API_URL = `${environment.BASE_URL}/api`;
+const API_URL = `${environment.BASE_URL}`;
 
 @Injectable({
     providedIn: 'root'
@@ -16,33 +16,33 @@ export class ListService {
     }
 
     findByServiceType(serviceType: 'TAP' | 'BOTTLE'): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/drink`, {
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}drink`, {
             params: new HttpParams().append('service', serviceType)
         });
     }
 
     findByColor(colorId: number): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/color/${colorId}/drink`);
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}color/${colorId}/drink`);
     }
 
     findByOrigin(originId: number): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/origin/${originId}/drink`);
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}origin/${originId}/drink`);
     }
 
     findByProducer(producerId: number): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/producer/${producerId}/drink`);
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}producer/${producerId}/drink`);
     }
 
     findByStyle(styleId: number): Observable<DescriptiveList<Drink>> {
-        return this.http.get<DescriptiveList<Drink>>(`${API_URL}/style/${styleId}/drink`);
+        return this.http.get<DescriptiveList<Drink>>(`${API_URL}style/${styleId}/drink`);
     }
 
     findAvailableTapBeers$(serviceMethod: string): Observable<Drink[]> {
-        return this.http.get<Drink[]>(`${API_URL}/service/${serviceMethod}/beer/available`);
+        return this.http.get<Drink[]>(`${API_URL}service/${serviceMethod}/beer/available`);
     }
 
     getRandom$(count: number) {
-        return this.http.get<DetailedDrink[]>(`${API_URL}/drink/random`, {
+        return this.http.get<DetailedDrink[]>(`${API_URL}drink/random`, {
             params: new HttpParams().append('count', count)
         });
     }

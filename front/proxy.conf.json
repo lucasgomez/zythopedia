@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "http://drinks.elveteek.ch",
+    "target": "http://stoopid.fetedelabiere.ch",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
