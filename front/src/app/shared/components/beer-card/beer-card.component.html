@@ -1,0 +1,15 @@
+<div class="product-grid-item-top">
+    <div>
+        <span class="product-category">{{drink.styleName}} ({{drink.abv}}%)</span>
+    </div>
+    <span class="product-category">{{drink.colorName}}</span>
+</div>
+<div class="product-grid-item-content">
+    <div class="product-name">{{drink.name}}</div>
+    <div class="product-description">{{drink.producerName}} - ({{drink.originShortName}} {{drink.originFlag}})</div>
+</div>
+<div class="product-grid-item-bottom">
+        <div *ngFor="let service of drink.services">
+            <p-chip label="{{buildPriceDisplay(service)}}"></p-chip>
+        </div>
+</div>

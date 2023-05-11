@@ -12,6 +12,8 @@ import { AbvPipe } from './pipes/abv.pipe';
 import { AvailabilityColorPipe } from './pipes/availability-color.pipe';
 import { AvailabilityIconPipe } from './pipes/availabilityIcon.pipe';
 import {AvailabilityLabelPipe} from "./pipes/availability-label.pipe";
+import {BeerCardComponent} from "./components/beer-card/beer-card.component";
+import {ChipModule} from "primeng/chip";
 
 @NgModule({
     imports: [
@@ -23,10 +25,12 @@ import {AvailabilityLabelPipe} from "./pipes/availability-label.pipe";
         MenubarModule,
         InputTextModule,
         ButtonModule,
-        MegaMenuModule
+        MegaMenuModule,
+        ChipModule
     ],
     declarations: [
         HeaderComponent,
+        BeerCardComponent,
         AbvPipe,
         AvailabilityIconPipe,
         AvailabilityLabelPipe,
@@ -37,6 +41,7 @@ import {AvailabilityLabelPipe} from "./pipes/availability-label.pipe";
         FormsModule,
         ReactiveFormsModule,
         HeaderComponent,
+        BeerCardComponent,
         AbvPipe,
         AvailabilityIconPipe,
         AvailabilityLabelPipe,
