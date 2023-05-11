@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -19,6 +19,13 @@ export class BoughtDrinkService {
     }
 
     changeAvailability(drinkId: number, availability: string): Observable<DetailedDrink> {
-        return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/availability/${availability}`);
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type':  'application/json',
+                'Authorization': 'Basic ' + btoa('brewmaster:motdepasse')
+            })
+        };
+
+        return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/availability/${availability}`, httpOptions);
     }
 }
