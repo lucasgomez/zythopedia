@@ -2,7 +2,8 @@
 ob_start('ob_gzhandler');
 
 header('Content-Type: application/json');
-
+console.log('test');
+console.log($_GET);
 $query = $_GET['query'];
 
 $ch = curl_init("http://stoopid.fetedelabiere.ch:8080/api/".$query);
