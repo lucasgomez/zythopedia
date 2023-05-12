@@ -13,6 +13,7 @@ export class DescriptiveDrinksListComponent implements OnInit {
 
     title!: string;
     drinks$!: Observable<DescriptiveList<Drink>>;
+    mobileDisplay!: boolean;
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -20,6 +21,7 @@ export class DescriptiveDrinksListComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.mobileDisplay = window.screen.width < 768;
         this.title = this.route.snapshot.data['title'];
         this.drinks$ = this.route.data.pipe(pluck('drinks'));
     }
