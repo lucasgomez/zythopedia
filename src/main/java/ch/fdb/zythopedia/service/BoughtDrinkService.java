@@ -6,16 +6,14 @@ import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkDetailedDtoMapper;
-import ch.fdb.zythopedia.entity.BoughtDrink;
-import ch.fdb.zythopedia.entity.Drink;
-import ch.fdb.zythopedia.entity.Edition;
-import ch.fdb.zythopedia.entity.NamedEntity;
+import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.repository.BoughtDrinkRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +35,9 @@ public class BoughtDrinkService {
     private final ServiceService serviceService;
     private final EditionService editionService;
     private final DrinkService drinkService;
+
+    @Value("${service.drinks.stylesIdsToIgnoreInDisplay}")
+    private List<Long> stylesIdsToIgnoreInDisplay;
 
     public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService, DrinkService drinkService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
@@ -282,6 +283,11 @@ public class BoughtDrinkService {
         return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition())
                 .stream()
                 .filter(BOUGHT_DRINK_AVAILABLE)
+                .filter(boughtDrink -> Optional.ofNullable(boughtDrink.getDrink())
+                        .map(Drink::getStyle)
+                        .map(Style::getId)
+                        .map(styleId -> !stylesIdsToIgnoreInDisplay.contains(styleId))
+                        .orElse(false))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
                     Collections.shuffle(collected);
                     return collected.stream();
