@@ -23,11 +23,11 @@
                         </td>
                         <td>
                             <ng-container *ngIf="expanded else collapsed">
-                                <h3>{{drink.name}}</h3>
+                                <h3><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></h3>
                             </ng-container>
                             <ng-template #collapsed>
                                 <div>
-                                    <b>{{drink.name}}</b>
+                                    <h4>{{drink.name}}</h4>
                                 </div>
                                 <div>
                                     {{drink.producerName + ' ' + drink.originFlag}}
@@ -36,7 +36,7 @@
                                 <div>{{drink.colorName + ' (' + drink.abv?.toFixed(1) + '%)'}}</div>
                             </ng-template>
                         </td>
-                        <td><p-badge size="large" severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
+                        <td><p-badge severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="rowexpansion" let-drink>

@@ -1,9 +1,9 @@
 <ng-container *ngIf="drink$ | async as drink else loading">
     <div class="grid">
         <div class="col-6">
-            <span class="product-category">{{drink.style?.name}} ({{drink.abv}}%)</span>
+            <a [routerLink]="['/', 'drinks', 'styles', drink.style?.id]"><span class="product-category">{{drink.style?.name}} ({{drink.abv}}%)</span></a>
         </div>
-        <span class="product-category col-6 align-content-end">{{drink.color?.name}}</span>
+        <a [routerLink]="['/', 'drinks', 'colors', drink.color?.id]"><span class="product-category col-6 align-content-end">{{drink.color?.name}}</span></a>
     </div>
     <p>{{drink.description}}</p>
     <div class="product-grid-item-bottom">

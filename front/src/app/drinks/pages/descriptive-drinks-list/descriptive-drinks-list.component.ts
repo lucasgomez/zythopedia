@@ -42,7 +42,4 @@ export class DescriptiveDrinksListComponent implements OnInit {
         return `/drinks/styles/${drink.styleId}`;
     }
 
-    buildData(drink: Drink): string {
-        return `${drink.colorName} (${drink.abv.toFixed(1)}%)`;
-    }
 }
