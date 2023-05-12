@@ -53,4 +53,9 @@ public class BoughtDrink {
 
     @OneToMany( mappedBy = "boughtDrink")
     private List<Service> services;
+
+    @Transient
+    public boolean isAvailable() {
+        return Availability.AVAILABLE.equals(availability);
+    }
 }

@@ -15,7 +15,7 @@ export class ColorService {
     }
 
     findAll(): Observable<Color[]> {
-        return this.http.get<Color[]>(API_URL);
+        return this.http.get<Color[]>(`${API_URL}/current`);
     }
 
     findOne(id: number): Observable<Color> {

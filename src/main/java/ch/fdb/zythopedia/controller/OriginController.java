@@ -33,6 +33,11 @@ public class OriginController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/origin/current")
+    public List<OriginDto> findOriginsWithService() {
+        return originService.findOriginsWithService();
+    }
+
     @GetMapping(value = "/origin/{styleId}")
     public OriginDto findById(@PathVariable long styleId) {
         return originService.findById(styleId)

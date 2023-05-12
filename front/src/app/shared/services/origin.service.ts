@@ -15,6 +15,6 @@ export class OriginService {
     }
 
     findAll(): Observable<Origin[]> {
-        return this.http.get<Origin[]>(API_URL);
+        return this.http.get<Origin[]>(`${API_URL}/current`);
     }
 }

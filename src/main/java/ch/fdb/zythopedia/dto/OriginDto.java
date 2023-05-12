@@ -12,10 +12,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Builder
 @EqualsAndHashCode
-public class OriginDto implements NamedEntity {
+public class OriginDto implements NamedEntity, EnumerableDto<OriginDto> {
 
     private Long id;
     private String name;
     private String shortName;
     private String flag;
+    private Integer currentEditionAvailableCount;
+    private Integer currentEditionCount;
 }

@@ -12,9 +12,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Builder
 @EqualsAndHashCode
-public class ColorDto implements NamedEntity {
+public class ColorDto implements NamedEntity, EnumerableDto<ColorDto> {
 
     private Long id;
     private String name;
     private String description;
+    private Integer currentEditionAvailableCount;
+    private Integer currentEditionCount;
 }

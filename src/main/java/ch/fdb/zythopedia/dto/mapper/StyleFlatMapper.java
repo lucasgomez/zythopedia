@@ -11,6 +11,8 @@ public interface StyleFlatMapper {
 
     @Mapping(target = "parentId", source = "parent.id")
     @Mapping(target = "parentName", source = "parent.name")
+    @Mapping(target = "currentEditionAvailableCount", ignore = true)
+    @Mapping(target = "currentEditionCount", ignore = true)
     StyleDto toDto(Style entity);
 
     CreateStyleDto toCreateDto(StyleDto dto);

@@ -2,9 +2,9 @@ package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.ColorDto;
 import ch.fdb.zythopedia.dto.IdOrNameDto;
-import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.dto.mapper.ColorMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Color;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.repository.ColorRepository;
@@ -20,16 +20,30 @@ import java.util.stream.Collectors;
 @Service
 public class ColorService {
 
-    private ColorRepository colorRepository;
-    private ColorMapper colorMapper;
+    private final ColorRepository colorRepository;
+    private final ColorMapper colorMapper;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public ColorService(ColorRepository colorRepository, ColorMapper colorMapper) {
+    public ColorService(
+            ColorRepository colorRepository, ColorMapper colorMapper,
+            BoughtDrinkService boughtDrinkService) {
         this.colorRepository = colorRepository;
         this.colorMapper = colorMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     public List<Color> findAll() {
         return colorRepository.findAll();
+    }
+
+    public List<ColorDto> findColorsWithService() {
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getColor)
+                        .orElse(null),
+                colorMapper::toDto
+        );
     }
 
     public List<ColorDto> findAllDto() {

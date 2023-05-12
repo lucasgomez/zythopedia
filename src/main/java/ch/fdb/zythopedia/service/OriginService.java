@@ -2,20 +2,19 @@ package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.OriginDto;
-import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.mapper.OriginMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Origin;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.OriginRepository;
 import ch.fdb.zythopedia.utils.DeleterHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.hql.spi.id.MultiTableBulkIdStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,12 +22,15 @@ import java.util.stream.Collectors;
 @Service
 public class OriginService {
 
-    private OriginRepository originRepository;
-    private OriginMapper originMapper;
+    private final OriginRepository originRepository;
+    private final OriginMapper originMapper;
 
-    public OriginService(OriginRepository originRepository, OriginMapper originMapper) {
+    private final BoughtDrinkService boughtDrinkService;
+
+    public OriginService(OriginRepository originRepository, OriginMapper originMapper, BoughtDrinkService boughtDrinkService) {
         this.originRepository = originRepository;
         this.originMapper = originMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     public List<Origin> findAll() {
@@ -88,5 +90,16 @@ public class OriginService {
                         .flatMap(originRepository::findByShortName))
                 .or(() -> Optional.ofNullable(originLongName)
                         .flatMap(originRepository::findByName));
+    }
+
+    public List<OriginDto> findOriginsWithService() {
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getProducer)
+                        .map(Producer::getOrigin)
+                        .orElse(null),
+                originMapper::toDto
+        );
     }
 }

@@ -15,6 +15,6 @@ export class StyleService {
     }
 
     findAll(): Observable<Style[]> {
-        return this.http.get<Style[]>(API_URL);
+        return this.http.get<Style[]>(`${API_URL}/current`);
     }
 }

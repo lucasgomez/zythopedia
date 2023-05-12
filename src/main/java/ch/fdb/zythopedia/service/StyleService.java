@@ -4,6 +4,7 @@ import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.repository.StyleRepository;
@@ -21,12 +22,14 @@ import java.util.stream.Collectors;
 @Service
 public class StyleService {
 
-    private StyleRepository styleRepository;
-    private StyleFlatMapper styleFlatMapper;
+    private final StyleRepository styleRepository;
+    private final StyleFlatMapper styleFlatMapper;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public StyleService(StyleRepository styleRepository, StyleFlatMapper styleFlatMapper) {
+    public StyleService(StyleRepository styleRepository, StyleFlatMapper styleFlatMapper, BoughtDrinkService boughtDrinkService) {
         this.styleRepository = styleRepository;
         this.styleFlatMapper = styleFlatMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     public Optional<Style> findById(long styleId) {
@@ -130,5 +133,15 @@ public class StyleService {
                 .collect(Collectors.toList()));
 
         return children;
+    }
+
+    public List<StyleDto> findStyleWithService() {
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getStyle)
+                        .orElse(null),
+                styleFlatMapper::toDto
+        );
     }
 }

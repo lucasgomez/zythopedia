@@ -33,6 +33,11 @@ public class ProducerController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/producer/current")
+    public List<ProducerDto> findProducersWithService() {
+        return producerService.findProducersWithService();
+    }
+
     @GetMapping(value = "/producer/{styleId}")
     public ProducerDto findById(@PathVariable long styleId) {
         return producerService.findById(styleId)

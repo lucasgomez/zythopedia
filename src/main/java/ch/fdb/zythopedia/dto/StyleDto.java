@@ -12,11 +12,13 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 @EqualsAndHashCode
-public class StyleDto implements NamedEntity {
+public class StyleDto implements NamedEntity, EnumerableDto<StyleDto> {
 
     private Long id;
     private String name;
     private String description;
     private Long parentId;
     private String parentName;
+    private Integer currentEditionAvailableCount;
+    private Integer currentEditionCount;
 }

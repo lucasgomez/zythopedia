@@ -15,6 +15,6 @@ export class ProducerService {
     }
 
     findAll(): Observable<Producer[]> {
-        return this.http.get<Producer[]>(API_URL);
+        return this.http.get<Producer[]>(`${API_URL}/current`);
     }
 }

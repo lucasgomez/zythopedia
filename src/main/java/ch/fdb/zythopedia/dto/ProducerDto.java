@@ -12,9 +12,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Builder
 @EqualsAndHashCode
-public class ProducerDto implements NamedEntity {
+public class ProducerDto implements NamedEntity, EnumerableDto<ProducerDto> {
 
     private Long id;
     private String name;
     private OriginDto origin;
+    private Integer currentEditionAvailableCount;
+    private Integer currentEditionCount;
 }

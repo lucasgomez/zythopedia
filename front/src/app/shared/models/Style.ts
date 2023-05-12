@@ -1,4 +1,6 @@
-export interface Style {
+import {EnumerableEntity} from "./EnumerableEntity";
+
+export interface Style extends EnumerableEntity {
     id: number;
     name: string;
     description: string;

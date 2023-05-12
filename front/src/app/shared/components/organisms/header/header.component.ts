@@ -49,25 +49,29 @@ export class HeaderComponent implements OnInit {
                 {
                     label: 'Par couleur', icon: 'mdi mdi-palette',
                     items: colors.sort((a, b) => a.name.localeCompare(b.name)).map(c => ({
-                        label: c.name, routerLink: `/drinks/colors/${c.id}`
+                        label: `${c.name} (${c.currentEditionAvailableCount}/${c.currentEditionCount})`,
+                        routerLink: `/drinks/colors/${c.id}`
                     }))
                 },
                 {
                     label: 'Par style', icon: 'mdi mdi-shape-outline',
-                    items: styles.sort((a, b) => a.name.localeCompare(b.name)).map(s => ({
-                        label: s.name, routerLink: `/drinks/styles/${s.id}`
+                    items: styles.sort((a, b) => a.name.localeCompare(b.name)).map(style => ({
+                        label: `${style.name} (${style.currentEditionAvailableCount}/${style.currentEditionCount})`,
+                        routerLink: `/drinks/styles/${style.id}`
                     }))
                 },
                 {
                     label: 'Par producteur', icon: 'mdi mdi-badge-account-outline',
-                    items: producers.sort((a, b) => a.name.localeCompare(b.name)).map(p => ({
-                        label: p.name, routerLink: `/drinks/producers/${p.id}`
+                    items: producers.sort((a, b) => a.name.localeCompare(b.name)).map(producer => ({
+                        label: `${producer.name} (${producer.currentEditionAvailableCount}/${producer.currentEditionCount})`,
+                        routerLink: `/drinks/producers/${producer.id}`
                     }))
                 },
                 {
                     label: 'Par origine', icon: 'mdi mdi-map-marker-outline',
-                    items: origins.sort((a, b) => a.name.localeCompare(b.name)).map(o => ({
-                        label: `${o.flag} ${o.name}`, routerLink: `/drinks/origins/${o.id}`
+                    items: origins.sort((a, b) => a.name.localeCompare(b.name)).map(origin => ({
+                        label: `${origin.flag} ${origin.name} (${origin.currentEditionAvailableCount}/${origin.currentEditionCount})`,
+                        routerLink: `/drinks/origins/${origin.id}`
                     }))
                 },
             ])

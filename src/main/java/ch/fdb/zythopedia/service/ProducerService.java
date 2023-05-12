@@ -2,10 +2,10 @@ package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.ProducerDto;
-import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.repository.ProducerRepository;
@@ -22,14 +22,16 @@ import java.util.stream.Collectors;
 @Service
 public class ProducerService {
 
-    private ProducerRepository producerRepository;
-    private ProducerMapper producerMapper;
-    private OriginService originService;
+    private final ProducerRepository producerRepository;
+    private final ProducerMapper producerMapper;
+    private final OriginService originService;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public ProducerService(ProducerRepository producerRepository, ProducerMapper producerMapper, OriginService originService) {
+    public ProducerService(ProducerRepository producerRepository, ProducerMapper producerMapper, OriginService originService, BoughtDrinkService boughtDrinkService) {
         this.producerRepository = producerRepository;
         this.producerMapper = producerMapper;
         this.originService = originService;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     public List<Producer> findAll() {
@@ -100,4 +102,13 @@ public class ProducerService {
                 producerRepository, Producer::getDrinks, Drink::setProducer);
     }
 
+    public List<ProducerDto> findProducersWithService() {
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getProducer)
+                        .orElse(null),
+                producerMapper::toDto
+        );
+    }
 }

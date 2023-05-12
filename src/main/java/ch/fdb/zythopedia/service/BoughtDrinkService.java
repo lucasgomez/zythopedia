@@ -1,5 +1,6 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.EnumerableDto;
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
@@ -8,6 +9,7 @@ import ch.fdb.zythopedia.dto.mapper.SoldDrinkDetailedDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Edition;
+import ch.fdb.zythopedia.entity.NamedEntity;
 import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -108,7 +111,7 @@ public class BoughtDrinkService {
 
     public Set<BoughtDrink> updateBoughtDrinksVolume(Collection<CreateBoughtDrinkDto> drinksToUpdate) {
         var allBoughtDrinksByCode = boughtDrinkRepository.findAll().stream()
-                .filter(boughtDrink -> Optional.of(boughtDrink)
+                .filter(boughtDrink -> Optional.ofNullable(boughtDrink)
                         .map(BoughtDrink::getEdition)
                         .map(Edition::getName)
                         .filter(editionName -> editionName.equals(editionService.getCurrentEditionName()))
@@ -144,6 +147,44 @@ public class BoughtDrinkService {
         var edition = editionService.findEdition(editionName)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Edition %s does not exist. Yet.", editionName)));
         return boughtDrinkRepository.findByEdition(edition);
+    }
+
+    public List<BoughtDrink> findCurrentEdition() {
+        return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition());
+    }
+
+    public <D extends EnumerableDto<D> & NamedEntity, E extends NamedEntity> List<D> findCurrentEditionList(Function<BoughtDrink, E> readEntityMapper, Function<E, D> dtoMapper) {
+        var currentEditionBoughtDrinks = boughtDrinkRepository.findByEdition(editionService.getCurrentEdition());
+
+        var entities = currentEditionBoughtDrinks.stream()
+                .map(readEntityMapper)
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(dtoMapper)
+                .collect(Collectors.toList());
+        var availableBoughtDrinksByEntityCount = currentEditionBoughtDrinks.stream()
+                .filter(BoughtDrink::isAvailable)
+                .filter(boughtDrink -> Objects.nonNull(readEntityMapper.apply(boughtDrink)))
+                .collect(Collectors.toMap(
+                        boughtDrink -> readEntityMapper.apply(boughtDrink).getId(),
+                        boughtDrink -> 1,
+                        Integer::sum));
+        var boughtDrinkByEntityCount = currentEditionBoughtDrinks.stream()
+                .filter(boughtDrink -> Objects.nonNull(readEntityMapper.apply(boughtDrink)))
+                .collect(Collectors.toMap(
+                        boughtDrink -> readEntityMapper.apply(boughtDrink).getId(),
+                        boughtDrink -> 1,
+                        Integer::sum));
+        return entities.stream()
+                .map(dto -> addCounts(dto, availableBoughtDrinksByEntityCount, boughtDrinkByEntityCount))
+                .collect(Collectors.toList());
+
+    }
+
+    private <D extends EnumerableDto<D> & NamedEntity> D addCounts(D dto, Map<Long, Integer> availableBoughtDrinksByEntityCount, Map<Long, Integer> boughtDrinkByEntityCount) {
+        dto.setCurrentEditionAvailableCount(availableBoughtDrinksByEntityCount.getOrDefault(dto.getId(), 0));
+        dto.setCurrentEditionCount(boughtDrinkByEntityCount.getOrDefault(dto.getId(), 0));
+        return dto;
     }
 
     public List<BoughtDrink> findCurrentEditionByColorId(Long colorId) {

@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 @Mapper(uses = OriginMapper.class)
 public interface ProducerMapper {
 
+    @Mapping(target = "currentEditionAvailableCount", ignore = true)
+    @Mapping(target = "currentEditionCount", ignore = true)
     ProducerDto toDto(Producer entity);
     @Mapping(target = "originId", source = "origin.id")
     @Mapping(target = "originName", source = "origin.name")

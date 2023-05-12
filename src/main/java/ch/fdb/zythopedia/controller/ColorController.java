@@ -32,6 +32,10 @@ public class ColorController {
                 .map(colorMapper::toDto)
                 .collect(Collectors.toList());
     }
+    @GetMapping("/current")
+    public List<ColorDto> findColorsWithService() {
+        return colorService.findColorsWithService();
+    }
 
     @GetMapping(value = "/{styleId}")
     public ColorDto findById(@PathVariable long styleId) {

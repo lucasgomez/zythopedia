@@ -33,6 +33,11 @@ public class StyleController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(value = "/style/current")
+    public List<StyleDto> findStyleWithService() {
+        return styleService.findStyleWithService();
+    }
+
     @GetMapping(value = "/style/{styleId}")
     public StyleDto findById(@PathVariable long styleId) {
         return styleService.findById(styleId)
