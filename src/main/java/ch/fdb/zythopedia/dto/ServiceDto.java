@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ServiceDto {
     private Long id;
+    private Long boughtDrinkId;
     private String drinkName;
     private String producerName;
     private Long volumeInCl;

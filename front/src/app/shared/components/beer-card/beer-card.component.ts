@@ -3,6 +3,7 @@ import {DetailedDrink} from '../../../shared/models/Drink';
 import {Service} from '../../../shared/models/Service';
 import {Observable} from "rxjs";
 import {BoughtDrinkService} from "../../services/bought-drink.service";
+import {CartService} from "../../services/cart.service";
 
 @Component({
     selector: 'beer-card',
@@ -16,7 +17,10 @@ export class BeerCardComponent implements OnInit {
 
     drink$!: Observable<DetailedDrink>;
 
-    constructor(private readonly boughtDrinkService: BoughtDrinkService) {
+    constructor(
+        private readonly boughtDrinkService: BoughtDrinkService,
+        private readonly cartService: CartService
+    ) {
     }
 
     ngOnInit(): void {
@@ -25,5 +29,19 @@ export class BeerCardComponent implements OnInit {
 
     buildPriceDisplay(service: Service): string {
         return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
+    }
+
+    addDrinkServiceToBasket(service: Service): void {
+        this.cartService.addDrinkServiceToBasket(service);
+    }
+
+    buildTooltip(drink: DetailedDrink): string {
+        if (drink.availability == 'AVAILABLE') {
+            return 'Ajouter au panier';
+        }
+        if (drink.availability == 'SOON') {
+            return 'Prochainement disponnible';
+        }
+        return 'Epuisée';
     }
 }

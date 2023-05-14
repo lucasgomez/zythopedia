@@ -10,5 +10,7 @@ public interface ServiceMapper {
 
     @Mapping(target = "drinkName", source = "boughtDrink.drink.name")
     @Mapping(target = "producerName", source = "boughtDrink.drink.producer.name")
+    @Mapping(target = "availability", source = "boughtDrink.availability")
+    @Mapping(target = "boughtDrinkId", source = "boughtDrink.id")
     ServiceDto toDto(Service service);
 }

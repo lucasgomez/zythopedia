@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {combineLatest, map, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable, switchMap, tap} from 'rxjs';
 import {ServiceService} from "../../../shared/services/service.service";
 import {Service} from "../../../shared/models/Service";
-
-const SERVICE_ID_PARAM_NAME = 'drinkServicesIds';
+import {CartService} from "../../../shared/services/cart.service";
 
 @Component({
     selector: 'app-cart',
@@ -14,8 +13,11 @@ export class CartComponent implements OnInit {
 
     private readonly DEPOSIT_PRICE = 2;
     services$! : Observable<(Service)[]>;
+    refreshServices$= new BehaviorSubject<void>(undefined);
 
-    constructor(private readonly serviceService: ServiceService) {
+    constructor(
+        private readonly serviceService: ServiceService,
+        private readonly cartService: CartService) {
     }
 
     ngOnInit(): void {
@@ -23,20 +25,19 @@ export class CartComponent implements OnInit {
     }
 
     loadServices(): void {
-        const drinkServicesIds = this.getBasketContent();
-        const servicesArray$ = Array.from(new Set(drinkServicesIds))
+        const servicesArray$ = Array.from(new Set(this.cartService.getBasketContent()))
             .map(id => this.serviceService.findById$(id));
-        this.services$ = combineLatest(servicesArray$).pipe(
-            map((services: Service[]) => drinkServicesIds
+        const serviceArray$ =  combineLatest(servicesArray$).pipe();
+        this.services$ = this.refreshServices$.pipe(
+            switchMap(() => serviceArray$),
+            map(services => services.filter(service => service.availability === 'AVAILABLE')),
+            map((services: Service[]) => this.cartService.getBasketContent()
                 .map(id => services.find(service => id === service.id))
                 .filter(service => !!service)
-                .map(service => service as Service))
-            );
+                .map(service => service as Service)
+            )
+        );
 
-    }
-
-    clearCart(): void {
-        localStorage.removeItem(SERVICE_ID_PARAM_NAME);
     }
 
     buildTableData(services: (Service)[]): DrinkRow[] {
@@ -51,12 +52,20 @@ export class CartComponent implements OnInit {
         return tableData;
     }
 
+    addService(serviceId: number): void {
+        const content = this.cartService.getBasketContent();
+        content.push(serviceId);
+        this.cartService.setBasketContent(content);
+        this.refreshServices$.next();
+    }
+
     removeService(serviceId: number): void {
-        const basketContent = this.getBasketContent();
+        const basketContent = this.cartService.getBasketContent();
         const index = basketContent.indexOf(serviceId);
         if (index > -1) {
             basketContent.splice(index, 1);
-            localStorage.setItem(SERVICE_ID_PARAM_NAME, JSON.stringify(basketContent));
+            this.cartService.setBasketContent(basketContent);
+            this.refreshServices$.next();
         }
     }
 
@@ -87,7 +96,7 @@ export class CartComponent implements OnInit {
     private buildDrinkRow(service: Service): DrinkRow {
         return {
             id: service.id,
-            link: `/drinks/${service.drinkId}`,
+            link: `/drinks/${service.boughtDrinkId}`,
             label: `${service.producerName} - ${service?.drinkName}`,
             volume: `${service.volumeInCl}cl.`,
             price: `${service.sellingPrice}.-`,
@@ -106,8 +115,12 @@ export class CartComponent implements OnInit {
         return services.length * this.DEPOSIT_PRICE;
     }
 
-    private getBasketContent(): number[] {
-        return JSON.parse(localStorage.getItem(SERVICE_ID_PARAM_NAME) || '[]').map((id: string) => +id);
+    hasBasketContent(): boolean {
+        return this.cartService.getBasketContent().length > 0;
+    }
+
+    clearCart(): void {
+        this.cartService.clearCart();
     }
 }
 

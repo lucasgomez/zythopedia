@@ -4,11 +4,14 @@ import { Observable, pluck } from 'rxjs';
 import { DescriptiveList } from '../../../shared/models/DescriptiveList';
 import { Drink } from '../../../shared/models/Drink';
 import {Service} from "../../../shared/models/Service";
+import {CartService} from "../../../shared/services/cart.service";
+import {MessageService} from "primeng/api";
 
 @Component({
     selector: 'app-descriptive-drinks-list',
     templateUrl: './descriptive-drinks-list.component.html',
-    styleUrls: ['./descriptive-drinks-list.component.css']
+    styleUrls: ['./descriptive-drinks-list.component.css'],
+    providers: [MessageService]
 })
 export class DescriptiveDrinksListComponent implements OnInit {
 
@@ -18,6 +21,8 @@ export class DescriptiveDrinksListComponent implements OnInit {
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly cartService: CartService,
+        private messageService: MessageService
     ) {
     }
 
@@ -44,9 +49,8 @@ export class DescriptiveDrinksListComponent implements OnInit {
     }
 
     addDrinkServiceToBasket(service: Service): void {
-        let drinkServicesIds = JSON.parse(localStorage.getItem('drinkServicesIds') || '[]');
-        drinkServicesIds.push(service.id);
-        localStorage.setItem('drinkServicesIds', JSON.stringify(drinkServicesIds));
+        this.cartService.addDrinkServiceToBasket(service);
+        this.messageService.add({ severity: 'success', detail: `${service.drinkName} ajouté au panier`});
     }
 
 }

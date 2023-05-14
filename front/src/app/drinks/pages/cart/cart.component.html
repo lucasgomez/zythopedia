@@ -1,23 +1,29 @@
-<p-button label="Vider le panier" (onClick)="clearCart()"></p-button>
 
-<ng-container *ngIf="services$ | async as services else loading">
-    <h1>Panier</h1>
-    <p-table [value]="buildTableData(services)">
-        <ng-template pTemplate="body" let-service>
-            <tr [className]="service.styleClass">
-                <td>
-                    <a *ngIf="service.link" [routerLink]="service.link">{{service.label}}</a>
-                    <div *ngIf="!service.link">{{service.label}}</div>
-                </td>
-                <td>{{service.volume}}</td>
-                <td class="amount">{{service.price}}</td>
-                <td>
-                    <i *ngIf="service.id" class="pi pi-minus-circle" (click)="removeService(service.id)"></i>
-                </td>
-            </tr>
-        </ng-template>
-    </p-table>
+<ng-container *ngIf="hasBasketContent()">
+    <p-button icon="pi pi-trash" label="Vider le panier" (onClick)="clearCart()"></p-button>
+    <ng-container *ngIf="services$ | async as services else loading">
+        <h1>Panier</h1>
+        <p-table [value]="buildTableData(services)">
+            <ng-template pTemplate="body" let-service>
+                <tr [className]="service.styleClass">
+                    <td>
+                        <a *ngIf="service.link" [routerLink]="service.link">{{service.label}}</a>
+                        <div *ngIf="!service.link">{{service.label}}</div>
+                    </td>
+                    <td>{{service.volume}}</td>
+                    <td class="amount">{{service.price}}</td>
+                    <td>
+                        <i *ngIf="service.id" class="pi pi-minus-circle" (click)="removeService(service.id)"></i>
+                        <i *ngIf="service.id" class="pi pi-plus-circle" (click)="addService(service.id)"></i>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-container>
+    <ng-template #loading>
+        <h2>Chargement de votre panier...</h2>
+    </ng-template>
 </ng-container>
-<ng-template #loading>
-    <h2>Chargement de votre panier...</h2>
-</ng-template>
+<ng-container *ngIf="!hasBasketContent()">
+    <h3>Votre panier est vide, allez sélectionner quelques bonnes bières</h3>
+</ng-container>

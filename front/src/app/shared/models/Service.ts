@@ -2,7 +2,7 @@ import { Availability } from './Availability';
 
 export interface Service {
     id: number;
-    drinkId: number;
+    boughtDrinkId: number;
     drinkName: string;
     producerName: string;
     volumeInCl: number;

@@ -24,6 +24,7 @@ import {DrinkCardComponent} from "./pages/drink-card/drink-card.component";
 import {RandomComponent} from "./pages/random/random.component";
 import {BadgeModule} from "primeng/badge";
 import {CartComponent} from "./pages/cart/cart.component";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
     declarations: [
@@ -34,7 +35,7 @@ import {CartComponent} from "./pages/cart/cart.component";
         DrinkCardComponent,
         RandomComponent,
         CartComponent,
-        StrengthRadarComponent
+        StrengthRadarComponent,
     ],
     imports: [
         SharedModule,
@@ -107,7 +108,8 @@ import {CartComponent} from "./pages/cart/cart.component";
         ChipModule,
         TagModule,
         DataViewModule,
-        BadgeModule
+        BadgeModule,
+        ToastModule
     ],
 })
 export class DrinksModule {
