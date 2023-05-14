@@ -17,6 +17,4 @@ public class ServiceDto {
     private Long volumeInCl;
     private Double sellingPrice;
     private Availability availability;
-    private Integer currentEditionAvailableCount;
-    private Integer currentEditionCount;
 }

@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper
 public interface ServiceMapper {
 
-    @Mapping(target = "currentEditionAvailableCount", ignore = true)
-    @Mapping(target = "currentEditionCount", ignore = true)
+    @Mapping(target = "drinkName", source = "boughtDrink.drink.name")
+    @Mapping(target = "producerName", source = "boughtDrink.drink.producer.name")
     ServiceDto toDto(Service service);
 }

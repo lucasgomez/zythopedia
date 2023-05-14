@@ -1,6 +1,7 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.ServiceDto;
+import ch.fdb.zythopedia.dto.mapper.ServiceMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Service;
 import ch.fdb.zythopedia.enums.ServiceMethod;
@@ -20,10 +21,12 @@ public class ServiceService {
 
     @Value("${service.tap.volumes}")
     private List<Long> tapVolumes;
-    private ServiceRepository serviceRepository;
+    private final ServiceRepository serviceRepository;
+    private final ServiceMapper serviceMapper;
 
-    public ServiceService(ServiceRepository serviceRepository) {
+    public ServiceService(ServiceRepository serviceRepository, ServiceMapper serviceMapper) {
         this.serviceRepository = serviceRepository;
+        this.serviceMapper = serviceMapper;
     }
 
     public Collection<Service> createNeededService(BoughtDrink boughtDrink) {
@@ -43,6 +46,11 @@ public class ServiceService {
                         .build())
                 .map(serviceRepository::save)
                 .collect(Collectors.toSet());
+    }
+
+    public Optional<ServiceDto> findById(long serviceId) {
+        return serviceRepository.findById(serviceId)
+                .map(serviceMapper::toDto);
     }
 
     public Service updatePrice(ServiceDto serviceDto) {

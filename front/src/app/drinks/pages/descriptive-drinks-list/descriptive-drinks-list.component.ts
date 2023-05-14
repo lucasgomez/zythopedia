@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, pluck } from 'rxjs';
 import { DescriptiveList } from '../../../shared/models/DescriptiveList';
 import { Drink } from '../../../shared/models/Drink';
+import {Service} from "../../../shared/models/Service";
 
 @Component({
     selector: 'app-descriptive-drinks-list',
@@ -26,8 +27,8 @@ export class DescriptiveDrinksListComponent implements OnInit {
         this.drinks$ = this.route.data.pipe(pluck('drinks'));
     }
 
-    buildPricesDisplay(drink: Drink): string {
-        return drink.services.map(service => `${service.sellingPrice}.- (${service.volumeInCl}cl)`).join(" / ");
+    buildPricesDisplay(service: Service): string {
+        return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
     }
 
     buildProducerUrl(drink: Drink): string {
@@ -40,6 +41,12 @@ export class DescriptiveDrinksListComponent implements OnInit {
 
     buildStyleUrl(drink: Drink): string {
         return `/drinks/styles/${drink.styleId}`;
+    }
+
+    addDrinkServiceToBasket(service: Service): void {
+        let drinkServicesIds = JSON.parse(localStorage.getItem('drinkServicesIds') || '[]');
+        drinkServicesIds.push(service.id);
+        localStorage.setItem('drinkServicesIds', JSON.stringify(drinkServicesIds));
     }
 
 }

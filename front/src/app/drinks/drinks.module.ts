@@ -23,6 +23,7 @@ import { DrinkComponent } from './pages/drink/drink.component';
 import {DrinkCardComponent} from "./pages/drink-card/drink-card.component";
 import {RandomComponent} from "./pages/random/random.component";
 import {BadgeModule} from "primeng/badge";
+import {CartComponent} from "./pages/cart/cart.component";
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import {BadgeModule} from "primeng/badge";
         DrinkComponent,
         DrinkCardComponent,
         RandomComponent,
+        CartComponent,
         StrengthRadarComponent
     ],
     imports: [
@@ -87,6 +89,10 @@ import {BadgeModule} from "primeng/badge";
                 component: DescriptiveDrinksListComponent,
                 resolve: {drinks: DrinksByOriginResolver},
                 data: {title: 'Boissons provenant de'}
+            },
+            {
+                path: 'cart',
+                component: CartComponent
             },
             {
                 path: ':drinkId',
