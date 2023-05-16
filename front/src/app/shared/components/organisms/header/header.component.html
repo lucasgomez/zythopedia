@@ -1,67 +1,16 @@
 <div *ngIf="displayHeader$ | async"
-        class="surface-overlay py-3 px-6 flex align-items-center justify-content-between relative lg:static"
-        style="min-height: 80px">
-    <img src="assets/elephant_zeus_mini.png" alt="Image" height="100" class="-mb-3 mr-0 lg:mr-6">
-    <a pRipple class="cursor-pointer block lg:hidden text-700 ml-auto" pStyleClass="@next" enterClass="hidden"
-       leaveToClass="hidden" [hideOnOutsideClick]="true">
-        <i class="pi pi-bars text-4xl"></i>
-    </a>
-    <div class="align-items-center flex-grow-1 justify-content-between hidden lg:flex absolute lg:static w-full surface-overlay left-0 top-100 z-1 shadow-2 lg:shadow-none">
-        <ul *ngIf="items$ | async as items" class="list-none p-0 m-0 flex lg:align-items-center select-none flex-column lg:flex-row">
-            <ng-container *ngFor="let item of items">
-                <ng-container *ngIf="item.items; else leaf">
-                    <li class="lg:relative">
-                        <a pRipple
-                           class="no-underline flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-600 hover:text-900 hover:surface-100 font-medium border-round cursor-pointer transition-colors transition-duration-150"
-                           pStyleClass="@next" enterClass="hidden" enterActiveClass="scalein" leaveToClass="hidden"
-                           leaveActiveClass="fadeout" [hideOnOutsideClick]="true" [routerLink]="item.routerLink">
-                            <i *ngIf="item.icon" [ngClass]="item.icon" class="mr-2"></i>
-                            <span>{{item.label}}</span>
-                            <i class="pi pi-angle-down ml-auto lg:ml-3"></i>
-                        </a>
-                        <ul class="list-none py-3 px-6 m-0 lg:px-0 lg:py-0 border-round shadow-0 lg:shadow-2 lg:border-1 border-50 lg:absolute surface-overlay hidden origin-top w-full lg:w-15rem cursor-pointer lg:max-h-20rem lg:overflow-y-auto">
-                            <ng-container
-                                    *ngTemplateOutlet="subBranch; context: {$implicit: item.items}"></ng-container>
-                            <ng-template #subBranch let-items>
-                                <li *ngFor="let item of items" class="relative">
-                                    <a pRipple
-                                       class="no-underline flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150"
-                                       pStyleClass="@next" enterClass="hidden" enterActiveClass="scalein"
-                                       leaveToClass="hidden" leaveActiveClass="fadeout" [hideOnOutsideClick]="true"
-                                       [routerLink]="item.routerLink"
-                                    >
-                                        <i *ngIf="item.icon" [ngClass]="item.icon" class="mr-2"></i>
-                                        <span class="font-medium">{{item.label}}</span>
-                                        <i *ngIf="item.items" class="pi pi-angle-down ml-auto lg:-rotate-90"></i>
-                                    </a>
-                                    <ul *ngIf="item.items"
-                                        class="list-none py-3 pl-3 m-0 lg:px-0 lg:py-0 border-round shadow-0 lg:shadow-2 lg:border-1 border-50 lg:absolute surface-overlay hidden origin-top w-full lg:w-15rem cursor-pointer left-100 top-0">
-                                        <ng-container
-                                                *ngTemplateOutlet="subBranch; context: {$implicit: item.items}"></ng-container>
-                                    </ul>
-                                </li>
-                            </ng-template>
-                        </ul>
-                    </li>
-                </ng-container>
-                <ng-template #leaf>
-                    <li>
-                        <a pRipple
-                           class="no-underline flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-600 hover:text-900 hover:surface-100 font-medium border-round cursor-pointer transition-colors transition-duration-150"
-                           [routerLink]="item.routerLink"
-                        >
-                            <i *ngIf="item.icon" [ngClass]="item.icon" class="mr-2"></i>
-                            <span>{{item.label}}</span>
-                        </a>
-                    </li>
-                </ng-template>
-            </ng-container>
-        </ul>
+     class="surface-overlay px-3 lg:px-6 flex align-items-center justify-content-between relative lg:static"
+     style="min-height: 80px"
+>
+    <img src="assets/elephant_zeus_mini.png" alt="Image" height="60" class="mr-3 lg:mr-6">
+    <div class="flex-grow-1">
+        <p-menubar [model]="(items$ | async) ?? []"></p-menubar>
     </div>
-    <div class="align-items-end">
-        <a class="cursor-pointer block lg:hidden text-700 ml-auto"
-           [routerLink]="['/drinks/cart']">
-            <i class="pi pi-shopping-cart text-4xl"></i>
-        </a>
+    <div class="ml-3 lg:ml-6 align-items-end">
+        <p-button
+                icon="pi pi-shopping-cart"
+                styleClass="p-button-rounded p-button-secondary p-button-text cart-button"
+                [routerLink]="['/drinks/cart']"
+        ></p-button>
     </div>
 </div>
