@@ -13,3 +13,9 @@
 :host::ng-deep table > tbody > tr:last-child > td:last-of-type {
     border-bottom-right-radius: var(--border-radius);
 }
+
+:host ::ng-deep .p-button{
+    font-size:13px;
+    padding: 6px;
+}
+

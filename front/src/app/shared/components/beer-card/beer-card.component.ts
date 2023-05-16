@@ -40,7 +40,7 @@ export class BeerCardComponent implements OnInit {
             return 'Ajouter au panier';
         }
         if (drink.availability == 'SOON') {
-            return 'Prochainement disponnible';
+            return 'Prochainement disponible';
         }
         return 'Epuisée';
     }

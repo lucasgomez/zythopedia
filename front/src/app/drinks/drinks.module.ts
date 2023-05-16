@@ -25,6 +25,8 @@ import {RandomComponent} from "./pages/random/random.component";
 import {BadgeModule} from "primeng/badge";
 import {CartComponent} from "./pages/cart/cart.component";
 import {ToastModule} from "primeng/toast";
+import {DropdownModule} from "primeng/dropdown";
+import {ToggleButtonModule} from "primeng/togglebutton";
 
 @NgModule({
     declarations: [
@@ -109,7 +111,9 @@ import {ToastModule} from "primeng/toast";
         TagModule,
         DataViewModule,
         BadgeModule,
-        ToastModule
+        ToastModule,
+        DropdownModule,
+        ToggleButtonModule
     ],
 })
 export class DrinksModule {

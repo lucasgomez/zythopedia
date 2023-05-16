@@ -5,17 +5,17 @@
 
     <ng-container *ngIf="mobileDisplay else desktopDisplay">
         <div class="border-round surface-card shadow-1">
-            <p-table [value]="drinks.content" dataKey="name" sortField="availability">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width: 5rem"></th>
-                        <th pSortableColumn="name">
-                            Nom <p-sortIcon field="name"></p-sortIcon>
-                        </th>
-                        <th pSortableColumn="availability">
-                            Disp. <p-sortIcon field="availability"></p-sortIcon>
-                        </th>
-                    </tr>
+            <p-table #drinksTable [value]="drinks.content" dataKey="name" sortField="name"
+                     [globalFilterFields]="['name','producerName','styleName','colorName']"
+            >
+                <ng-template pTemplate="caption" class="d-flex justify-content-between align-items-center">
+                    <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
+                    <input #globalFilter type="text" pInputText size="50" placeholder="Rechercher..." style="width:50%"
+                            (input)="drinksTable.filterGlobal($any($event.target).value, 'contains')"
+                    />
+                    <i class="pi pi-times-circle" (click)="clearGlobalFilter()"></i>
+                    <p-toggleButton [(ngModel)]="showOnlyAvailable" (onChange)="onAvailabilityToggle()"
+                                    onLabel="Disponibles" offLabel="Toutes" style="margin-left: 10px"></p-toggleButton>
                 </ng-template>
                 <ng-template pTemplate="body" let-drink let-expanded="expanded">
                     <tr>
@@ -37,7 +37,7 @@
                                 <div>{{drink.colorName + ' (' + drink.abv?.toFixed(1) + '%)'}}</div>
                             </ng-template>
                         </td>
-                        <td><p-badge severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
+                        <td><p-badge *ngIf="!showOnlyAvailable" severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="rowexpansion" let-drink>

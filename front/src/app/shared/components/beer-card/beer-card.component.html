@@ -1,13 +1,16 @@
 <ng-container *ngIf="drink$ | async as drink else loading">
     <div class="grid">
-        <div class="col-6">
+        <div class="col-8">
             <a [routerLink]="['/', 'drinks', 'styles', drink.style.id]">
-                <span class="product-category">{{drink.style.name}} ({{drink.abv}}%)</span>
+                <span>{{drink.style.name}}</span>
+            </a>
+            <span> ({{drink.abv}}%)</span>
+        </div>
+        <div class="col-4 align-content-end">
+            <a [routerLink]="['/', 'drinks', 'colors', drink.color.id]">
+                <span>{{drink.color.name}}</span>
             </a>
         </div>
-        <a [routerLink]="['/', 'drinks', 'colors', drink.color.id]">
-            <span class="product-category col-6 align-content-end">{{drink.color.name}}</span>
-        </a>
     </div>
     <p>{{drink.description}}</p>
     <div class="product-grid-item-bottom">
