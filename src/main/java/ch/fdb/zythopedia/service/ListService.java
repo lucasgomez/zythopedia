@@ -1,6 +1,7 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.DescriptiveList;
+import ch.fdb.zythopedia.dto.ServiceDto;
 import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.SoldDrinkLightDto;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkLightDtoMapper;
@@ -20,10 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -71,6 +69,7 @@ public class ListService {
                 .title(serviceMethod.getLabel())
                 .content(boughtDrinkService.findCurrentEditionByServiceMethod(serviceMethod).stream()
                         .map(soldDrinkLightDtoMapper::toDto)
+                        .map(this::sortService)
                         .collect(Collectors.toList()))
                 .build();
     }
@@ -102,6 +101,7 @@ public class ListService {
                 .orElseThrow(() -> new EntityNotFoundException(listTypeId, entityName));
         var list = finder.apply(listTypeId).stream()
                 .map(soldDrinkLightDtoMapper::toDto)
+                .map(this::sortService)
                 .sorted(Comparator.comparing(SoldDrinkLightDto::getName))
                 .collect(Collectors.toList());
 
@@ -110,6 +110,11 @@ public class ListService {
                 .description(listType.getDescription())
                 .content(list)
                 .build();
+    }
+
+    private SoldDrinkLightDto sortService(SoldDrinkLightDto soldDrinkLightDto) {
+        Collections.sort(soldDrinkLightDto.getServices(), Comparator.comparing(ServiceDto::getVolumeInCl));
+        return soldDrinkLightDto;
     }
 
     public Set<SoldDrinkDetailedDto> getRandom(Integer count) {
