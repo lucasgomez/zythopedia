@@ -64,6 +64,9 @@ export class DescriptiveDrinksListComponent implements OnInit, AfterViewInit {
     }
 
     onAvailabilityToggle(): void {
+        if (this.drinksTable === undefined) {
+            return;
+        }
         if (this.showOnlyAvailable) {
             this.drinksTable.filter('AVAILABLE', 'availability', 'equals');
             return;
