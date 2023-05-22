@@ -12,9 +12,11 @@ import { ListService } from '../../../shared/services/list.service';
 })
 export class BeamerDisplayComponent implements OnInit, OnDestroy {
 
+    
     drinks$!: Observable<Drink[]>;
     pageCounter = 0;
     maxPages = 0;
+
     private showTap = true;
 
     constructor(
@@ -23,7 +25,7 @@ export class BeamerDisplayComponent implements OnInit, OnDestroy {
     ) {
     }
 
-    private readonly RELOAD_DELAY = 20000;
+    private readonly RELOAD_DELAY = 30000;
     private readonly MAX_PAGE_TILES = 24;
 
     ngOnInit(): void {
@@ -31,7 +33,7 @@ export class BeamerDisplayComponent implements OnInit, OnDestroy {
         this.drinks$ = timer(1000, this.RELOAD_DELAY).pipe(
             tap(() => this.showTap = !this.showTap),
             map(() => this.showTap ? 'tap' : 'bottle'),
-            switchMap(service => this.listService.findAvailableTapBeers$(service)),
+            switchMap(service => this.listService.findAvailableBeers$(service)),
             tap(drinks => this.incrementPageCounter(drinks)),
             map(drinks => this.filterForBottles(drinks))
         );

@@ -35,7 +35,7 @@ export class ListService {
         return this.http.get<DescriptiveList<Drink>>(`${API_URL}style/${styleId}/drink`);
     }
 
-    findAvailableTapBeers$(serviceMethod: string): Observable<Drink[]> {
+    findAvailableBeers$(serviceMethod: string): Observable<Drink[]> {
         return this.http.get<Drink[]>(`${API_URL}service/${serviceMethod}/beer/available`);
     }
 
