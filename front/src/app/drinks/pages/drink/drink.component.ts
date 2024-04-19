@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, pluck } from 'rxjs';
-import { DetailedDrink } from '../../../shared/models/Drink';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Observable, pluck} from 'rxjs';
+import {DetailedDrink} from '../../../shared/models/Drink';
 
 @Component({
     selector: 'app-drink',

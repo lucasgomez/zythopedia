@@ -67,9 +67,9 @@ public class ColorService {
 
     public Color create(String name, String description) {
         return colorRepository.save(Color.builder()
-                    .name(name)
-                    .description(description)
-                    .build());
+                .name(name)
+                .description(description)
+                .build());
     }
 
     public Color update(long colorId, String name, String description) {

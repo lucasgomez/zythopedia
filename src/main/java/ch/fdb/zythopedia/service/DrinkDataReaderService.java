@@ -34,7 +34,7 @@ public class DrinkDataReaderService {
     public static final int ORIGIN_REPLACE_BY_NAME_COLUMN_NUM = 6;
 
     public static final int PRODUCER_ID_COLUMN_NUM = 0;
-    public static final int PRODUCER_NAME_COLUMN_NUM= 1;
+    public static final int PRODUCER_NAME_COLUMN_NUM = 1;
     public static final int PRODUCER_ORIGIN_ID_COLUMN_NUM = 2;
     public static final int PRODUCER_ORIGIN_NAME_COLUMN_NUM = 3;
     public static final int PRODUCER_TO_DELETE_COLUMN_NUM = 4;
@@ -154,8 +154,8 @@ public class DrinkDataReaderService {
      * @return pairs of id of color to delete (1st) and the optional id of replacement color (2nd)
      */
     private Map<Long, IdOrNameDto> readEntityToDeleteWithReplacement(Collection<Row> rows, int entityToDeleteColumnNum,
-                                                              int entityIdColumnNum, int entityToReplaceByColumnNum,
-                                                              int entityToReplaceByNameColumnNum) {
+                                                                     int entityIdColumnNum, int entityToReplaceByColumnNum,
+                                                                     int entityToReplaceByNameColumnNum) {
         return rows.stream()
                 .filter(row -> Strings.isNotBlank(getCellStringContent(row, entityToDeleteColumnNum)))
                 .collect(Collectors.toMap(

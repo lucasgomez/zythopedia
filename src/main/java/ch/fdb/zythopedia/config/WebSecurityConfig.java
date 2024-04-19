@@ -3,7 +3,6 @@ package ch.fdb.zythopedia.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -20,7 +19,6 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig {
 
     @Value("${users.admin.username}")
@@ -36,15 +34,31 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and()
-                .authorizeRequests()
-                .antMatchers("/css/**", "/js/**", "/loggedout").permitAll()
-                .anyRequest().permitAll()
-                .and()
-                .httpBasic()
-                .and()
-                .logout().disable()
-                .csrf().disable();
+
+
+//EnableMethodSecurity
+
+//        http.cors().and()
+//                .authorizeRequests()
+//                .antMatchers("/css/**", "/js/**", "/loggedout").permitAll()
+//                .anyRequest().permitAll()
+//                .and()
+//                .httpBasic()
+//                .and()
+//                .logout().disable()
+//                .csrf().disable();
+//
+//        return http.build();
+
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/css/**", "/js/**", "/loggedout").permitAll()
+                        .anyRequest().permitAll()
+                )
+                .formLogin((form) -> form
+                        .loginPage("/login")
+                        .permitAll()
+                );
 
         return http.build();
     }
@@ -63,6 +77,7 @@ public class WebSecurityConfig {
 
         return new InMemoryUserDetailsManager(admin, barbar);
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

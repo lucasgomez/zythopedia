@@ -1,9 +1,9 @@
 package ch.fdb.zythopedia.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity

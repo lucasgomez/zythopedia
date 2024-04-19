@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, map, Observable, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, Observable, switchMap} from 'rxjs';
 import {ServiceService} from "../../../shared/services/service.service";
 import {Service} from "../../../shared/models/Service";
 import {CartService} from "../../../shared/services/cart.service";
@@ -12,8 +12,8 @@ import {CartService} from "../../../shared/services/cart.service";
 export class CartComponent implements OnInit {
 
     private readonly DEPOSIT_PRICE = 2;
-    services$! : Observable<(Service)[]>;
-    refreshServices$= new BehaviorSubject<void>(undefined);
+    services$!: Observable<(Service)[]>;
+    refreshServices$ = new BehaviorSubject<void>(undefined);
 
     constructor(
         private readonly serviceService: ServiceService,
@@ -27,7 +27,7 @@ export class CartComponent implements OnInit {
     loadServices(): void {
         const servicesArray$ = Array.from(new Set(this.cartService.getBasketContent()))
             .map(id => this.serviceService.findById$(id));
-        const serviceArray$ =  combineLatest(servicesArray$).pipe();
+        const serviceArray$ = combineLatest(servicesArray$).pipe();
         this.services$ = this.refreshServices$.pipe(
             switchMap(() => serviceArray$),
             map(services => services.filter(service => service.availability === 'AVAILABLE')),

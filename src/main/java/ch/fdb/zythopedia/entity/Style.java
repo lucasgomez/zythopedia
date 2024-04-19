@@ -1,10 +1,9 @@
 package ch.fdb.zythopedia.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,9 +32,9 @@ public class Style implements NamedEntity {
     private Style parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Style> children = new ArrayList<>();
+    private List<Style> children;
 
     @OneToMany(mappedBy = "style")
-    private List<Drink> drinks = new ArrayList<>();
+    private List<Drink> drinks;
 
 }

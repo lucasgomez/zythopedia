@@ -1,10 +1,10 @@
 package ch.fdb.zythopedia.entity;
 
 import ch.fdb.zythopedia.enums.Strength;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity

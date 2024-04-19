@@ -1,18 +1,20 @@
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <div class="title">{{getTitle()}}</div>
-    <p-dataView [value]="drinks" layout="grid" >
+    <div class="title">{{ getTitle() }}</div>
+    <p-dataView [value]="drinks" layout="grid">
         <ng-template let-drink pTemplate="gridItem">
             <div class="col-3">
                 <div class="product-grid-item card">
                     <div class="product-grid-item-top">
                         <div>
-                            <span class="product-category">{{drink.styleName}} ({{drink.abv}}%)</span>
+                            <span class="product-category">{{ drink.styleName }} ({{ drink.abv }}%)</span>
                         </div>
-                        <span class="product-category">{{drink.colorName}}</span>
+                        <span class="product-category">{{ drink.colorName }}</span>
                     </div>
                     <div class="product-grid-item-content">
-                        <div class="product-name">{{drink.name}}</div>
-                        <div class="product-description">{{drink.producerName}} - ({{drink.originShortName}} {{drink.originFlag}})</div>
+                        <div class="product-name">{{ drink.name }}</div>
+                        <div class="product-description">{{ drink.producerName }} -
+                            ({{ drink.originShortName }} {{ drink.originFlag }})
+                        </div>
                     </div>
                     <div class="product-grid-item-bottom">
                         <div *ngFor="let service of drink.services">

@@ -44,7 +44,7 @@ public final class SpreadsheetHelper {
                 .map(row -> row.getCell(0))
                 .filter(SpreadsheetHelper::hasContent)
                 .isPresent()
-        || Optional.ofNullable(sheet.getRow(rowNum))
+                || Optional.ofNullable(sheet.getRow(rowNum))
                 .map(row -> row.getCell(1))
                 .filter(SpreadsheetHelper::hasContent)
                 .isPresent();
@@ -105,8 +105,10 @@ public final class SpreadsheetHelper {
 
     private static Long getCellLongContent(Cell cell) {
         switch (cell.getCellType()) {
-            case NUMERIC: return ((Double) cell.getNumericCellValue()).longValue();
-            case STRING: return Long.valueOf(cell.getStringCellValue());
+            case NUMERIC:
+                return ((Double) cell.getNumericCellValue()).longValue();
+            case STRING:
+                return Long.valueOf(cell.getStringCellValue());
             default: {
                 log.error(String.format("Could not read value from cell %s, thus ignoring it", cell.getAddress().formatAsString()));
                 return null;

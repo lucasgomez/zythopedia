@@ -3,13 +3,14 @@ package ch.fdb.zythopedia.controller;
 import ch.fdb.zythopedia.dto.ColorDto;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.dto.mapper.ColorMapper;
+import ch.fdb.zythopedia.entity.Color;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.service.ColorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
- import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class ColorController {
                 .map(colorMapper::toDto)
                 .collect(Collectors.toList());
     }
+
     @GetMapping("/current")
     public List<ColorDto> findColorsWithService() {
         return colorService.findColorsWithService();
@@ -41,7 +43,7 @@ public class ColorController {
     public ColorDto findById(@PathVariable long styleId) {
         return colorService.findById(styleId)
                 .map(colorMapper::toDto)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(styleId, Color.class.getName()));
     }
 
     @PostMapping

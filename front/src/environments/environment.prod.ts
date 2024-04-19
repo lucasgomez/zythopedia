@@ -1,4 +1,4 @@
 export const environment = {
-  production: true,
-  BASE_URL: 'redirect/?query='
+    production: true,
+    BASE_URL: 'redirect/?query='
 };

@@ -25,7 +25,7 @@ public class ImportController {
     @Secured("ROLE_ADMIN")
     public String importAmsteinOrder(@RequestParam("file") MultipartFile file) {
         var filename = file.getOriginalFilename();
-        log.info("File uploaded : "+filename);
+        log.info("File uploaded : " + filename);
 
         importService.importAmsteinOrder(file);
 
@@ -36,7 +36,7 @@ public class ImportController {
     @Secured("ROLE_ADMIN")
     public String importAmsteinCatalog(@RequestParam("file") MultipartFile file) {
         var filename = file.getOriginalFilename();
-        log.info("File uploaded : "+filename);
+        log.info("File uploaded : " + filename);
 
         importService.importAmsteinCatalogData(file);
 
@@ -47,7 +47,7 @@ public class ImportController {
     @Secured("ROLE_ADMIN")
     public String importPricesFromCalculator(@RequestParam("file") MultipartFile file) {
         var filename = file.getOriginalFilename();
-        log.info("File uploaded : "+filename);
+        log.info("File uploaded : " + filename);
 
         importService.importPrices(file);
 
@@ -58,7 +58,7 @@ public class ImportController {
     @Secured("ROLE_ADMIN")
     public String importDrinkData(@RequestParam("file") MultipartFile file) {
         var filename = file.getOriginalFilename();
-        log.info("File uploaded : "+filename);
+        log.info("File uploaded : " + filename);
 
         importService.importDrinksData(file);
 

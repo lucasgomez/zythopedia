@@ -1,4 +1,4 @@
-import { Availability } from './Availability';
+import {Availability} from './Availability';
 
 export interface Service {
     id: number;

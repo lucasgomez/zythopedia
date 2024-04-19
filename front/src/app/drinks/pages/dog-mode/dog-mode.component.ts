@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {catchError, Observable, pluck, tap} from 'rxjs';
-import { DescriptiveList } from '../../../shared/models/DescriptiveList';
-import { Drink } from '../../../shared/models/Drink';
-import { BoughtDrinkService } from '../../../shared/services/bought-drink.service';
+import {DescriptiveList} from '../../../shared/models/DescriptiveList';
+import {Drink} from '../../../shared/models/Drink';
+import {BoughtDrinkService} from '../../../shared/services/bought-drink.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
@@ -14,7 +14,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class DogModeComponent implements OnInit {
 
     drinks$!: Observable<DescriptiveList<Drink>>;
-    availabilities = ['SOON','AVAILABLE','OUT_OF_STOCK'];
+    availabilities = ['SOON', 'AVAILABLE', 'OUT_OF_STOCK'];
     loginForm!: FormGroup;
 
     constructor(

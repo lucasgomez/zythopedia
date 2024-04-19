@@ -1,8 +1,4 @@
-import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { DetailedDrink } from '../models/Drink';
+import {Injectable} from '@angular/core';
 import {Service} from "../models/Service";
 
 @Injectable({
@@ -28,4 +24,5 @@ export class CartService {
         localStorage.setItem(SERVICE_ID_PARAM_NAME, JSON.stringify(basketContent));
     }
 }
+
 export const SERVICE_ID_PARAM_NAME = 'drinkServicesIds';

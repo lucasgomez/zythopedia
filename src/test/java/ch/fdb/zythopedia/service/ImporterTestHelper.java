@@ -49,7 +49,7 @@ public class ImporterTestHelper {
     );
 
     public static MockMultipartFile openFileFromResources(String fileName) {
-        try (var file = ImporterTestHelper.class.getResourceAsStream(String.format("/%s", fileName))){
+        try (var file = ImporterTestHelper.class.getResourceAsStream(String.format("/%s", fileName))) {
             return new MockMultipartFile(
                     "file",
                     fileName,

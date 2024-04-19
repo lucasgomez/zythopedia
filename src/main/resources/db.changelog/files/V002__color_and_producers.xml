@@ -40,9 +40,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="ORIGIN_FK" type="BIGINT"/>
-        </createTable><addForeignKeyConstraint baseColumnNames="ORIGIN_FK" baseTableName="PRODUCER"
-                                               constraintName="FK_PRODUCER_ORIGIN__ORIGIN"
-                                               referencedColumnNames="ID" referencedTableName="ORIGIN"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="ORIGIN_FK" baseTableName="PRODUCER"
+                                 constraintName="FK_PRODUCER_ORIGIN__ORIGIN"
+                                 referencedColumnNames="ID" referencedTableName="ORIGIN"/>
         <addUniqueConstraint tableName="PRODUCER" columnNames="NAME" constraintName="UK_PRODUCER__NAME"/>
     </changeSet>
 </databaseChangeLog>

@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <h3 class="mt-0">{{title}} {{drinks.title}}</h3>
-    <div *ngIf="drinks.description" class="text-700 mb-5">{{drinks.description}}</div>
+    <h3 class="mt-0">{{ title }} {{ drinks.title }}</h3>
+    <div *ngIf="drinks.description" class="text-700 mb-5">{{ drinks.description }}</div>
 
     <ng-container *ngIf="mobileDisplay else desktopDisplay">
         <div class="border-round surface-card shadow-1">
@@ -11,7 +11,7 @@
                 <ng-template pTemplate="caption" class="d-flex justify-content-between align-items-center">
                     <i class="pi pi-search" style="margin:4px 4px 0 0"></i>
                     <input #globalFilter type="text" pInputText size="50" placeholder="Rechercher..." style="width:50%"
-                            (input)="drinksTable.filterGlobal($any($event.target).value, 'contains')"
+                           (input)="drinksTable.filterGlobal($any($event.target).value, 'contains')"
                     />
                     <i class="pi pi-times-circle" (click)="clearGlobalFilter()"></i>
                     <p-toggleButton [(ngModel)]="showOnlyAvailable" (onChange)="onAvailabilityToggle()"
@@ -20,24 +20,30 @@
                 <ng-template pTemplate="body" let-drink let-expanded="expanded">
                     <tr>
                         <td>
-                            <button type="button" pButton pRipple [pRowToggler]="drink" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                            <button type="button" pButton pRipple [pRowToggler]="drink"
+                                    class="p-button-text p-button-rounded p-button-plain"
+                                    [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
                         </td>
                         <td>
                             <ng-container *ngIf="expanded else collapsed">
-                                <h3><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></h3>
+                                <h3><a [routerLink]="['/', 'drinks', drink.id]"
+                                       class="no-underline">{{ drink.name }}</a></h3>
                             </ng-container>
                             <ng-template #collapsed>
                                 <div>
-                                    <h4>{{drink.name}}</h4>
+                                    <h4>{{ drink.name }}</h4>
                                 </div>
                                 <div>
-                                    {{drink.producerName + ' ' + drink.originFlag}}
+                                    {{ drink.producerName + ' ' + drink.originFlag }}
                                 </div>
-                                <div>{{drink.styleName}}</div>
-                                <div>{{drink.colorName + ' (' + drink.abv?.toFixed(1) + '%)'}}</div>
+                                <div>{{ drink.styleName }}</div>
+                                <div>{{ drink.colorName + ' (' + drink.abv?.toFixed(1) + '%)' }}</div>
                             </ng-template>
                         </td>
-                        <td><p-badge *ngIf="!showOnlyAvailable" severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
+                        <td>
+                            <p-badge *ngIf="!showOnlyAvailable" severity="{{drink.availability | availabilityColor}}"
+                                     value="{{drink.availability | availabilityIcon}}"></p-badge>
+                        </td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="rowexpansion" let-drink>
@@ -57,39 +63,51 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="availability">
-                            Dispo. <p-sortIcon field="availability"></p-sortIcon>
+                            Dispo.
+                            <p-sortIcon field="availability"></p-sortIcon>
                         </th>
                         <th pSortableColumn="name">
-                            Nom <p-sortIcon field="name"></p-sortIcon>
+                            Nom
+                            <p-sortIcon field="name"></p-sortIcon>
                         </th>
                         <th pSortableColumn="abv">
-                            Alc. <p-sortIcon field="abv"></p-sortIcon>
+                            Alc.
+                            <p-sortIcon field="abv"></p-sortIcon>
                         </th>
                         <th pSortableColumn="styleName">
-                            Type <p-sortIcon field="styleName"></p-sortIcon>
+                            Type
+                            <p-sortIcon field="styleName"></p-sortIcon>
                         </th>
                         <th pSortableColumn="colorName">
-                            Color <p-sortIcon field="colorName"></p-sortIcon>
+                            Color
+                            <p-sortIcon field="colorName"></p-sortIcon>
                         </th>
                         <th pSortableColumn="producerName">
-                            Producteur <p-sortIcon field="producerName"></p-sortIcon>
+                            Producteur
+                            <p-sortIcon field="producerName"></p-sortIcon>
                         </th>
                         <th pSortableColumn="prices">
-                            Prix (vol.) <p-sortIcon field="prices"></p-sortIcon>
+                            Prix (vol.)
+                            <p-sortIcon field="prices"></p-sortIcon>
                         </th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-drink>
                     <tr>
-                        <td><p-badge size="large" severity="{{drink.availability | availabilityColor}}" value="{{drink.availability | availabilityIcon}}"></p-badge></td>
-                        <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{drink.name}}</a></td>
-                        <td>{{drink.abv | abv}}</td>
-                        <td><a [routerLink]="buildStyleUrl(drink)">{{drink.styleName}}</a></td>
-                        <td><a [routerLink]="buildColorUrl(drink)">{{drink.colorName}}</a></td>
-                        <td><a [routerLink]="buildProducerUrl(drink)">{{drink.producerName}}</a></td>
+                        <td>
+                            <p-badge size="large" severity="{{drink.availability | availabilityColor}}"
+                                     value="{{drink.availability | availabilityIcon}}"></p-badge>
+                        </td>
+                        <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{ drink.name }}</a></td>
+                        <td>{{ drink.abv | abv }}</td>
+                        <td><a [routerLink]="buildStyleUrl(drink)">{{ drink.styleName }}</a></td>
+                        <td><a [routerLink]="buildColorUrl(drink)">{{ drink.colorName }}</a></td>
+                        <td><a [routerLink]="buildProducerUrl(drink)">{{ drink.producerName }}</a></td>
                         <td>
                             <div *ngFor="let service of drink.services">
-                                <p-button icon="pi pi-shopping-cart" label="{{buildPricesDisplay(service)}}" styleClass="p-button-sm" (click)="addDrinkServiceToBasket(service)"></p-button>
+                                <p-button icon="pi pi-shopping-cart" label="{{buildPricesDisplay(service)}}"
+                                          styleClass="p-button-sm"
+                                          (click)="addDrinkServiceToBasket(service)"></p-button>
                             </div>
                         </td>
                     </tr>

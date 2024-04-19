@@ -11,13 +11,13 @@ import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.repository.BoughtDrinkRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;

@@ -160,9 +160,13 @@ public class AmsteinReaderService {
 
     private ServiceMethod getServiceMethodFromAmsteinContentType(String contentType) {
         switch (contentType) {
-            case "FUT": return ServiceMethod.TAP;
-            case "CAR": case "CAI": return ServiceMethod.BOTTLE;
-            default: return null;
+            case "FUT":
+                return ServiceMethod.TAP;
+            case "CAR":
+            case "CAI":
+                return ServiceMethod.BOTTLE;
+            default:
+                return null;
         }
     }
 

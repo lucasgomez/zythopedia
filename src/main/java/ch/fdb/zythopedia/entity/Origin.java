@@ -1,10 +1,9 @@
 package ch.fdb.zythopedia.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -35,5 +34,5 @@ public class Origin implements NamedEntity {
     private String flag;
 
     @OneToMany(mappedBy = "origin")
-    private List<Producer> producers = new ArrayList<>();
+    private List<Producer> producers;
 }

@@ -2,20 +2,22 @@
     <div class="grid">
         <div class="col-8">
             <a [routerLink]="['/', 'drinks', 'styles', drink.style.id]">
-                <span>{{drink.style.name}}</span>
+                <span>{{ drink.style.name }}</span>
             </a>
-            <span> ({{drink.abv}}%)</span>
+            <span> ({{ drink.abv }}%)</span>
         </div>
         <div class="col-4 align-content-end">
             <a [routerLink]="['/', 'drinks', 'colors', drink.color.id]">
-                <span>{{drink.color.name}}</span>
+                <span>{{ drink.color.name }}</span>
             </a>
         </div>
     </div>
-    <p>{{drink.description}}</p>
+    <p>{{ drink.description }}</p>
     <div class="product-grid-item-bottom">
         <div *ngFor="let service of drink.services">
-            <p-button [disabled]="drink.availability != 'AVAILABLE'" [pTooltip]="buildTooltip(drink)" icon="pi pi-shopping-cart" label="{{buildPriceDisplay(service)}}" styleClass="p-button-sm" (click)="addDrinkServiceToBasket(service)"></p-button>
+            <p-button [disabled]="drink.availability != 'AVAILABLE'" [pTooltip]="buildTooltip(drink)"
+                      icon="pi pi-shopping-cart" label="{{buildPriceDisplay(service)}}" styleClass="p-button-sm"
+                      (click)="addDrinkServiceToBasket(service)"></p-button>
         </div>
     </div>
 </ng-container>

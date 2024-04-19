@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { map, Observable, switchMap, tap, timer } from 'rxjs';
-import { Drink } from '../../../shared/models/Drink';
-import { Service } from '../../../shared/models/Service';
-import { HeaderDisplayService } from '../../../shared/services/header-display.service';
-import { ListService } from '../../../shared/services/list.service';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {map, Observable, switchMap, tap, timer} from 'rxjs';
+import {Drink} from '../../../shared/models/Drink';
+import {Service} from '../../../shared/models/Service';
+import {HeaderDisplayService} from '../../../shared/services/header-display.service';
+import {ListService} from '../../../shared/services/list.service';
 
 @Component({
     selector: 'beamer-display',
@@ -12,7 +12,7 @@ import { ListService } from '../../../shared/services/list.service';
 })
 export class BeamerDisplayComponent implements OnInit, OnDestroy {
 
-    
+
     drinks$!: Observable<Drink[]>;
     pageCounter = 0;
     maxPages = 0;
@@ -58,7 +58,7 @@ export class BeamerDisplayComponent implements OnInit, OnDestroy {
     }
 
     getTitle(): string {
-        return this.showTap ? 'Pressions' : `Bouteilles ${this.pageCounter+1}/${this.maxPages}`;
+        return this.showTap ? 'Pressions' : `Bouteilles ${this.pageCounter + 1}/${this.maxPages}`;
     }
 
     private filterForBottles(drinks: Drink[]): Drink[] {

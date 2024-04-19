@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { Availability } from '../models/Availability';
+import {Pipe, PipeTransform} from '@angular/core';
+import {Availability} from '../models/Availability';
 
 @Pipe({
     name: 'availabilityIcon'

@@ -1,15 +1,16 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.dto.ProducerDto;
+import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
+import ch.fdb.zythopedia.entity.Producer;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.service.ProducerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +39,11 @@ public class ProducerController {
         return producerService.findProducersWithService();
     }
 
-    @GetMapping(value = "/producer/{styleId}")
-    public ProducerDto findById(@PathVariable long styleId) {
-        return producerService.findById(styleId)
+    @GetMapping(value = "/producer/{producerId}")
+    public ProducerDto findById(@PathVariable long producerId) {
+        return producerService.findById(producerId)
                 .map(producerMapper::toDto)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(producerId, Producer.class.getName()));
     }
 
     @PostMapping(value = "/producer")

@@ -60,7 +60,7 @@ export class DescriptiveDrinksListComponent implements OnInit, AfterViewInit {
 
     addDrinkServiceToBasket(service: Service): void {
         this.cartService.addDrinkServiceToBasket(service);
-        this.messageService.add({ severity: 'success', detail: `${service.drinkName} ajouté au panier`});
+        this.messageService.add({severity: 'success', detail: `${service.drinkName} ajouté au panier`});
     }
 
     onAvailabilityToggle(): void {

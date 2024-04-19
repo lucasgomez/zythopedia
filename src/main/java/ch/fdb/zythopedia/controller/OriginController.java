@@ -1,15 +1,16 @@
 package ch.fdb.zythopedia.controller;
 
-import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.OriginDto;
+import ch.fdb.zythopedia.dto.creation.CreateOriginDto;
 import ch.fdb.zythopedia.dto.mapper.OriginMapper;
+import ch.fdb.zythopedia.entity.Origin;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.service.OriginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +39,11 @@ public class OriginController {
         return originService.findOriginsWithService();
     }
 
-    @GetMapping(value = "/origin/{styleId}")
-    public OriginDto findById(@PathVariable long styleId) {
-        return originService.findById(styleId)
+    @GetMapping(value = "/origin/{originId}")
+    public OriginDto findById(@PathVariable long originId) {
+        return originService.findById(originId)
                 .map(originMapper::toDto)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException(originId, Origin.class.getName()));
     }
 
     @PostMapping(value = "/origin")

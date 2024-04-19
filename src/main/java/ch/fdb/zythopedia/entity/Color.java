@@ -1,10 +1,9 @@
 package ch.fdb.zythopedia.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +28,6 @@ public class Color implements NamedEntity {
     private String description;
 
     @OneToMany(mappedBy = "color")
-    private List<Drink> drinks = new ArrayList<>();
+    private List<Drink> drinks;
 
 }

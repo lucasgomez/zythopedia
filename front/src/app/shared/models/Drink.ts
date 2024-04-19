@@ -1,8 +1,8 @@
-import { Availability } from './Availability';
-import { Color } from './Color';
-import { Producer } from './Producer';
-import { Service } from './Service';
-import { Style } from './Style';
+import {Availability} from './Availability';
+import {Color} from './Color';
+import {Producer} from './Producer';
+import {Service} from './Service';
+import {Style} from './Style';
 
 export interface Drink {
     id: number;

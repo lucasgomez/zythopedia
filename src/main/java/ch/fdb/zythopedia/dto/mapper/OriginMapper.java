@@ -12,5 +12,6 @@ public interface OriginMapper {
     @Mapping(target = "currentEditionAvailableCount", ignore = true)
     @Mapping(target = "currentEditionCount", ignore = true)
     OriginDto toDto(Origin entity);
+
     CreateOriginDto toCreateDto(OriginDto dto);
 }

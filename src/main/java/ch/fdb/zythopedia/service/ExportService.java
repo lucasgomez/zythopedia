@@ -6,13 +6,13 @@ import ch.fdb.zythopedia.dto.mapper.DrinkPriceCalculatorDtoMapper;
 import ch.fdb.zythopedia.dto.mapper.SimpleDrinkMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.enums.ServiceMethod;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class ExportService {
 
     private File saveWorkbookInTempFolder(Workbook workbook, String fileBaseName) {
         var fileName = String.format("tmp/%s_%s.xlsx", UUID.randomUUID(), fileBaseName);
-        try  (OutputStream fileOut = new FileOutputStream(fileName)) {
+        try (OutputStream fileOut = new FileOutputStream(fileName)) {
             workbook.write(fileOut);
             return new File(fileName);
         } catch (IOException ioException) {
@@ -120,7 +120,7 @@ public class ExportService {
 
         for (var rowId = 0; rowId < drinks.size(); rowId++) {
             var cellId = 0;
-            var row = sheet.createRow(rowId+1);
+            var row = sheet.createRow(rowId + 1);
             var drink = simpleDrinks.get(rowId);
 
             writeContentToCell(row, DrinkDataReaderService.DRINK_ID_COLUMN_NUM, drink.getId());
@@ -143,7 +143,7 @@ public class ExportService {
         addHeader(sheet, boldCellStyle, List.of("id", "name", "shortName", "flag", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < origins.size(); rowId++) {
-            var row = sheet.createRow(rowId+1);
+            var row = sheet.createRow(rowId + 1);
             var origin = origins.get(rowId);
 
             writeContentToCell(row, DrinkDataReaderService.ORIGIN_ID_COLUMN_NUM, origin.getId());
@@ -160,7 +160,7 @@ public class ExportService {
         addHeader(sheet, boldCellStyle, List.of("id", "name", "originId", "originName", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < producers.size(); rowId++) {
-            var row = sheet.createRow(rowId+1);
+            var row = sheet.createRow(rowId + 1);
             var producer = producers.get(rowId);
 
             var optionalOrigin = Optional.ofNullable(producer.getOrigin());
@@ -184,7 +184,7 @@ public class ExportService {
         addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "parentId", "parentName", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < styles.size(); rowId++) {
-            var row = sheet.createRow(rowId+1);
+            var row = sheet.createRow(rowId + 1);
             var style = styles.get(rowId);
 
             writeContentToCell(row, DrinkDataReaderService.STYLE_ID_COLUMN_NUM, style.getId());
@@ -202,7 +202,7 @@ public class ExportService {
         addHeader(sheet, boldCellStyle, List.of("id", "name", "description", "toDelete", "replaceById", "replaceByName"));
 
         for (var rowId = 0; rowId < colors.size(); rowId++) {
-            var row = sheet.createRow(rowId+1);
+            var row = sheet.createRow(rowId + 1);
             var color = colors.get(rowId);
 
             writeContentToCell(row, DrinkDataReaderService.COLOR_ID_COLUMN_NUM, color.getId());
@@ -222,7 +222,7 @@ public class ExportService {
         addHeader(sheet, boldCellStyle, PRICE_CALCULATOR_HEADERS);
 
         for (var rowId = 0; rowId < dtos.size(); rowId++) {
-            addPriceCalculatorRowContent(sheet.createRow(rowId+1), dtos.get(rowId), boldCellStyle, numberCellStyle);
+            addPriceCalculatorRowContent(sheet.createRow(rowId + 1), dtos.get(rowId), boldCellStyle, numberCellStyle);
         }
 
         return workbook;
@@ -283,8 +283,8 @@ public class ExportService {
         cell.setCellStyle(numberCellStyle);
 
         var formula = ServiceMethod.TAP.name().equalsIgnoreCase(dto.getServiceMethod())
-            ? String.format("%s*%s*%s/100", getCellAddress(buyingPriceCell), TAP_COEFFICIENT, getCellAddress(volumeCell))
-            : String.format("%s*%s", getCellAddress(buyingPriceCell), BOTTLE_COEFFICIENT);
+                ? String.format("%s*%s*%s/100", getCellAddress(buyingPriceCell), TAP_COEFFICIENT, getCellAddress(volumeCell))
+                : String.format("%s*%s", getCellAddress(buyingPriceCell), BOTTLE_COEFFICIENT);
 
         cell.setCellFormula(formula);
 
@@ -295,7 +295,7 @@ public class ExportService {
         return String.format(
                 "%s%s",
                 CellReference.convertNumToColString(buyingPriceCell.getColumnIndex()),
-                buyingPriceCell.getAddress().getRow()+1);
+                buyingPriceCell.getAddress().getRow() + 1);
     }
 
     private Cell writeContentToCell(Row row, int cellId, String content) {

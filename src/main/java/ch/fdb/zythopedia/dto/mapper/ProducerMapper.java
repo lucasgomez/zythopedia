@@ -12,6 +12,7 @@ public interface ProducerMapper {
     @Mapping(target = "currentEditionAvailableCount", ignore = true)
     @Mapping(target = "currentEditionCount", ignore = true)
     ProducerDto toDto(Producer entity);
+
     @Mapping(target = "originId", source = "origin.id")
     @Mapping(target = "originName", source = "origin.name")
     @Mapping(target = "originShortName", source = "origin.shortName")

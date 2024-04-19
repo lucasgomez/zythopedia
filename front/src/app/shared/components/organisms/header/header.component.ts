@@ -38,8 +38,8 @@ export class HeaderComponent implements OnInit {
             this.colorService.findAll(),
         ]).pipe(
             map(([producers, origins, styles, colors]) => [
-                { label: 'Toutes', icon: 'mdi mdi-format-list-text', routerLink: '/drinks' },
-                { label: 'L\'Oracle', icon: 'mdi mdi-head-question', routerLink: '/drinks/random' },
+                {label: 'Toutes', icon: 'mdi mdi-format-list-text', routerLink: '/drinks'},
+                {label: 'L\'Oracle', icon: 'mdi mdi-head-question', routerLink: '/drinks/random'},
                 {
                     label: 'Par service', icon: 'mdi mdi-chemical-weapon',
                     items: this.serviceMethods.map(serviceMethod => ({

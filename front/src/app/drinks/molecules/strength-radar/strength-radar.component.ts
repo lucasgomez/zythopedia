@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { DetailedDrink } from '../../../shared/models/Drink';
+import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {DetailedDrink} from '../../../shared/models/Drink';
 
 const CANVAS_SIZE = 200;
 const TARGET_RADIUS = 80;
@@ -11,7 +11,7 @@ const TARGET_RADIUS = 80;
 })
 export class StrengthRadarComponent implements AfterViewInit {
 
-    @ViewChild('radar', { static: false })
+    @ViewChild('radar', {static: false})
     canvas!: ElementRef<HTMLCanvasElement>;
     ctx?: CanvasRenderingContext2D;
 
@@ -30,10 +30,10 @@ export class StrengthRadarComponent implements AfterViewInit {
 
 
         const values: Val = [
-            { name: 'Amertume', value: this.drink.bitterness },
-            { name: 'Houblonnage', value: this.drink.hoppiness },
-            { name: 'Douceur', value: this.drink.sweetness },
-            { name: 'Acidité', value: this.drink.sourness }
+            {name: 'Amertume', value: this.drink.bitterness},
+            {name: 'Houblonnage', value: this.drink.hoppiness},
+            {name: 'Douceur', value: this.drink.sweetness},
+            {name: 'Acidité', value: this.drink.sourness}
         ];
 
         const center: Vec = {
@@ -167,5 +167,9 @@ export class StrengthRadarComponent implements AfterViewInit {
     }
 }
 
-interface Vec {x: number, y: number}
-type Val = Array<{name: string, value: number}>
+interface Vec {
+    x: number,
+    y: number
+}
+
+type Val = Array<{ name: string, value: number }>

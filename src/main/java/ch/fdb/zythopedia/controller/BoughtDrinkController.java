@@ -5,12 +5,12 @@ import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.service.BoughtDrinkService;
+import jakarta.websocket.server.PathParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 
 @Slf4j
 @RestController
@@ -47,10 +47,10 @@ public class BoughtDrinkController {
     @PostMapping("/drink/{drinkId}/boughtdrink")
     @Secured("ROLE_MANAGER")
     public SoldDrinkDetailedDto createBoughtDrink(@PathVariable Long drinkId,
-                                       @PathParam(value = "code") String code,
-                                       @PathParam(value = "buyingPrice") Double buyingPrice,
-                                       @PathParam(value = "serviceMethod") ServiceMethod serviceMethod,
-                                       @PathParam(value = "volumeInCl") Long volumeInCl) {
+                                                  @PathParam(value = "code") String code,
+                                                  @PathParam(value = "buyingPrice") Double buyingPrice,
+                                                  @PathParam(value = "serviceMethod") ServiceMethod serviceMethod,
+                                                  @PathParam(value = "volumeInCl") Long volumeInCl) {
         return boughtDrinkService.create(drinkId, buyingPrice, serviceMethod, code, volumeInCl);
     }
 

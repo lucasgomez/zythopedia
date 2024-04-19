@@ -1,8 +1,8 @@
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { DetailedDrink } from '../models/Drink';
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {environment} from '../../../environments/environment';
+import {DetailedDrink} from '../models/Drink';
 
 const API_URL = `${environment.BASE_URL}boughtdrink`;
 
@@ -21,7 +21,7 @@ export class BoughtDrinkService {
     changeAvailability(drinkId: number, availability: string, user: string, password: string): Observable<DetailedDrink> {
         const httpOptions = {
             headers: new HttpHeaders({
-                'Content-Type':  'application/json',
+                'Content-Type': 'application/json',
                 'Authorization': 'Basic ' + btoa(`${user}:${password}`)
             })
         };

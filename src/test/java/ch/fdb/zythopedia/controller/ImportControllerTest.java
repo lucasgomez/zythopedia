@@ -120,7 +120,7 @@ class ImportControllerTest {
         postFile(API_IMPORT_DATA, drinkDataFile);
 
         assertTrue(serviceRepository.findAll().stream()
-                .allMatch(service -> Objects.isNull(service.getSellingPrice())),
+                        .allMatch(service -> Objects.isNull(service.getSellingPrice())),
                 "Selling price should be null before import");
 
         when(mockPricesCalculatorReaderService.readServices(any()))
@@ -137,10 +137,10 @@ class ImportControllerTest {
         assertEquals(5L, pricedServices.size(),
                 "Selling price should be set after import for 5 drinks");
         assertEquals(25.0, pricedServices.stream()
-                .filter(service -> service.getVolumeInCl() == 140L)
-                .map(Service::getSellingPrice)
-                .findFirst()
-                .orElse(0.0),
+                        .filter(service -> service.getVolumeInCl() == 140L)
+                        .map(Service::getSellingPrice)
+                        .findFirst()
+                        .orElse(0.0),
                 "Selling price for 140cl Lupulus should have been set to 25.0 after price import");
 
     }
@@ -286,9 +286,9 @@ class ImportControllerTest {
     private IdOrNameDto translateProducersIdFromImport(IdOrNameDto producerIdFromImport, Map<String, Long> allColorsIdByName) {
         return IdOrNameDto.builder()
                 .id(Optional.of(producerIdFromImport)
-                            .map(IdOrNameDto::getId)
-                            .map(id -> allColorsIdByName.get(ImporterTestHelper.PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT.get(id)))
-                            .orElse(null))
+                        .map(IdOrNameDto::getId)
+                        .map(id -> allColorsIdByName.get(ImporterTestHelper.PRODUCERS_OLD_NAME_BY_ID_FROM_IMPORT.get(id)))
+                        .orElse(null))
                 .name(producerIdFromImport.getName())
                 .build();
     }
@@ -296,9 +296,9 @@ class ImportControllerTest {
     private IdOrNameDto translateStyleIdFromImport(IdOrNameDto colorIdFromImport, Map<String, Long> allColorsIdByName) {
         return IdOrNameDto.builder()
                 .id(Optional.of(colorIdFromImport)
-                            .map(IdOrNameDto::getId)
-                            .map(id -> allColorsIdByName.get(ImporterTestHelper.STYLES_OLD_NAME_BY_ID_FROM_IMPORT.get(id)))
-                            .orElse(null))
+                        .map(IdOrNameDto::getId)
+                        .map(id -> allColorsIdByName.get(ImporterTestHelper.STYLES_OLD_NAME_BY_ID_FROM_IMPORT.get(id)))
+                        .orElse(null))
                 .name(colorIdFromImport.getName())
                 .build();
     }

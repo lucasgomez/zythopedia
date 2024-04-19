@@ -14,8 +14,8 @@
     border-bottom-right-radius: var(--border-radius);
 }
 
-:host ::ng-deep .p-button{
-    font-size:13px;
+:host ::ng-deep .p-button {
+    font-size: 13px;
     padding: 6px;
 }
 

@@ -2,10 +2,10 @@ package ch.fdb.zythopedia.entity;
 
 import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -51,7 +51,7 @@ public class BoughtDrink {
     @Column(name = "RETURNABLE")
     private Boolean returnable;
 
-    @OneToMany( mappedBy = "boughtDrink")
+    @OneToMany(mappedBy = "boughtDrink")
     private List<Service> services;
 
     @Transient
