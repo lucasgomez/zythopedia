@@ -40,7 +40,8 @@ public class OriginService {
     public List<OriginDto> findAllDto() {
         return originRepository.findAll().stream()
                 .map(originMapper::toDto)
-                .sorted(Comparator.comparing(OriginDto::getName))
+                .sorted(Comparator.comparing(OriginDto::getName,
+                        Comparator.nullsFirst(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
     }
 
@@ -87,9 +88,9 @@ public class OriginService {
         return Optional.ofNullable(originId)
                 .flatMap(originRepository::findById)
                 .or(() -> Optional.ofNullable(originShortName)
-                        .flatMap(originRepository::findByShortName))
+                        .flatMap(originRepository::findByShortNameIgnoreCase))
                 .or(() -> Optional.ofNullable(originLongName)
-                        .flatMap(originRepository::findByName));
+                        .flatMap(originRepository::findByNameIgnoreCase));
     }
 
     public List<OriginDto> findOriginsWithService() {

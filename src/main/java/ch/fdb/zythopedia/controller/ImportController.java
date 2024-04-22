@@ -4,10 +4,7 @@ import ch.fdb.zythopedia.service.ImportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -19,6 +16,17 @@ public class ImportController {
 
     public ImportController(ImportService importService) {
         this.importService = importService;
+    }
+
+    @PostMapping(value = "/order")
+    @Secured("ROLE_ADMIN")
+    public String importOrder(@RequestParam("file") MultipartFile file) {
+        var filename = file.getOriginalFilename();
+        log.info("File uploaded : " + filename);
+
+        importService.importOrder(file);
+
+        return filename;
     }
 
     @PostMapping(value = "/order/amstein")

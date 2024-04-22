@@ -15,7 +15,8 @@ import lombok.experimental.Accessors;
 public class Message {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize=1)
     @Column(name = "ID")
     private Long id;
     @Column(name = "TITLE", nullable = false)

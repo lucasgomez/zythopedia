@@ -52,7 +52,7 @@ public class BoughtDrinkService {
         var currentEdition = editionService.getCurrentEdition();
 
         var createdBoughtDrinks = unreferencedBoughtDrinks.stream()
-                .filter(boughtDrinkRepository -> Objects.nonNull(boughtDrinkRepository.getFirst().getServiceMethod()))
+                .filter(boughtDrinkEntry -> Objects.nonNull(boughtDrinkEntry.getFirst().getServiceMethod()))
                 .map(boughtDrinkToCreate -> createBoughtDrink(boughtDrinkToCreate, currentEdition))
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toList());
@@ -81,7 +81,7 @@ public class BoughtDrinkService {
         var created = boughtDrinkRepository.save(BoughtDrink.builder()
                 .code(boughtDrinkToCreate.getCode())
                 .serviceMethod(boughtDrinkToCreate.getServiceMethod())
-                .returnable(boughtDrinkToCreate.getReturnable())
+                .returnable(boughtDrinkToCreate.isReturnable())
                 .buyingPrice(boughtDrinkToCreate.getBuyingPrice())
                 .drink(drink)
                 .volumeInCl(boughtDrinkToCreate.getVolumeInCl())
@@ -139,6 +139,16 @@ public class BoughtDrinkService {
         return boughtDrinkRepository.findByEdition(editionService.getCurrentEdition());
     }
 
+    public Collection<BoughtDrink> getPreviousEditionsBoughtDrinks() {
+        var currentEdition = editionService.getCurrentEdition();
+        return boughtDrinkRepository.findAll().stream()
+                .filter(boughtDrink -> Optional.of(boughtDrink)
+                        .map(BoughtDrink::getEdition)
+                        .filter(Predicate.not(currentEdition::equals))
+                        .isPresent())
+                .collect(Collectors.toSet());
+    }
+
     public List<BoughtDrink> getCurrentEditionBoughtDrinks(ServiceMethod serviceMethod, Availability availability) {
         return boughtDrinkRepository.findByServiceMethodAndEditionNameAndAvailability(
                 serviceMethod, editionService.getCurrentEdition().getName(), availability);
@@ -162,7 +172,7 @@ public class BoughtDrinkService {
                 .filter(Objects::nonNull)
                 .distinct()
                 .map(dtoMapper)
-                .collect(Collectors.toList());
+                .toList();
         var availableBoughtDrinksByEntityCount = currentEditionBoughtDrinks.stream()
                 .filter(BoughtDrink::isAvailable)
                 .filter(boughtDrink -> Objects.nonNull(readEntityMapper.apply(boughtDrink)))

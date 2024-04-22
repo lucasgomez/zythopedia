@@ -10,5 +10,5 @@ import java.util.Optional;
  */
 @NoRepositoryBean
 public interface IdOrNameDtoFinderAndDeleter<T> extends JpaRepository<T, Long> {
-    Optional<T> findByName(String name);
+    Optional<T> findByNameIgnoreCase(String name);
 }

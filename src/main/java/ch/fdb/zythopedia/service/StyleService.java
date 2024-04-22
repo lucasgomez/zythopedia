@@ -55,7 +55,7 @@ public class StyleService {
         var parent = Optional.ofNullable(createStyleDto.getParentStyleId())
                 .flatMap(styleRepository::findById)
                 .orElseGet(() -> Optional.ofNullable(createStyleDto.getParentName())
-                        .flatMap(styleRepository::findByName)
+                        .flatMap(styleRepository::findByNameIgnoreCase)
                         .orElse(null));
 
         return styleRepository.save(Style.builder()
@@ -76,7 +76,7 @@ public class StyleService {
         var newParent = Optional.ofNullable(createStyleDto.getParentStyleId())
                 .flatMap(styleRepository::findById)
                 .orElseGet(() -> Optional.ofNullable(createStyleDto.getParentName())
-                        .flatMap(styleRepository::findByName)
+                        .flatMap(styleRepository::findByNameIgnoreCase)
                         .orElse(null));
 
         checkForCycles(styleToUpdate, newParent);
@@ -130,7 +130,7 @@ public class StyleService {
         children.addAll(children.stream()
                 .map(this::getDescendants)
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList()));
+                .toList());
 
         return children;
     }
@@ -143,5 +143,10 @@ public class StyleService {
                         .orElse(null),
                 styleFlatMapper::toDto
         );
+    }
+
+    public Style findOrCreate(String name) {
+        return styleRepository.findByNameIgnoreCase(name)
+                .orElseGet(() -> create(CreateStyleDto.builder().name(name).build()));
     }
 }

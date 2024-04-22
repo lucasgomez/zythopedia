@@ -37,7 +37,7 @@ public final class DeleterHelper {
         if (Objects.nonNull(entityIdToTransferTo)) {
             var entityToTransferTo = Optional.ofNullable(entityIdToTransferTo.getId())
                     .flatMap(repository::findById)
-                    .or(() -> repository.findByName(entityIdToTransferTo.getName()))
+                    .or(() -> repository.findByNameIgnoreCase(entityIdToTransferTo.getName()))
                     .orElseThrow(() -> new IllegalArgumentException(String.format(
                             "Could not transfer %s %s to %s %s due to self nihilism",
                             entityName,

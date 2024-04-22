@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface OriginRepository extends JpaRepository<Origin, Long>, IdOrNameDtoFinderAndDeleter<Origin> {
-    Optional<Origin> findByShortName(String originShortName);
+    Optional<Origin> findByShortNameIgnoreCase(String originShortName);
 }

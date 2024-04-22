@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 @Service
 public class DrinkService {
 
-    private DrinkRepository drinkRepository;
-    private ColorRepository colorRepository;
-    private ProducerRepository producerRepository;
-    private StyleRepository styleRepository;
-    private DrinkMapper drinkMapper;
+    private final DrinkRepository drinkRepository;
+    private final ColorRepository colorRepository;
+    private final ProducerRepository producerRepository;
+    private final StyleRepository styleRepository;
+    private final DrinkMapper drinkMapper;
 
     public DrinkService(DrinkRepository drinkRepository, ColorRepository colorRepository, ProducerRepository producerRepository, StyleRepository styleRepository, DrinkMapper drinkMapper) {
         this.drinkRepository = drinkRepository;
@@ -42,7 +42,7 @@ public class DrinkService {
         return drinkRepository.findAll().stream()
                 .filter(drink -> Optional.of(drink)
                         .map(Drink::getBoughtDrinks)
-                        .map(boughtDrinks -> boughtDrinks.isEmpty())
+                        .map(List::isEmpty)
                         .orElse(true))
                 .collect(Collectors.toList());
     }
@@ -64,13 +64,13 @@ public class DrinkService {
                 .description(createDrinkDto.getDescription())
                 .abv(createDrinkDto.getAbv())
                 .color(Optional.ofNullable(createDrinkDto.getColorName())
-                        .flatMap(colorRepository::findByName)
+                        .flatMap(colorRepository::findByNameIgnoreCase)
                         .orElse(null))
                 .producer(Optional.ofNullable(createDrinkDto.getProducerName())
-                        .flatMap(producerRepository::findByName)
+                        .flatMap(producerRepository::findByNameIgnoreCase)
                         .orElse(null))
                 .style(Optional.ofNullable(createDrinkDto.getStyleName())
-                        .flatMap(styleRepository::findByName)
+                        .flatMap(styleRepository::findByNameIgnoreCase)
                         .orElse(null))
                 .sourness(createDrinkDto.getSourness())
                 .bitterness(createDrinkDto.getBitterness())
@@ -113,11 +113,28 @@ public class DrinkService {
                 .flatMap(repository::findById)
                 .orElseGet(() -> Optional.ofNullable(dto)
                         .map(NamedEntity::getName)
-                        .flatMap(repository::findByName)
+                        .flatMap(repository::findByNameIgnoreCase)
                         .orElse(null));
     }
 
     public Optional<Drink> findById(Long drinkId) {
         return drinkRepository.findById(drinkId);
+    }
+
+    public Drink createDrink(CreateBoughtDrinkDto orderWithoutDrink) {
+        return createDrink(getDrink(orderWithoutDrink));
+    }
+
+    private CreateDrinkDto getDrink(CreateBoughtDrinkDto orderedDrink) {
+        return CreateDrinkDto.builder()
+                .name(orderedDrink.getName())
+                .producerName(orderedDrink.getProducerName())
+                .styleName(orderedDrink.getStyleName())
+                .abv(orderedDrink.getAbv())
+                .build();
+    }
+
+    public Optional<Drink> findByNameAndProducerName(String name, String producerName) {
+        return drinkRepository.findByNameIgnoreCaseAndProducerNameIgnoreCase(name, producerName);
     }
 }

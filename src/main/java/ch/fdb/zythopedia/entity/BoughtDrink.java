@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "BOUGHT_DRINK", uniqueConstraints = {@UniqueConstraint(name = "UK_BOUGHT_DRINK__CODE_EDITION_FK", columnNames = {"CODE", "EDITION_FK"})})
@@ -19,7 +20,8 @@ import java.util.List;
 public class BoughtDrink {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize=1)
     @Column(name = "ID")
     private Long id;
 
@@ -57,5 +59,28 @@ public class BoughtDrink {
     @Transient
     public boolean isAvailable() {
         return Availability.AVAILABLE.equals(availability);
+    }
+
+    @Transient
+    public String getName() {
+        return Optional.ofNullable(getDrink())
+                .map(Drink::getName)
+                .orElse("");
+    }
+
+    @Transient
+    public String getProducerName() {
+        return Optional.ofNullable(getDrink())
+                .map(Drink::getProducer)
+                .map(Producer::getName)
+                .orElse("");
+    }
+
+    @Transient
+    public String getStyleName() {
+        return Optional.ofNullable(getDrink())
+                .map(Drink::getStyle)
+                .map(Style::getName)
+                .orElse("");
     }
 }

@@ -149,7 +149,7 @@ class ImportControllerTest {
         var services = serviceRepository.findByBoughtDrinkDrinkNameAndBoughtDrinkDrinkProducerNameAndVolumeInCl(
                 service.getDrinkName(), service.getProducerName(), service.getVolumeInCl());
         assertEquals(1, services.size());
-        return service.setId(services.get(0).getId());
+        return service.setId(services.getFirst().getId());
     }
 
     @Test
@@ -164,31 +164,31 @@ class ImportControllerTest {
         mockProducerReading(realDrinkDataReaderService);
 
         // Check initial status for colors
-        var deletedColor = colorRepository.findByName("Aromatisée").map(Color::getId).orElseThrow();
-        var renamedColor = colorRepository.findByName("Noir").map(Color::getId).orElseThrow();
-        assertTrue(Strings.isEmpty(colorRepository.findByName("Brune").orElseThrow().getDescription()), "Brune color should not have description yet");
+        var deletedColor = colorRepository.findByNameIgnoreCase("Aromatisée").map(Color::getId).orElseThrow();
+        var renamedColor = colorRepository.findByNameIgnoreCase("Noir").map(Color::getId).orElseThrow();
+        assertTrue(Strings.isEmpty(colorRepository.findByNameIgnoreCase("Brune").orElseThrow().getDescription()), "Brune color should not have description yet");
 
         // Check initial status for styles
-        var deletedStyle = styleRepository.findByName("NESTLE WATERS (SUISSE) SA").map(Style::getId).orElseThrow();
-        var updatedNameStyle = styleRepository.findByName("India Pale Ale").map(Style::getId).orElseThrow();
-        var updatedDescriptionStyle = styleRepository.findByName("Lager / Premium").orElseThrow();
+        var deletedStyle = styleRepository.findByNameIgnoreCase("NESTLE WATERS (SUISSE) SA").map(Style::getId).orElseThrow();
+        var updatedNameStyle = styleRepository.findByNameIgnoreCase("India Pale Ale").map(Style::getId).orElseThrow();
+        var updatedDescriptionStyle = styleRepository.findByNameIgnoreCase("Lager / Premium").orElseThrow();
         assertTrue(Strings.isEmpty(updatedDescriptionStyle.getDescription()), "Lager style should not have description yet");
 
         // Check initial status for producers
-        originRepository.findByName("Corse").map(Origin::getId).orElseThrow();
+        originRepository.findByNameIgnoreCase("Corse").map(Origin::getId).orElseThrow();
 
         var file = ImporterTestHelper.openFileFromResources(ImporterTestHelper.DRINK_DATA_XLSX);
         postFile(API_IMPORT_DATA, file);
 
         // Assert changes for color
         assertTrue(colorRepository.findById(deletedColor).isEmpty(), "Color should be deleted");
-        assertTrue(colorRepository.findByName("Blanche").isPresent(), "Color should be added");
+        assertTrue(colorRepository.findByNameIgnoreCase("Blanche").isPresent(), "Color should be added");
         assertEquals("Noire", colorRepository.findById(renamedColor).map(Color::getName).orElse("Not found"), "Color should be added");
-        assertFalse(Strings.isEmpty(colorRepository.findByName("Brune").orElseThrow().getDescription()), "Brune color should have description now");
+        assertFalse(Strings.isEmpty(colorRepository.findByNameIgnoreCase("Brune").orElseThrow().getDescription()), "Brune color should have description now");
 
         // Assert changes for style
         assertTrue(styleRepository.findById(deletedStyle).isEmpty(), "Style should be deleted");
-        assertTrue(styleRepository.findByName("Triple Wet Hopped Kölsch").isPresent(), "Style should be added");
+        assertTrue(styleRepository.findByNameIgnoreCase("Triple Wet Hopped Kölsch").isPresent(), "Style should be added");
         assertEquals("IPA", styleRepository.findById(updatedNameStyle).map(Style::getName).orElse("Not found"), "Style name should be updated");
         assertFalse(Strings.isEmpty(styleRepository.findById(updatedDescriptionStyle.getId()).map(Style::getDescription).orElse("Not found")), "Style description should be updated");
     }

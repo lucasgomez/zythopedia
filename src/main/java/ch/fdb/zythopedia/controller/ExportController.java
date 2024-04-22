@@ -32,6 +32,12 @@ public class ExportController {
         return buildResponseEntity(exportService.getCalculatorForCurrentEdition());
     }
 
+    @GetMapping("/export/order")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<ByteArrayResource> getEmptyOrderForCurrentEdition() {
+        return buildResponseEntity(exportService.getEmptyOrderForCurrentEdition());
+    }
+
     @GetMapping("/edition/{editionName}/export/data")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<ByteArrayResource> getDrinksData(@PathVariable String editionName) {

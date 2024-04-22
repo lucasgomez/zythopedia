@@ -62,8 +62,8 @@ public class ProducerService {
         if (origin.isEmpty() &&
                 (null != createProducerDto.getOriginShortName() || null != createProducerDto.getOriginName())) {
             origin = Optional.ofNullable(createProducerDto.getOriginShortName())
-                    .or(() -> Optional.ofNullable(createProducerDto.getOriginName()))
-                    .map(name -> name.substring(0, 4))
+                    .or(() -> Optional.of(createProducerDto.getOriginName()))
+                    .map(name -> name.substring(0, Math.min(4, name.length())))
                     .map(shortName -> originService.create(CreateOriginDto.builder()
                             .shortName(shortName)
                             .name(createProducerDto.getOriginName())
@@ -110,5 +110,13 @@ public class ProducerService {
                         .orElse(null),
                 producerMapper::toDto
         );
+    }
+
+    public Producer findOrCreate(String producerName, String originShortName) {
+        return producerRepository.findByNameIgnoreCase(producerName)
+                .orElseGet(() -> create(CreateProducerDto.builder()
+                        .name(producerName)
+                        .originShortName(originShortName)
+                        .build()));
     }
 }

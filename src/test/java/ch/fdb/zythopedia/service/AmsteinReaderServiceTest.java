@@ -107,7 +107,7 @@ class AmsteinReaderServiceTest {
         assertEquals(CRAK_CODE, boughtDrinkDto.getCode());
         assertEquals(4.13, boughtDrinkDto.getBuyingPrice());
         assertEquals(ServiceMethod.BOTTLE, boughtDrinkDto.getServiceMethod());
-        assertFalse(boughtDrinkDto.getReturnable());
+        assertFalse(boughtDrinkDto.isReturnable());
     }
 
 }

@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,15 +30,15 @@ public class ExportService {
     public static final List<String> PRICE_CALCULATOR_HEADERS = List.of("id", "boughtDrinkId", "producerName", "producerOriginName", "name", "colorName",
             "styleName", "abv", "buyingPrice", "serviceMethod", "volumeInCl", "sellingPrice",
             "projectedSellingPrice", "price per alc. cL", "Projected margin", "Absolute margin");
-    private DrinkService drinkService;
-    private BoughtDrinkService boughtDrinkService;
-    private StyleService styleService;
-    private ProducerService producerService;
-    private OriginService originService;
-    private ColorService colorService;
-    private DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper;
-    private DrinkMapper drinkMapper;
-    private SimpleDrinkMapper simpleDrinkMapper;
+    private final DrinkService drinkService;
+    private final BoughtDrinkService boughtDrinkService;
+    private final StyleService styleService;
+    private final ProducerService producerService;
+    private final OriginService originService;
+    private final ColorService colorService;
+    private final DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper;
+    private final DrinkMapper drinkMapper;
+    private final SimpleDrinkMapper simpleDrinkMapper;
 
     public ExportService(DrinkService drinkService, BoughtDrinkService boughtDrinkService, StyleService styleService, ProducerService producerService, OriginService originService, ColorService colorService, DrinkPriceCalculatorDtoMapper drinkPriceCalculatorDtoMapper, DrinkMapper drinkMapper, SimpleDrinkMapper simpleDrinkMapper) {
         this.drinkService = drinkService;
@@ -73,7 +74,7 @@ public class ExportService {
                 .collect(Collectors.toSet());
         var drinksWithNoService = drinkService.findDrinksWithNoService().stream()
                 .map(drinkMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
 
         var drinksToExport = new ArrayList<DrinkDto>();
         drinksToExport.addAll(currentEditionDrinks);
@@ -81,6 +82,68 @@ public class ExportService {
 
         var workbook = buildDataExporterWorkbook(drinksToExport);
         return saveWorkbookInTempFolder(workbook, "drinkData");
+    }
+
+    public File getEmptyOrderForCurrentEdition() {
+        var workbook = (Workbook) new XSSFWorkbook();
+        var boldCellStyle = buildBoldCellStyle(workbook);
+
+        buildOrderSheet(workbook, boldCellStyle);
+        buildBoughtDrinkSheet(workbook, true, boldCellStyle);
+        buildBoughtDrinkSheet(workbook, false, boldCellStyle);
+        buildStylesSheet(workbook, styleService.findAllDto(), boldCellStyle);
+        buildColorsSheet(workbook, colorService.findAllDto(), boldCellStyle);
+        buildProducersSheet(workbook, producerService.findAllDto(), boldCellStyle);
+        buildOriginsSheet(workbook, originService.findAllDto(), boldCellStyle);
+
+        return saveWorkbookInTempFolder(workbook, "order");
+    }
+
+    private Sheet buildBoughtDrinkSheet(Workbook workbook, boolean currentEdition, CellStyle boldCellStyle) {
+        var sheet = workbook.createSheet(currentEdition
+                ? "Current edition order"
+                : "Previous editions orders");
+
+        var boughtDrinks = currentEdition
+                ? boughtDrinkService.getCurrentEditionBoughtDrinks()
+                : boughtDrinkService.getPreviousEditionsBoughtDrinks();
+        var rowIterator = new AtomicInteger(1);
+        Comparator<BoughtDrink> bdc = Comparator.comparing(boughtDrink -> boughtDrink.getEdition().getName());
+
+        addHeader(sheet, boldCellStyle, List.of("code", "brewery_name", "name", "volume_in_cl", "buying_price", "edition"));
+        boughtDrinks.stream()
+                .sorted(bdc)
+                .forEach(boughtDrink -> printOrderRow(boughtDrink, sheet, rowIterator.getAndIncrement()));
+
+        return sheet;
+    }
+
+    private void printOrderRow(BoughtDrink boughtDrink, Sheet sheet, int rowId) {
+        var row = sheet.createRow(rowId);
+        writeContentToCell(row, 0, boughtDrink.getCode());
+        writeContentToCell(row, 1, boughtDrink.getProducerName());
+        writeContentToCell(row, 2, boughtDrink.getName());
+        writeContentToCell(row, 3, boughtDrink.getVolumeInCl());
+        writeContentToCell(row, 4, boughtDrink.getBuyingPrice());
+        writeContentToCell(row, 5, boughtDrink.getEdition().getName());
+    }
+
+    private Sheet buildOrderSheet(Workbook workbook, CellStyle boldCellStyle) {
+        var sheet = workbook.createSheet("order");
+
+        addHeader(sheet, boldCellStyle, List.of(
+                "code", "drink name", "producer name",
+                "style", "abv", "vol (cl)",
+                "origin", "buying price", "service method (TAP, BOTTLE)"));
+
+        addRow(sheet, 1, List.of("BRAEXA033VP", "Exempl'Ale", "Les Brabus",
+                "Cherry sour helles", "6.6", "33",
+                "CH", "2.15", "BOTTLE"));
+        addRow(sheet, 2, List.of("", "Anderes Examplen", "Die Brabusen",
+                "IPA", "9.2", "",
+                "DE", "12.2", "TAP"));
+
+        return sheet;
     }
 
     private File saveWorkbookInTempFolder(Workbook workbook, String fileBaseName) {
@@ -116,10 +179,9 @@ public class ExportService {
         var simpleDrinks = drinks.stream()
                 .map(simpleDrinkMapper::toSimplerDto)
                 .sorted(Comparator.comparing(SimpleDrinkDto::getName))
-                .collect(Collectors.toList());
+                .toList();
 
         for (var rowId = 0; rowId < drinks.size(); rowId++) {
-            var cellId = 0;
             var row = sheet.createRow(rowId + 1);
             var drink = simpleDrinks.get(rowId);
 
@@ -345,7 +407,18 @@ public class ExportService {
         for (var cellId = 0; cellId < headers.size(); cellId++) {
             var cell = row.createCell(cellId);
             cell.setCellValue(headers.get(cellId));
-            cell.setCellStyle(boldStyle);
+            if (Objects.nonNull(boldStyle)) {
+                cell.setCellStyle(boldStyle);
+            }
+        }
+    }
+
+    private void addRow(Sheet sheet, int rowNum, List<String> cells) {
+        var row = sheet.createRow(rowNum);
+
+        for (var cellId = 0; cellId < cells.size(); cellId++) {
+            var cell = row.createCell(cellId);
+            cell.setCellValue(cells.get(cellId));
         }
     }
 }

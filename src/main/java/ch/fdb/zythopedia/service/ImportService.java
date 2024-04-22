@@ -28,18 +28,19 @@ public class ImportService {
     @Value("${edition.current.name}")
     private String currentEditionName;
 
-    private BoughtDrinkService boughtDrinkService;
-    private DrinkService drinkService;
-    private StyleService styleService;
-    private ColorService colorService;
-    private OriginService originService;
-    private ProducerService producerService;
-    private AmsteinReaderService amsteinReaderService;
-    private DrinkDataReaderService drinkDataReaderService;
-    private PricesCalculatorReaderService pricesCalculatorReaderService;
-    private ServiceService serviceService;
+    private final BoughtDrinkService boughtDrinkService;
+    private final DrinkService drinkService;
+    private final StyleService styleService;
+    private final ColorService colorService;
+    private final OriginService originService;
+    private final ProducerService producerService;
+    private final AmsteinReaderService amsteinReaderService;
+    private final DrinkDataReaderService drinkDataReaderService;
+    private final PricesCalculatorReaderService pricesCalculatorReaderService;
+    private final ServiceService serviceService;
+    private final OrderReaderService orderReaderService;
 
-    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, OriginService originService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService, PricesCalculatorReaderService pricesCalculatorReaderService, ServiceService serviceService) {
+    public ImportService(BoughtDrinkService boughtDrinkService, DrinkService drinkService, StyleService styleService, ColorService colorService, OriginService originService, ProducerService producerService, AmsteinReaderService amsteinReaderService, DrinkDataReaderService drinkDataReaderService, PricesCalculatorReaderService pricesCalculatorReaderService, ServiceService serviceService, OrderReaderService orderReaderService) {
         this.boughtDrinkService = boughtDrinkService;
         this.drinkService = drinkService;
         this.styleService = styleService;
@@ -50,6 +51,82 @@ public class ImportService {
         this.drinkDataReaderService = drinkDataReaderService;
         this.pricesCalculatorReaderService = pricesCalculatorReaderService;
         this.serviceService = serviceService;
+        this.orderReaderService = orderReaderService;
+    }
+
+    public void importOrder(MultipartFile file) {
+        log.info("Starting import of order");
+
+        var workbook = getWorkbookFromFile(file);
+
+        var allDrinksByCode = boughtDrinkService.findAll().stream()
+                .filter(boughtDrink -> Objects.nonNull(boughtDrink.getDrink()))
+                .filter(boughtDrink -> Objects.nonNull(boughtDrink.getCode()))
+                .filter(Predicate.not(boughtDrink -> boughtDrink.getCode().isEmpty()))
+                .collect(Collectors.toMap(
+                        BoughtDrink::getCode,
+                        BoughtDrink::getDrink,
+                        (bd1, bd2) -> bd1.getId() < bd2.getId() ? bd1 : bd2));
+
+        var orders = orderReaderService.readDrinksOrders(workbook);
+        var ordersWithoutDrink = orders.stream()
+                .filter(hasExistingDrink(allDrinksByCode))
+                .collect(Collectors.toSet());
+
+        updateOrdersWithProducers(ordersWithoutDrink);
+        updateOrdersWithStyles(ordersWithoutDrink);
+
+        var ordersWithDrink = findOrCreateDrinksWithOrder(ordersWithoutDrink, orders, allDrinksByCode);
+
+        boughtDrinkService.createNewBoughtDrinks(
+                ordersWithDrink.entrySet().stream()
+                        .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toSet()));
+
+        log.info("End import of order");
+    }
+
+    private Map<CreateBoughtDrinkDto, Drink> findOrCreateDrinksWithOrder(Set<CreateBoughtDrinkDto> ordersWithoutDrink, List<CreateBoughtDrinkDto> orders, Map<String, Drink> allDrinksByCode) {
+        var ordersWithDrink = ordersWithoutDrink.stream()
+                .collect(Collectors.toMap(
+                        order -> order,
+                        this::findOrCreateDrink));
+        orders.stream()
+                .filter(Predicate.not(ordersWithDrink::containsKey))
+                .forEach(existingOrder -> ordersWithDrink.put(
+                        existingOrder,
+                        allDrinksByCode.get(existingOrder.getCode())));
+
+        return ordersWithDrink;
+    }
+
+    private Drink findOrCreateDrink(CreateBoughtDrinkDto order) {
+        return drinkService
+                .findByNameAndProducerName(order.getName(), order.getProducerName())
+                .orElseGet(() -> drinkService.createDrink(order));
+    }
+
+    private static Predicate<CreateBoughtDrinkDto> hasExistingDrink(Map<String, Drink> drinksByCode) {
+        return order ->
+                Objects.isNull(order.getCode()) || Objects.isNull(drinksByCode.get(order.getCode()));
+    }
+
+    private void updateOrdersWithStyles(Set<CreateBoughtDrinkDto> ordersWithoutDrink) {
+        ordersWithoutDrink.stream()
+                .filter(order -> Objects.nonNull(order.getStyleName()))
+                .filter(Predicate.not(order -> order.getStyleName().isBlank()))
+                .forEach(order -> order.setStyleName(
+                        styleService.findOrCreate(order.getStyleName())
+                                .getName()));
+    }
+
+    private void updateOrdersWithProducers(Set<CreateBoughtDrinkDto> ordersWithoutDrink) {
+        ordersWithoutDrink.stream()
+                .filter(order -> Objects.nonNull(order.getProducerName()))
+                .filter(Predicate.not(order -> order.getProducerName().isBlank()))
+                .forEach(order -> order.setProducerName(
+                        producerService.findOrCreate(order.getProducerName(), order.getProducerOriginName())
+                                .getName()));
     }
 
     public void importPrices(MultipartFile file) {
@@ -61,7 +138,7 @@ public class ImportService {
         log.info(String.format("Prices to import read %s", pricesToUpdate.size()));
         var servicesUpdated = pricesToUpdate.stream()
                 .map(serviceService::updatePrice)
-                .collect(Collectors.toList());
+                .toList();
         log.info(String.format("Prices to imported %s / %s", servicesUpdated.size(), pricesToUpdate.size()));
 
         log.info("End of import of prices");
@@ -83,7 +160,8 @@ public class ImportService {
     private <D extends NamedEntity, E> void processDataToImport(String entityName, Collection<Row> originRows,
                                                                 Function<Collection<Row>, Collection<D>> reader,
                                                                 Function<Collection<Row>, Map<Long, IdOrNameDto>> readerForDeletionWithReplacement,
-                                                                Function<D, E> updater, Function<D, E> creater, BiFunction<Long, IdOrNameDto, Void> deleter) {
+                                                                Function<D, E> updater, Function<D, E> creater,
+                                                                BiFunction<Long, IdOrNameDto, Void> deleter) {
         var readDtos = reader.apply(originRows);
 
         log.info(String.format("%s to update %s", entityName, readDtos.size()));
@@ -149,7 +227,8 @@ public class ImportService {
         processDataToImport("Drinks", drinkDataReaderService.getDrinkRows(workbook),
                 drinkDataReaderService::readDrinks,
                 drinkDataReaderService::readDrinksToDelete,
-                drinkService::update, drinkService::create, boughtDrinkService::deleteByDrinkId);
+                drinkService::update, drinkService::create,
+                boughtDrinkService::deleteByDrinkId);
 
     }
 
@@ -167,10 +246,6 @@ public class ImportService {
         importDrinks(sheet);
 
         log.info("Amstein catalog import finished");
-    }
-
-    public void testImportAmsteinOrder(MultipartFile multipartFile) {
-        //TODO add method to test reading data
     }
 
     public void importAmsteinOrder(MultipartFile multipartFile) {
