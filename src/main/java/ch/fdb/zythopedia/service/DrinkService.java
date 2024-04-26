@@ -79,6 +79,12 @@ public class DrinkService {
                 .build());
     }
 
+    public void delete(long id) {
+        drinkRepository
+                .findById(id)
+                .ifPresent(drinkRepository::delete);
+    }
+
     private Drink mapFromBoughtDrink(CreateBoughtDrinkDto boughtDrinkDto) {
         return Drink.builder()
                 .name(boughtDrinkDto.getName())

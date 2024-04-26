@@ -15,7 +15,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -48,12 +47,12 @@ public class BoughtDrinkService {
     }
 
     @Transactional
-    public Collection<BoughtDrink> createNewBoughtDrinks(Collection<Pair<CreateBoughtDrinkDto, Drink>> unreferencedBoughtDrinks) {
+    public Collection<BoughtDrink> createNewBoughtDrinks(Map<CreateBoughtDrinkDto, Drink> unreferencedBoughtDrinks) {
         var currentEdition = editionService.getCurrentEdition();
 
-        var createdBoughtDrinks = unreferencedBoughtDrinks.stream()
-                .filter(boughtDrinkEntry -> Objects.nonNull(boughtDrinkEntry.getFirst().getServiceMethod()))
-                .map(boughtDrinkToCreate -> createBoughtDrink(boughtDrinkToCreate, currentEdition))
+        var createdBoughtDrinks = unreferencedBoughtDrinks.entrySet().stream()
+                .filter(boughtDrinkEntry -> Objects.nonNull(boughtDrinkEntry.getKey().getServiceMethod()))
+                .map(boughtDrinkToCreate -> createBoughtDrink(boughtDrinkToCreate.getKey(), boughtDrinkToCreate.getValue(), currentEdition))
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toList());
 
@@ -73,16 +72,12 @@ public class BoughtDrinkService {
                 || Optional.ofNullable(boughtDrink.getVolumeInCl()).filter(volume -> 0 < volume).isPresent();
     }
 
-    private BoughtDrink createBoughtDrink(Pair<CreateBoughtDrinkDto, Drink> boughtDrinkToCreate, Edition edition) {
-        return createBoughtDrink(boughtDrinkToCreate.getFirst(), boughtDrinkToCreate.getSecond(), edition);
-    }
-
     private BoughtDrink createBoughtDrink(CreateBoughtDrinkDto boughtDrinkToCreate, Drink drink, Edition currentEdition) {
         var created = boughtDrinkRepository.save(BoughtDrink.builder()
                 .code(boughtDrinkToCreate.getCode())
                 .serviceMethod(boughtDrinkToCreate.getServiceMethod())
                 .returnable(boughtDrinkToCreate.isReturnable())
-                .buyingPrice(boughtDrinkToCreate.getBuyingPrice())
+                .buyingPrice(Optional.ofNullable(boughtDrinkToCreate.getBuyingPrice()).orElse(0.0))
                 .drink(drink)
                 .volumeInCl(boughtDrinkToCreate.getVolumeInCl())
                 .availability(Availability.AVAILABLE)
@@ -98,16 +93,16 @@ public class BoughtDrinkService {
         return boughtDrinkRepository.findAll();
     }
 
-    public List<BoughtDrink> updateBoughtDrinksPrice(Collection<Pair<CreateBoughtDrinkDto, BoughtDrink>> referencedFromCurrentEditionBoughtDrinks) {
-        return referencedFromCurrentEditionBoughtDrinks.stream()
+    public List<BoughtDrink> updateBoughtDrinksPrice(Map<CreateBoughtDrinkDto, BoughtDrink> referencedFromCurrentEditionBoughtDrinks) {
+        return referencedFromCurrentEditionBoughtDrinks.entrySet().stream()
                 .filter(hasPriceChanged())
-                .map(pair -> pair.getSecond().setBuyingPrice(pair.getFirst().getBuyingPrice()))
+                .map(pair -> pair.getValue().setBuyingPrice(pair.getKey().getBuyingPrice()))
                 .map(boughtDrinkRepository::save)
                 .collect(Collectors.toList());
     }
 
-    private Predicate<Pair<CreateBoughtDrinkDto, BoughtDrink>> hasPriceChanged() {
-        return pair -> Precision.equals(pair.getFirst().getBuyingPrice(), pair.getSecond().getBuyingPrice(), CENTS_PRECISION);
+    private Predicate<Map.Entry<CreateBoughtDrinkDto, BoughtDrink>> hasPriceChanged() {
+        return pair -> Precision.equals(pair.getKey().getBuyingPrice(), pair.getValue().getBuyingPrice(), CENTS_PRECISION);
     }
 
     public Set<BoughtDrink> updateBoughtDrinksVolume(Collection<CreateBoughtDrinkDto> drinksToUpdate) {
@@ -232,9 +227,8 @@ public class BoughtDrinkService {
 
     @Transactional
     public Void deleteByDrinkId(Long drinkId, IdOrNameDto unused) {
-        var boughtDrinkToDelete = boughtDrinkRepository.findByDrinkId(drinkId)
-                .orElseThrow(() -> new EntityNotFoundException(drinkId, "boughtDrink (by drinkId)"));
-        delete(boughtDrinkToDelete);
+        boughtDrinkRepository.findByDrinkId(drinkId)
+                .ifPresent(this::delete);
         return null;
     }
 

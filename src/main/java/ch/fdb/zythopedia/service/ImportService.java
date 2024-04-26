@@ -5,6 +5,7 @@ import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.utils.SpreadsheetHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -78,12 +79,38 @@ public class ImportService {
 
         var ordersWithDrink = findOrCreateDrinksWithOrder(ordersWithoutDrink, orders, allDrinksByCode);
 
-        boughtDrinkService.createNewBoughtDrinks(
-                ordersWithDrink.entrySet().stream()
-                        .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toSet()));
+        var currentEditionBoughtDrinks = boughtDrinkService.getCurrentEditionBoughtDrinks();
+        var currentBoughtDrinksCode = currentEditionBoughtDrinks.stream()
+                .map(BoughtDrink::getCode)
+                .filter(Strings::isNotBlank)
+                .collect(Collectors.toSet());
+        var currentBoughtDrinksDrinkId = currentEditionBoughtDrinks.stream()
+                .filter(boughtDrink -> Objects.nonNull(boughtDrink.getDrink()))
+                .collect(Collectors.toMap(boughtDrink -> boughtDrink.getDrink().getId(), boughtDrink -> boughtDrink));
+
+        var boughtDrinksToCreate = ordersWithDrink.entrySet().stream()
+                .filter(Predicate.not(order -> boughtDrinkExists(order.getKey(), order.getValue(), currentBoughtDrinksCode, currentBoughtDrinksDrinkId.keySet())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        var boughtDrinksToUpdate = ordersWithDrink.entrySet().stream()
+                .filter(order -> boughtDrinkExists(order.getKey(), order.getValue(), currentBoughtDrinksCode, currentBoughtDrinksDrinkId.keySet()))
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> currentBoughtDrinksDrinkId.get(entry.getValue().getId())));
+        boughtDrinkService.createNewBoughtDrinks(boughtDrinksToCreate);
+
+        boughtDrinkService.updateBoughtDrinksPrice(boughtDrinksToUpdate);
 
         log.info("End import of order");
+    }
+
+    private boolean boughtDrinkExists(CreateBoughtDrinkDto createBoughtDrinkDto, Drink drink, Set<String> currentBoughtDrinksCode, Set<Long> currentBoughtDrinksDrinkId) {
+        return
+                Optional.ofNullable(createBoughtDrinkDto)
+                        .map(CreateBoughtDrinkDto::getCode)
+                        .filter(currentBoughtDrinksCode::contains)
+                        .isPresent() ||
+                Optional.ofNullable(drink)
+                        .map(Drink::getId)
+                        .filter(currentBoughtDrinksDrinkId::contains)
+                        .isPresent();
     }
 
     private Map<CreateBoughtDrinkDto, Drink> findOrCreateDrinksWithOrder(Set<CreateBoughtDrinkDto> ordersWithoutDrink, List<CreateBoughtDrinkDto> orders, Map<String, Drink> allDrinksByCode) {
@@ -272,7 +299,7 @@ public class ImportService {
 
         boughtDrinkService.createNewBoughtDrinks(matchDrinkWithBoughtDrink(unreferencedBoughtDrinks, createdDrinks));
         log.info("Unreferenced drinks imported");
-        boughtDrinkService.createNewBoughtDrinks(mapPairToDrink(referencedFromPreviousEditionBoughtDrinks));
+        boughtDrinkService.createNewBoughtDrinks(mapBoughtDrinksToDrinks(referencedFromPreviousEditionBoughtDrinks));
         log.info("Referenced drinks from previous edition imported");
         var updatedBoughtDrinks = boughtDrinkService.updateBoughtDrinksPrice(referencedFromCurrentEditionBoughtDrinks);
         log.info(String.format("Referenced drinks from current edition updated (%s/%s)", updatedBoughtDrinks.size(), referencedFromCurrentEditionBoughtDrinks.size()));
@@ -359,18 +386,16 @@ public class ImportService {
         return importedColors;
     }
 
-    private Collection<Pair<CreateBoughtDrinkDto, Drink>> mapPairToDrink(Collection<Pair<CreateBoughtDrinkDto, BoughtDrink>> referencedFromPreviousEditionBoughtDrinks) {
-        return referencedFromPreviousEditionBoughtDrinks.stream()
-                .map(pair -> Pair.of(pair.getFirst(), pair.getSecond().getDrink()))
-                .collect(Collectors.toList());
+    private Map<CreateBoughtDrinkDto, Drink> mapBoughtDrinksToDrinks(Map<CreateBoughtDrinkDto, BoughtDrink> referencedFromPreviousEditionBoughtDrinks) {
+        return referencedFromPreviousEditionBoughtDrinks.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getDrink()));
     }
 
-    private Collection<Pair<CreateBoughtDrinkDto, Drink>> matchDrinkWithBoughtDrink(Collection<CreateBoughtDrinkDto> unreferencedBoughtDrinks, Collection<Drink> createdDrinks) {
+    private Map<CreateBoughtDrinkDto, Drink> matchDrinkWithBoughtDrink(Collection<CreateBoughtDrinkDto> unreferencedBoughtDrinks, Collection<Drink> createdDrinks) {
         return unreferencedBoughtDrinks.stream()
-                .map(boughtDrink -> Pair.of(
-                        boughtDrink,
-                        findMatchingDrink(createdDrinks, boughtDrink)))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        boughtDrink -> boughtDrink,
+                        boughtDrink -> findMatchingDrink(createdDrinks, boughtDrink)));
     }
 
     private Drink findMatchingDrink(Collection<Drink> createdDrinks, CreateBoughtDrinkDto boughtDrink) {
@@ -379,15 +404,14 @@ public class ImportService {
                 .findFirst().orElseThrow(() -> new RuntimeException(String.format("Could not find matching drink for %s - %s", boughtDrink.getCode(), boughtDrink.getName())));
     }
 
-    private List<Pair<CreateBoughtDrinkDto, BoughtDrink>> getReferencedBoughtDrinksToImport(Collection<CreateBoughtDrinkDto> boughtDrinkToImports, Map<String, List<BoughtDrink>> allBoughtDrinksByCode, boolean isFromCurrentEdition) {
+    private Map<CreateBoughtDrinkDto, BoughtDrink> getReferencedBoughtDrinksToImport(Collection<CreateBoughtDrinkDto> boughtDrinkToImports, Map<String, List<BoughtDrink>> allBoughtDrinksByCode, boolean isFromCurrentEdition) {
         return boughtDrinkToImports.stream()
                 .filter(boughtDrinkToImport -> Objects.nonNull(allBoughtDrinksByCode.get(boughtDrinkToImport.getCode())))
                 .map(boughtDrinkToImport -> Pair.of(
                         boughtDrinkToImport,
                         getBoughtDrinkByEdition(allBoughtDrinksByCode, boughtDrinkToImport, isFromCurrentEdition)))
                 .filter(pair -> pair.getSecond().isPresent())
-                .map(pair -> Pair.of(pair.getFirst(), pair.getSecond().get()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(Pair::getFirst, sa -> sa.getSecond().get()));
     }
 
     private List<CreateBoughtDrinkDto> getUnreferencedBoughtDrinksToImport(Collection<CreateBoughtDrinkDto> boughtDrinkToImports, Map<String, List<BoughtDrink>> allBoughtDrinksByCode) {

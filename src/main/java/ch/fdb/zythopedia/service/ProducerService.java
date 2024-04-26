@@ -56,14 +56,18 @@ public class ProducerService {
     public Producer create(CreateProducerDto createProducerDto) {
         var origin = originService.findByIdOrName(
                 createProducerDto.getOriginId(),
-                createProducerDto.getOriginShortName(),
+                Optional.ofNullable(createProducerDto.getOriginName())
+                        .filter(String::isBlank)
+                        .or(() -> Optional.ofNullable(createProducerDto.getOriginShortName()))
+                        .map(ProducerService::formatOriginShortName)
+                        .orElse(""),
                 createProducerDto.getOriginName());
 
         if (origin.isEmpty() &&
                 (null != createProducerDto.getOriginShortName() || null != createProducerDto.getOriginName())) {
             origin = Optional.ofNullable(createProducerDto.getOriginShortName())
                     .or(() -> Optional.of(createProducerDto.getOriginName()))
-                    .map(name -> name.substring(0, Math.min(4, name.length())))
+                    .map(ProducerService::formatOriginShortName)
                     .map(shortName -> originService.create(CreateOriginDto.builder()
                             .shortName(shortName)
                             .name(createProducerDto.getOriginName())
@@ -74,6 +78,10 @@ public class ProducerService {
                 .name(createProducerDto.getName())
                 .origin(origin.orElse(null))
                 .build());
+    }
+
+    private static String formatOriginShortName(String name) {
+        return name.substring(0, Math.min(4, name.length()));
     }
 
     public Producer update(ProducerDto producerDto) {
@@ -116,6 +124,7 @@ public class ProducerService {
         return producerRepository.findByNameIgnoreCase(producerName)
                 .orElseGet(() -> create(CreateProducerDto.builder()
                         .name(producerName)
+                        .originName(originShortName)
                         .originShortName(originShortName)
                         .build()));
     }
