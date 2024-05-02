@@ -34,7 +34,7 @@ public class StyleController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/style/current")
+    @GetMapping(value = "/edition/current/style")
     public List<StyleDto> findStyleWithService() {
         return styleService.findStyleWithService();
     }

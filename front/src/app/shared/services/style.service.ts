@@ -4,8 +4,6 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Style} from '../models/Style';
 
-const API_URL = `${environment.BASE_URL}style`;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -15,6 +13,6 @@ export class StyleService {
     }
 
     findAll(): Observable<Style[]> {
-        return this.http.get<Style[]>(`${API_URL}/current`);
+        return this.http.get<Style[]>(`${environment.BASE_URL}/edition/current/style`);
     }
 }

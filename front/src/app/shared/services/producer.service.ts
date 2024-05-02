@@ -4,8 +4,6 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Producer} from '../models/Producer';
 
-const API_URL = `${environment.BASE_URL}producer`;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -15,6 +13,6 @@ export class ProducerService {
     }
 
     findAll(): Observable<Producer[]> {
-        return this.http.get<Producer[]>(`${API_URL}/current`);
+        return this.http.get<Producer[]>(`${environment.BASE_URL}/edition/current/producer`);
     }
 }

@@ -4,8 +4,6 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Color} from '../models/Color';
 
-const API_URL = `${environment.BASE_URL}color`;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -15,10 +13,6 @@ export class ColorService {
     }
 
     findAll(): Observable<Color[]> {
-        return this.http.get<Color[]>(`${API_URL}/current`);
-    }
-
-    findOne(id: number): Observable<Color> {
-        return this.http.get<Color>(`${API_URL}/${id}`);
+        return this.http.get<Color[]>(`${environment.BASE_URL}/edition/current/color`);
     }
 }

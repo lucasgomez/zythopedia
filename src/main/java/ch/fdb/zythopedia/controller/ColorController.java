@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/color", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
+@RequestMapping(path = "/api", produces = MediaType.APPLICATION_JSON_VALUE, consumes = "*/*")
 public class ColorController {
 
     private final ColorService colorService;
@@ -27,40 +27,40 @@ public class ColorController {
         this.colorMapper = colorMapper;
     }
 
-    @GetMapping
+    @GetMapping("/color")
     public List<ColorDto> findAll() {
         return colorService.findAll().stream()
                 .map(colorMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/current")
+    @GetMapping("/edition/current/color")
     public List<ColorDto> findColorsWithService() {
         return colorService.findColorsWithService();
     }
 
-    @GetMapping(value = "/{styleId}")
+    @GetMapping("/color/{styleId}")
     public ColorDto findById(@PathVariable long styleId) {
         return colorService.findById(styleId)
                 .map(colorMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException(styleId, Color.class.getName()));
     }
 
-    @PostMapping
+    @PostMapping("/color")
     @Secured("ROLE_MANAGER")
     public ColorDto create(@RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.create(createColorDto.getName(), createColorDto.getDescription()));
     }
 
-    @PutMapping(value = "/{styleId}")
+    @PutMapping("/color/{styleId}")
     @Secured("ROLE_MANAGER")
     public ColorDto update(@PathVariable long styleId, @RequestBody CreateColorDto createColorDto) {
         return colorMapper.toDto(
                 colorService.update(styleId, createColorDto.getName(), createColorDto.getDescription()));
     }
 
-    @DeleteMapping(value = "/{styleId}")
+    @DeleteMapping("/color/{styleId}")
     @Secured("ROLE_MANAGER")
     public void delete(@PathVariable long styleId) {
         colorService.delete(styleId);

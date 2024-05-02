@@ -34,7 +34,7 @@ public class OriginController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/origin/current")
+    @GetMapping(value = "/edition/current/origin")
     public List<OriginDto> findOriginsWithService() {
         return originService.findOriginsWithService();
     }

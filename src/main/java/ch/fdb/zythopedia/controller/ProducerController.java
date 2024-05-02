@@ -34,7 +34,7 @@ public class ProducerController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/producer/current")
+    @GetMapping(value = "/edition/current/producer")
     public List<ProducerDto> findProducersWithService() {
         return producerService.findProducersWithService();
     }
