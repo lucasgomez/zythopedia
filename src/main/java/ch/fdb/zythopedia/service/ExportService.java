@@ -6,7 +6,7 @@ import ch.fdb.zythopedia.dto.mapper.DrinkPriceCalculatorDtoMapper;
 import ch.fdb.zythopedia.dto.mapper.SimpleDrinkMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.enums.ServiceMethod;
-import jakarta.transaction.Transactional;
+import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;

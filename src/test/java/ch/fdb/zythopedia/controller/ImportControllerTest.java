@@ -149,7 +149,7 @@ class ImportControllerTest {
         var services = serviceRepository.findByBoughtDrinkDrinkNameAndBoughtDrinkDrinkProducerNameAndVolumeInCl(
                 service.getDrinkName(), service.getProducerName(), service.getVolumeInCl());
         assertEquals(1, services.size());
-        return service.setId(services.getFirst().getId());
+        return service.setId(services.get(0).getId());
     }
 
     @Test
