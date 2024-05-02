@@ -13,6 +13,6 @@ export class StyleService {
     }
 
     findAll(): Observable<Style[]> {
-        return this.http.get<Style[]>(`${environment.BASE_URL}/edition/current/style`);
+        return this.http.get<Style[]>(`${environment.BASE_URL}edition/current/style`);
     }
 }

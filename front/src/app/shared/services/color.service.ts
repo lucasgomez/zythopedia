@@ -13,6 +13,6 @@ export class ColorService {
     }
 
     findAll(): Observable<Color[]> {
-        return this.http.get<Color[]>(`${environment.BASE_URL}/edition/current/color`);
+        return this.http.get<Color[]>(`${environment.BASE_URL}edition/current/color`);
     }
 }

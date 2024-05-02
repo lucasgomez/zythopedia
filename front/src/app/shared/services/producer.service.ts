@@ -13,6 +13,6 @@ export class ProducerService {
     }
 
     findAll(): Observable<Producer[]> {
-        return this.http.get<Producer[]>(`${environment.BASE_URL}/edition/current/producer`);
+        return this.http.get<Producer[]>(`${environment.BASE_URL}edition/current/producer`);
     }
 }

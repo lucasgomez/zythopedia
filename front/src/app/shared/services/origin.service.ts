@@ -13,6 +13,6 @@ export class OriginService {
     }
 
     findAll(): Observable<Origin[]> {
-        return this.http.get<Origin[]>(`${environment.BASE_URL}/edition/current/origin`);
+        return this.http.get<Origin[]>(`${environment.BASE_URL}edition/current/origin`);
     }
 }
