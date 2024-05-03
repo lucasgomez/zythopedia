@@ -13,4 +13,8 @@ export class DrinkCardComponent {
 
     constructor() {
     }
+
+    showRadar(drink: DetailedDrink): boolean {
+        return !!drink.bitterness || !!drink.hoppiness || !!drink.sourness || !!drink.sweetness;
+    }
 }

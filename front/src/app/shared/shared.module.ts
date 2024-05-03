@@ -14,6 +14,8 @@ import {AvailabilityIconPipe} from './pipes/availabilityIcon.pipe';
 import {AvailabilityLabelPipe} from "./pipes/availability-label.pipe";
 import {BeerCardComponent} from "./components/beer-card/beer-card.component";
 import {ChipModule} from "primeng/chip";
+import { AvailibilityBadgeComponent } from './components/availibility-badge/availibility-badge.component';
+import {BadgeModule} from "primeng/badge";
 
 @NgModule({
     imports: [
@@ -26,7 +28,8 @@ import {ChipModule} from "primeng/chip";
         InputTextModule,
         ButtonModule,
         MegaMenuModule,
-        ChipModule
+        ChipModule,
+        BadgeModule
     ],
     declarations: [
         HeaderComponent,
@@ -35,6 +38,7 @@ import {ChipModule} from "primeng/chip";
         AvailabilityIconPipe,
         AvailabilityLabelPipe,
         AvailabilityColorPipe,
+        AvailibilityBadgeComponent,
     ],
     exports: [
         CommonModule,
@@ -46,6 +50,7 @@ import {ChipModule} from "primeng/chip";
         AvailabilityIconPipe,
         AvailabilityLabelPipe,
         AvailabilityColorPipe,
+        AvailibilityBadgeComponent,
     ]
 })
 export class SharedModule {

@@ -32,10 +32,10 @@
         </div>
         <div class="col-12 md:col-6 p-3">
             <div class="text-500 font-medium mb-2">Disponibilité</div>
-            <div class="text-900">{{ drink.availability | availabilityIcon }}</div>
+            <availability-badge [availability]="drink.availability"/>
         </div>
         <div class="col-12 md:col-2 p-3"
-             *ngIf="drink.sourness !== undefined && drink.bitterness !== undefined && drink.sweetness !== undefined && drink.hoppiness !== undefined">
+             *ngIf="showRadar(drink)">
             <div class="text-500 font-medium mb-2">Force</div>
             <div class="text-900 line-height-3">
                 <app-strength-radar [drink]="drink"></app-strength-radar>
@@ -50,7 +50,7 @@
                     <li class="text-900 line-height-3">{{ service.volumeInCl }} cl</li>
                     <li class="text-300 mx-3">&mdash;</li>
                     <li class="text-500 font-medium mr-3">Prix</li>
-                    <li class="text-900 line-height-3">{{ service?.sellingPrice?.toFixed(2) }} CHF</li>
+                    <li class="text-900 line-height-3">{{ service?.sellingPrice?.toFixed(2) ?? '?' }} CHF</li>
                 </ul>
             </div>
         </div>

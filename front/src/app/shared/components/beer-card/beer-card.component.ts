@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {DetailedDrink} from '../../../shared/models/Drink';
-import {Service} from '../../../shared/models/Service';
+import {DetailedDrink} from '../../models/Drink';
+import {Service} from '../../models/Service';
 import {Observable} from "rxjs";
 import {BoughtDrinkService} from "../../services/bought-drink.service";
 import {CartService} from "../../services/cart.service";
@@ -28,7 +28,8 @@ export class BeerCardComponent implements OnInit {
     }
 
     buildPriceDisplay(service: Service): string {
-        return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
+        debugger;
+        return `${service.sellingPrice ?? '?'}.- (${service.volumeInCl}cl)`;
     }
 
     addDrinkServiceToBasket(service: Service): void {

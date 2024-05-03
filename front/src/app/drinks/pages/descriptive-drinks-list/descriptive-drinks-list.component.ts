@@ -43,7 +43,7 @@ export class DescriptiveDrinksListComponent implements OnInit, AfterViewInit {
     }
 
     buildPricesDisplay(service: Service): string {
-        return `${service.sellingPrice}.- (${service.volumeInCl}cl)`;
+        return `${service.sellingPrice ?? '?'}.- (${service.volumeInCl}cl)`;
     }
 
     buildProducerUrl(drink: Drink): string {

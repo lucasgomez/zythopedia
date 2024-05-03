@@ -15,7 +15,7 @@
                     />
                     <i class="pi pi-times-circle" (click)="clearGlobalFilter()"></i>
                     <p-toggleButton [(ngModel)]="showOnlyAvailable" (onChange)="onAvailabilityToggle()"
-                                    onLabel="Disponibles" offLabel="Toutes" style="margin-left: 10px"></p-toggleButton>
+                                    onLabel="Disponibles" offLabel="Toutes"></p-toggleButton>
                 </ng-template>
                 <ng-template pTemplate="body" let-drink let-expanded="expanded">
                     <tr>
@@ -41,8 +41,7 @@
                             </ng-template>
                         </td>
                         <td>
-                            <p-badge *ngIf="!showOnlyAvailable" severity="{{drink.availability | availabilityColor}}"
-                                     value="{{drink.availability | availabilityIcon}}"></p-badge>
+                            <availability-badge *ngIf="!showOnlyAvailable" [availability]="drink.availability"></availability-badge>
                         </td>
                     </tr>
                 </ng-template>
@@ -95,8 +94,7 @@
                 <ng-template pTemplate="body" let-drink>
                     <tr>
                         <td>
-                            <p-badge size="large" severity="{{drink.availability | availabilityColor}}"
-                                     value="{{drink.availability | availabilityIcon}}"></p-badge>
+                            <availability-badge [availability]="drink.availability"/>
                         </td>
                         <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{ drink.name }}</a></td>
                         <td>{{ drink.abv | abv }}</td>
