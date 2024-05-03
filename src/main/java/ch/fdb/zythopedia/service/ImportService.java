@@ -86,17 +86,22 @@ public class ImportService {
                 .collect(Collectors.toSet());
         var currentBoughtDrinksDrinkId = currentEditionBoughtDrinks.stream()
                 .filter(boughtDrink -> Objects.nonNull(boughtDrink.getDrink()))
-                .collect(Collectors.toMap(boughtDrink -> boughtDrink.getDrink().getId(), boughtDrink -> boughtDrink));
+                .collect(Collectors.groupingBy(boughtDrink -> boughtDrink.getDrink().getId()));
 
         var boughtDrinksToCreate = ordersWithDrink.entrySet().stream()
                 .filter(Predicate.not(order -> boughtDrinkExists(order.getKey(), order.getValue(), currentBoughtDrinksCode, currentBoughtDrinksDrinkId.keySet())))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         var boughtDrinksToUpdate = ordersWithDrink.entrySet().stream()
                 .filter(order -> boughtDrinkExists(order.getKey(), order.getValue(), currentBoughtDrinksCode, currentBoughtDrinksDrinkId.keySet()))
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> currentBoughtDrinksDrinkId.get(entry.getValue().getId())));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> currentBoughtDrinksDrinkId.get(entry.getValue().getId()).stream()
+                        .filter(boughtDrink -> boughtDrink.getServiceMethod() == entry.getKey().getServiceMethod())
+                        .findFirst()));
         boughtDrinkService.createNewBoughtDrinks(boughtDrinksToCreate);
 
-        boughtDrinkService.updateBoughtDrinksPrice(boughtDrinksToUpdate);
+        boughtDrinkService.updateBoughtDrinksPrice(boughtDrinksToUpdate.entrySet().stream()
+                .filter(entry -> entry.getValue().isPresent())
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue().get()))
+                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond)));
 
         log.info("End import of order");
     }
