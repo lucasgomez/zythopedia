@@ -24,12 +24,10 @@ public class StyleService {
 
     private final StyleRepository styleRepository;
     private final StyleFlatMapper styleFlatMapper;
-    private final BoughtDrinkService boughtDrinkService;
 
-    public StyleService(StyleRepository styleRepository, StyleFlatMapper styleFlatMapper, BoughtDrinkService boughtDrinkService) {
+    public StyleService(StyleRepository styleRepository, StyleFlatMapper styleFlatMapper) {
         this.styleRepository = styleRepository;
         this.styleFlatMapper = styleFlatMapper;
-        this.boughtDrinkService = boughtDrinkService;
     }
 
     public Optional<Style> findById(long styleId) {
@@ -133,16 +131,6 @@ public class StyleService {
                 .toList());
 
         return children;
-    }
-
-    public List<StyleDto> findStyleWithService() {
-        return boughtDrinkService.findCurrentEditionList(
-                boughtDrink -> Optional.ofNullable(boughtDrink)
-                        .map(BoughtDrink::getDrink)
-                        .map(Drink::getStyle)
-                        .orElse(null),
-                styleFlatMapper::toDto
-        );
     }
 
     public Style findOrCreate(String name) {

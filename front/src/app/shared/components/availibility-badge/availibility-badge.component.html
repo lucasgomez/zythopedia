@@ -1,4 +1,6 @@
 <p-badge size="large"
          [severity]="availability | availabilityColor"
-         [value]="availability | availabilityIcon"
-         [pTooltip]="availability | availabilityLabel"></p-badge>
+         [value]="labelAddition+(availability | availabilityIcon)"
+         [pTooltip]="labelAddition+(availability | availabilityLabel)"
+         (click)="onClick()"
+></p-badge>

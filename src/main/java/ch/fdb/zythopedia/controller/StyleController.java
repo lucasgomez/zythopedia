@@ -3,8 +3,11 @@ package ch.fdb.zythopedia.controller;
 import ch.fdb.zythopedia.dto.StyleDto;
 import ch.fdb.zythopedia.dto.creation.CreateStyleDto;
 import ch.fdb.zythopedia.dto.mapper.StyleFlatMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Style;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
+import ch.fdb.zythopedia.service.BoughtDrinkService;
 import ch.fdb.zythopedia.service.StyleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -12,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,10 +25,12 @@ public class StyleController {
 
     private final StyleService styleService;
     private final StyleFlatMapper styleFlatMapper;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public StyleController(StyleService styleService, StyleFlatMapper styleFlatMapper) {
+    public StyleController(StyleService styleService, StyleFlatMapper styleFlatMapper, BoughtDrinkService boughtDrinkService) {
         this.styleService = styleService;
         this.styleFlatMapper = styleFlatMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     @GetMapping(value = "/style")
@@ -36,7 +42,13 @@ public class StyleController {
 
     @GetMapping(value = "/edition/current/style")
     public List<StyleDto> findStyleWithService() {
-        return styleService.findStyleWithService();
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getStyle)
+                        .orElse(null),
+                styleFlatMapper::toDto
+        );
     }
 
     @GetMapping(value = "/style/{styleId}")

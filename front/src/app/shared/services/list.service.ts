@@ -4,6 +4,7 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {DescriptiveList} from '../models/DescriptiveList';
 import {DetailedDrink, Drink} from '../models/Drink';
+import {ServiceMethod} from "../models/ServiceMethod";
 
 const API_URL = `${environment.BASE_URL}`;
 
@@ -15,7 +16,7 @@ export class ListService {
     constructor(private readonly http: HttpClient) {
     }
 
-    findByServiceType(serviceType: 'TAP' | 'BOTTLE'): Observable<DescriptiveList<Drink>> {
+    findByServiceType(serviceType: ServiceMethod): Observable<DescriptiveList<Drink>> {
         return this.http.get<DescriptiveList<Drink>>(`${API_URL}service/${serviceType}/drink`);
     }
 

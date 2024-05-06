@@ -27,6 +27,7 @@ import {CartComponent} from "./pages/cart/cart.component";
 import {ToastModule} from "primeng/toast";
 import {DropdownModule} from "primeng/dropdown";
 import {ToggleButtonModule} from "primeng/togglebutton";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
     declarations: [
@@ -113,7 +114,8 @@ import {ToggleButtonModule} from "primeng/togglebutton";
         BadgeModule,
         ToastModule,
         DropdownModule,
-        ToggleButtonModule
+        ToggleButtonModule,
+        DialogModule
     ],
 })
 export class DrinksModule {

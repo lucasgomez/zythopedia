@@ -43,18 +43,22 @@
                         <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{ drink.name }}</a></td>
                         <td>{{ drink.producerName }}</td>
                         <td>{{ drink.services.length > 1 ? 'TAP' : 'BOTTLE' }}</td>
-                        <td>{{ drink.availability | availabilityIcon }}</td>
+                        <td><availability-badge [availability]="drink.availability"></availability-badge></td>
                         <td>
-                            <button *ngFor="let availability of availabilities" [id]="availability"
-                                    (click)="changeAvailability(drink, availability)">
-                                {{ availability }}
-                            </button>
+                            <availability-badge [availability]="getNextAvailability(drink.availability)" (click)="changeAvailability(drink)" [labelAddition]="'->'"/>
+                            <p-button icon="pi pi-pencil" (onClick)="editDrink(drink)"></p-button>
                         </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
     </form>
+    <p-dialog header="Edition d'une binch" [modal]="true" [(visible)]="editDrinkPopupVisible">
+        <edit-drink
+                [drink]="(detailedDrinkToEdit$ | async) ?? undefined"
+                (onSave)="onSaveDrink($event)"
+        />
+    </p-dialog>
 </ng-container>
 <ng-template #loading>
     <p>Chargement en cours...</p>

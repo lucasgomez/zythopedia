@@ -3,15 +3,20 @@ package ch.fdb.zythopedia.controller;
 import ch.fdb.zythopedia.dto.ColorDto;
 import ch.fdb.zythopedia.dto.creation.CreateColorDto;
 import ch.fdb.zythopedia.dto.mapper.ColorMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Color;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
+import ch.fdb.zythopedia.service.BoughtDrinkService;
 import ch.fdb.zythopedia.service.ColorService;
+import ch.fdb.zythopedia.service.ListService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,10 +26,12 @@ public class ColorController {
 
     private final ColorService colorService;
     private final ColorMapper colorMapper;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public ColorController(ColorService styleService, ColorMapper colorMapper) {
+    public ColorController(ColorService styleService, ColorMapper colorMapper, BoughtDrinkService boughtDrinkService) {
         this.colorService = styleService;
         this.colorMapper = colorMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     @GetMapping("/color")
@@ -36,7 +43,13 @@ public class ColorController {
 
     @GetMapping("/edition/current/color")
     public List<ColorDto> findColorsWithService() {
-        return colorService.findColorsWithService();
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getColor)
+                        .orElse(null),
+                colorMapper::toDto
+        );
     }
 
     @GetMapping("/color/{styleId}")

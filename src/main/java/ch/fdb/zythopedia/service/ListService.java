@@ -1,9 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.DescriptiveList;
-import ch.fdb.zythopedia.dto.ServiceDto;
-import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
-import ch.fdb.zythopedia.dto.SoldDrinkLightDto;
+import ch.fdb.zythopedia.dto.*;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkLightDtoMapper;
 import ch.fdb.zythopedia.entity.BoughtDrink;
 import ch.fdb.zythopedia.entity.Drink;

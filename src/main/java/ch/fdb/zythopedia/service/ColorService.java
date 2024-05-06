@@ -22,28 +22,15 @@ public class ColorService {
 
     private final ColorRepository colorRepository;
     private final ColorMapper colorMapper;
-    private final BoughtDrinkService boughtDrinkService;
 
     public ColorService(
-            ColorRepository colorRepository, ColorMapper colorMapper,
-            BoughtDrinkService boughtDrinkService) {
+            ColorRepository colorRepository, ColorMapper colorMapper) {
         this.colorRepository = colorRepository;
         this.colorMapper = colorMapper;
-        this.boughtDrinkService = boughtDrinkService;
     }
 
     public List<Color> findAll() {
         return colorRepository.findAll();
-    }
-
-    public List<ColorDto> findColorsWithService() {
-        return boughtDrinkService.findCurrentEditionList(
-                boughtDrink -> Optional.ofNullable(boughtDrink)
-                        .map(BoughtDrink::getDrink)
-                        .map(Drink::getColor)
-                        .orElse(null),
-                colorMapper::toDto
-        );
     }
 
     public List<ColorDto> findAllDto() {

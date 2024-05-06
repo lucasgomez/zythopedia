@@ -1,10 +1,13 @@
 package ch.fdb.zythopedia.service;
 
+import ch.fdb.zythopedia.dto.ColorDto;
 import ch.fdb.zythopedia.dto.EnumerableDto;
 import ch.fdb.zythopedia.dto.IdOrNameDto;
 import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
+import ch.fdb.zythopedia.dto.creation.FullDrinkDto;
+import ch.fdb.zythopedia.dto.mapper.FullDrinkDtoMapper;
 import ch.fdb.zythopedia.dto.mapper.SoldDrinkDetailedDtoMapper;
 import ch.fdb.zythopedia.entity.*;
 import ch.fdb.zythopedia.enums.Availability;
@@ -31,6 +34,7 @@ public class BoughtDrinkService {
 
     private final BoughtDrinkRepository boughtDrinkRepository;
     private final SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper;
+    private final FullDrinkDtoMapper fullDrinkDtoMapper;
     private final ServiceService serviceService;
     private final EditionService editionService;
     private final DrinkService drinkService;
@@ -38,9 +42,10 @@ public class BoughtDrinkService {
     @Value("${service.drinks.stylesIdsToIgnoreInDisplay}")
     private List<Long> stylesIdsToIgnoreInDisplay;
 
-    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, ServiceService serviceService, EditionService editionService, DrinkService drinkService) {
+    public BoughtDrinkService(BoughtDrinkRepository boughtDrinkRepository, SoldDrinkDetailedDtoMapper soldDrinkDetailedDtoMapper, FullDrinkDtoMapper fullDrinkDtoMapper, ServiceService serviceService, EditionService editionService, DrinkService drinkService) {
         this.boughtDrinkRepository = boughtDrinkRepository;
         this.soldDrinkDetailedDtoMapper = soldDrinkDetailedDtoMapper;
+        this.fullDrinkDtoMapper = fullDrinkDtoMapper;
         this.serviceService = serviceService;
         this.editionService = editionService;
         this.drinkService = drinkService;
@@ -218,6 +223,13 @@ public class BoughtDrinkService {
                 .map(soldDrinkDetailedDtoMapper::toDto);
     }
 
+    public FullDrinkDto getFullBoughtDrink(Long boughtDrinkId) {
+        return boughtDrinkRepository.findById(boughtDrinkId)
+                .map(fullDrinkDtoMapper::toDto)
+                .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
+
+    }
+
     @Transactional
     public Optional<SoldDrinkDetailedDto> updataAvailability(Long boughDrinkId, Availability availability) {
         return boughtDrinkRepository.findById(boughDrinkId)
@@ -299,5 +311,19 @@ public class BoughtDrinkService {
                 .limit(Optional.ofNullable(count).orElse(1))
                 .map(soldDrinkDetailedDtoMapper::toDto)
                 .collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public SoldDrinkDetailedDto updateBoughtDrink(Long boughtDrinkId, FullDrinkDto boughtDrinkDto) {
+        var boughtDrink = boughtDrinkRepository.findById(boughtDrinkId)
+                .orElseThrow(() -> new EntityNotFoundException(boughtDrinkId, "boughtDrink"));
+
+        drinkService.updateDrink(boughtDrink.getDrink(), boughtDrinkDto);
+
+        boughtDrink.setServiceMethod(boughtDrinkDto.getServiceMethod());
+        boughtDrink.setVolumeInCl(boughtDrinkDto.getVolumeInCl());
+        boughtDrink.setAvailability(boughtDrinkDto.getAvailability());
+
+        return soldDrinkDetailedDtoMapper.toDto(boughtDrink);
     }
 }

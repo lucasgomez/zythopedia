@@ -13,7 +13,7 @@ export class AvailabilityIconPipe implements PipeTransform {
             case 'AVAILABLE':
                 return '🍻';
             case 'OUT_OF_STOCK':
-                return '❌';
+                return '✖️';
             default:
                 return '❔';
         }

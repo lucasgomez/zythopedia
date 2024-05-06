@@ -1,6 +1,7 @@
 package ch.fdb.zythopedia.controller;
 
 import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
+import ch.fdb.zythopedia.dto.creation.FullDrinkDto;
 import ch.fdb.zythopedia.enums.Availability;
 import ch.fdb.zythopedia.enums.ServiceMethod;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
@@ -42,6 +43,18 @@ public class BoughtDrinkController {
                                        @PathParam(value = "colorName") String colorName) {
         return boughtDrinkService.create(drinkName, buyingPrice, serviceMethod, code, volumeInCl,
                 producerName, styleName, colorName);
+    }
+
+    @GetMapping("/boughtdrink/{boughtDrinkId}/full")
+    @Secured("ROLE_MANAGER")
+    public FullDrinkDto getFullBoughtDrink(@PathVariable Long boughtDrinkId) {
+        return boughtDrinkService.getFullBoughtDrink(boughtDrinkId);
+    }
+
+    @PutMapping("/boughtdrink/{boughtDrinkId}")
+    @Secured("ROLE_MANAGER")
+    public SoldDrinkDetailedDto updateBoughtDrink(@PathVariable Long boughtDrinkId, @RequestBody FullDrinkDto boughtDrinkToUpdate) {
+        return boughtDrinkService.updateBoughtDrink(boughtDrinkId, boughtDrinkToUpdate);
     }
 
     @PostMapping("/drink/{drinkId}/boughtdrink")

@@ -25,13 +25,11 @@ public class ProducerService {
     private final ProducerRepository producerRepository;
     private final ProducerMapper producerMapper;
     private final OriginService originService;
-    private final BoughtDrinkService boughtDrinkService;
 
-    public ProducerService(ProducerRepository producerRepository, ProducerMapper producerMapper, OriginService originService, BoughtDrinkService boughtDrinkService) {
+    public ProducerService(ProducerRepository producerRepository, ProducerMapper producerMapper, OriginService originService) {
         this.producerRepository = producerRepository;
         this.producerMapper = producerMapper;
         this.originService = originService;
-        this.boughtDrinkService = boughtDrinkService;
     }
 
     public List<Producer> findAll() {
@@ -108,16 +106,6 @@ public class ProducerService {
     public Void delete(Long producerIdToDelete, IdOrNameDto producerIdToTransferTo) {
         return DeleterHelper.delete("Producer", "Drink", producerIdToDelete, producerIdToTransferTo,
                 producerRepository, Producer::getDrinks, Drink::setProducer);
-    }
-
-    public List<ProducerDto> findProducersWithService() {
-        return boughtDrinkService.findCurrentEditionList(
-                boughtDrink -> Optional.ofNullable(boughtDrink)
-                        .map(BoughtDrink::getDrink)
-                        .map(Drink::getProducer)
-                        .orElse(null),
-                producerMapper::toDto
-        );
     }
 
     public Producer findOrCreate(String producerName, String originShortName) {

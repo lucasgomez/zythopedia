@@ -1,0 +1,36 @@
+<form [formGroup]="drinkForm" (ngSubmit)="onSubmit()">
+
+    <label for="id">ID</label>
+    <input id="id" type="text" formControlName="id">
+
+    <label for="name">Name</label>
+    <input id="name" type="text" formControlName="name">
+
+    <label for="description">Description</label>
+    <textarea id="description" formControlName="description"></textarea>
+
+    <label for="availability">Availability</label>
+    <input id="availability" type="checkbox" formControlName="availability">
+
+    <p-dropdown id="producerId" formControlName="producerId" [options]="(producerList$ | async) ?? []"/>
+    <p-dropdown id="styleId" formControlName="styleId" [options]="(styleList$ | async) ?? []"/>
+    <p-dropdown id="colorId" formControlName="colorId" [options]="(colorList$ | async) ?? []"/>
+
+    <label for="sourness">Sourness</label>
+    <input id="sourness" type="number" formControlName="sourness">
+
+    <label for="bitterness">Bitterness</label>
+    <input id="bitterness" type="number" formControlName="bitterness">
+
+    <label for="sweetness">Sweetness</label>
+    <input id="sweetness" type="number" formControlName="sweetness">
+
+    <label for="hoppiness">Hoppiness</label>
+    <input id="hoppiness" type="number" formControlName="hoppiness">
+
+    <label for="abv">ABV</label>
+    <input id="abv" type="number" formControlName="abv">
+
+    <button type="submit">Submit</button>
+
+</form>

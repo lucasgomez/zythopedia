@@ -1,12 +1,19 @@
 package ch.fdb.zythopedia.service;
 
 import ch.fdb.zythopedia.dto.DrinkDto;
+import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
+import ch.fdb.zythopedia.dto.creation.FullDrinkDto;
 import ch.fdb.zythopedia.dto.mapper.DrinkMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Color;
 import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.NamedEntity;
+import ch.fdb.zythopedia.enums.Strength;
+import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
 import ch.fdb.zythopedia.repository.*;
+import liquibase.pro.packaged.F;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.PropertyValueException;
 import org.springframework.stereotype.Service;
@@ -14,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,13 +34,15 @@ public class DrinkService {
     private final ProducerRepository producerRepository;
     private final StyleRepository styleRepository;
     private final DrinkMapper drinkMapper;
+    private final ColorService colorService;
 
-    public DrinkService(DrinkRepository drinkRepository, ColorRepository colorRepository, ProducerRepository producerRepository, StyleRepository styleRepository, DrinkMapper drinkMapper) {
+    public DrinkService(DrinkRepository drinkRepository, ColorRepository colorRepository, ProducerRepository producerRepository, StyleRepository styleRepository, DrinkMapper drinkMapper, ColorService colorService) {
         this.drinkRepository = drinkRepository;
         this.colorRepository = colorRepository;
         this.producerRepository = producerRepository;
         this.styleRepository = styleRepository;
         this.drinkMapper = drinkMapper;
+        this.colorService = colorService;
     }
 
     public List<Drink> findAll() {
@@ -142,5 +153,44 @@ public class DrinkService {
 
     public Optional<Drink> findByNameAndProducerName(String name, String producerName) {
         return drinkRepository.findByNameIgnoreCaseAndProducerNameIgnoreCase(name, producerName);
+    }
+
+    public void updateDrink(Drink drinkToUpdate, FullDrinkDto boughtDrinkSubmitted) {
+        updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getColorId(),
+                Drink::getColor, Drink::setColor, colorRepository::findById);
+        updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getStyleId(),
+                Drink::getStyle, Drink::setStyle, styleRepository::findById);
+        updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getColorId(),
+                Drink::getProducer, Drink::setProducer, producerRepository::findById);
+
+        drinkToUpdate.setName(boughtDrinkSubmitted.getName());
+        drinkToUpdate.setDescription(boughtDrinkSubmitted.getDescription());
+        drinkToUpdate.setAbv(boughtDrinkSubmitted.getAbv());
+        drinkToUpdate.setSourness(Strength.getStrengthByRank(boughtDrinkSubmitted.getSourness()));
+        drinkToUpdate.setBitterness(Strength.getStrengthByRank(boughtDrinkSubmitted.getBitterness()));
+        drinkToUpdate.setSweetness(Strength.getStrengthByRank(boughtDrinkSubmitted.getSweetness()));
+        drinkToUpdate.setHoppiness(Strength.getStrengthByRank(boughtDrinkSubmitted.getHoppiness()));
+    }
+
+    private <T extends NamedEntity> void updatePropertyIfNeeded(Drink drink,
+                                            Long propertyId,
+                                            Function<Drink, T> drinkPropertyGetter,
+                                            BiFunction<Drink, T, Drink> drinkPropertySetter,
+                                            Function<Long, Optional<T>> propertyFinder) {
+        if (propertyId == null) {
+            drinkPropertySetter.apply(drink, null);
+            return;
+        }
+
+        var existingPropertyId = Optional.ofNullable(drinkPropertyGetter.apply(drink))
+                .map(NamedEntity::getId)
+                .orElse(null);
+
+        if (propertyId.equals(existingPropertyId)) {
+            return;
+        }
+
+        propertyFinder.apply(propertyId)
+                .ifPresent(propertyEntity -> drinkPropertySetter.apply(drink, propertyEntity));
     }
 }

@@ -3,6 +3,7 @@ import {Color} from './Color';
 import {Producer} from './Producer';
 import {Service} from './Service';
 import {Style} from './Style';
+import {ServiceMethod} from "./ServiceMethod";
 
 export interface Drink {
     id: number;
@@ -34,4 +35,23 @@ export interface DetailedDrink {
     abv: number;
     availability: Availability;
     services: Service[];
+}
+
+export interface FullDrinkDto {
+    id: number;
+    drinkId: number;
+    name: String;
+    description: String;
+    abv: number;
+    producerId: number;
+    colorId: number;
+    styleId: number;
+    sourness: number;
+    bitterness: number;
+    sweetness: number;
+    hoppiness: number;
+    buyingPrice: number;
+    serviceMethod: ServiceMethod;
+    volumeInCl: number;
+    availability: Availability;
 }

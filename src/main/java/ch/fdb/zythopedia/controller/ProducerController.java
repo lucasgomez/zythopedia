@@ -3,8 +3,11 @@ package ch.fdb.zythopedia.controller;
 import ch.fdb.zythopedia.dto.ProducerDto;
 import ch.fdb.zythopedia.dto.creation.CreateProducerDto;
 import ch.fdb.zythopedia.dto.mapper.ProducerMapper;
+import ch.fdb.zythopedia.entity.BoughtDrink;
+import ch.fdb.zythopedia.entity.Drink;
 import ch.fdb.zythopedia.entity.Producer;
 import ch.fdb.zythopedia.exceptions.EntityNotFoundException;
+import ch.fdb.zythopedia.service.BoughtDrinkService;
 import ch.fdb.zythopedia.service.ProducerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -12,6 +15,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,10 +25,12 @@ public class ProducerController {
 
     private final ProducerService producerService;
     private final ProducerMapper producerMapper;
+    private final BoughtDrinkService boughtDrinkService;
 
-    public ProducerController(ProducerService styleService, ProducerMapper producerMapper) {
+    public ProducerController(ProducerService styleService, ProducerMapper producerMapper, BoughtDrinkService boughtDrinkService) {
         this.producerService = styleService;
         this.producerMapper = producerMapper;
+        this.boughtDrinkService = boughtDrinkService;
     }
 
     @GetMapping(value = "/producer")
@@ -36,7 +42,13 @@ public class ProducerController {
 
     @GetMapping(value = "/edition/current/producer")
     public List<ProducerDto> findProducersWithService() {
-        return producerService.findProducersWithService();
+        return boughtDrinkService.findCurrentEditionList(
+                boughtDrink -> Optional.ofNullable(boughtDrink)
+                        .map(BoughtDrink::getDrink)
+                        .map(Drink::getProducer)
+                        .orElse(null),
+                producerMapper::toDto
+        );
     }
 
     @GetMapping(value = "/producer/{producerId}")
