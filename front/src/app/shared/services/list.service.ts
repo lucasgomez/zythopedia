@@ -36,8 +36,12 @@ export class ListService {
         return this.http.get<DescriptiveList<Drink>>(`${API_URL}style/${styleId}/drink`);
     }
 
-    findAvailableBeers$(serviceMethod: string): Observable<Drink[]> {
+    findAvailableBeersByService$(serviceMethod: string): Observable<Drink[]> {
         return this.http.get<Drink[]>(`${API_URL}service/${serviceMethod}/beer/available`);
+    }
+
+    findAvailableBeers$(): Observable<Drink[]> {
+        return this.http.get<Drink[]>(`${API_URL}beer/available`);
     }
 
     getRandom$(count: number) {

@@ -1,5 +1,5 @@
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <div class="title">{{ getTitle() }}</div>
+    <div class="title">{{ (counterLeft$ | async) }}{{ (title$ | async) }}{{ (counterRight$ | async) }}</div>
     <p-dataView [value]="drinks" layout="grid">
         <ng-template let-drink pTemplate="gridItem">
             <div class="col-3">
@@ -17,7 +17,7 @@
                         </div>
                     </div>
                     <div class="product-grid-item-bottom">
-                        <div *ngFor="let service of drink.services">
+                        <div *ngFor="let service of getSortedServices(drink)">
                             <p-chip label="{{buildPriceDisplay(service)}}"></p-chip>
                         </div>
                     </div>

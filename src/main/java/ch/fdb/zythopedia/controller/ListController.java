@@ -80,4 +80,9 @@ public class ListController {
     public List<SoldDrinkLightDto> getAvailableBottledBeers() {
         return listService.getAvailableBottledBeers();
     }
+
+    @GetMapping(value = "/beer/available")
+    public List<SoldDrinkLightDto> getAvailableBeers() {
+        return listService.getAvailableBeers();
+    }
 }

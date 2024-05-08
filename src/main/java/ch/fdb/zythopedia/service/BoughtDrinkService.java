@@ -84,7 +84,9 @@ public class BoughtDrinkService {
                 .returnable(boughtDrinkToCreate.isReturnable())
                 .buyingPrice(Optional.ofNullable(boughtDrinkToCreate.getBuyingPrice()).orElse(0.0))
                 .drink(drink)
-                .volumeInCl(boughtDrinkToCreate.getVolumeInCl())
+                .volumeInCl(ServiceMethod.TAP == boughtDrinkToCreate.getServiceMethod()
+                        ? 100
+                        : boughtDrinkToCreate.getVolumeInCl())
                 .availability(Availability.AVAILABLE)
                 .returnable(false)
                 .edition(currentEdition)

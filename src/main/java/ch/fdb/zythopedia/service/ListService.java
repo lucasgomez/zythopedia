@@ -72,15 +72,19 @@ public class ListService {
     }
 
     public List<SoldDrinkLightDto> getAvailableTapBeers() {
-        return getAvailableBeers(ServiceMethod.TAP);
+        return getAvailableBeers(boughtDrinkService.getCurrentEditionBoughtDrinks(ServiceMethod.TAP, Availability.AVAILABLE));
+    }
+
+    public List<SoldDrinkLightDto> getAvailableBeers() {
+        return getAvailableBeers(boughtDrinkService.getCurrentEditionBoughtDrinks());
     }
 
     public List<SoldDrinkLightDto> getAvailableBottledBeers() {
-        return getAvailableBeers(ServiceMethod.BOTTLE);
+        return getAvailableBeers(boughtDrinkService.getCurrentEditionBoughtDrinks(ServiceMethod.BOTTLE, Availability.AVAILABLE));
     }
 
-    private List<SoldDrinkLightDto> getAvailableBeers(ServiceMethod serviceMethod) {
-        return boughtDrinkService.getCurrentEditionBoughtDrinks(serviceMethod, Availability.AVAILABLE).stream()
+    private List<SoldDrinkLightDto> getAvailableBeers(Collection<BoughtDrink> drinks) {
+        return drinks.stream()
                 .filter(boughtDrink -> Optional.ofNullable(boughtDrink)
                         .map(BoughtDrink::getDrink)
                         .map(Drink::getStyle)
@@ -88,7 +92,9 @@ public class ListService {
                         .filter(Predicate.not(stylesIdsToIgnoreInDisplay::contains))
                         .isPresent())
                 .map(soldDrinkLightDtoMapper::toDto)
-                .sorted(Comparator.comparing(SoldDrinkLightDto::getName))
+                .sorted(Comparator
+                        .comparing(SoldDrinkLightDto::getStyleName)
+                        .thenComparing(SoldDrinkLightDto::getName))
                 .collect(Collectors.toList());
     }
 

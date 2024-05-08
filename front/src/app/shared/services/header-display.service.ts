@@ -13,7 +13,7 @@ export class HeaderDisplayService {
     }
 
     mustDisplayHeader(): Observable<boolean> {
-        return this.showHeader.asObservable();
+        return this.showHeader;
     }
 
 }

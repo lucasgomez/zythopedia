@@ -108,7 +108,7 @@ public final class SpreadsheetHelper {
             case NUMERIC:
                 return ((Double) cell.getNumericCellValue()).longValue();
             case STRING:
-                return Long.valueOf(cell.getStringCellValue());
+                return Optional.ofNullable(cell.getStringCellValue()).map(Long::valueOf).orElse(0L);
             default: {
                 log.error(String.format("Could not read value from cell %s, thus ignoring it", cell.getAddress().formatAsString()));
                 return null;
