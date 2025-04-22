@@ -50,7 +50,30 @@ public class ListService {
     }
 
     public DescriptiveList<SoldDrinkLightDto> findByStyleId(Long styleId) {
-        return findByListTypeId(styleId, styleRepository, "style", boughtDrinkService::findCurrentEditionByStyleId);
+        var style = styleRepository.findById(styleId)
+                .orElseThrow(() -> new EntityNotFoundException(styleId, "style"));
+
+        var childStyles = style.getChildren();
+
+        var drinkLists = new ArrayList<DescriptiveList<SoldDrinkLightDto>>();
+        drinkLists.add(findByListTypeId(styleId, styleRepository, "style", boughtDrinkService::findCurrentEditionByStyleId));
+
+        if (childStyles == null || childStyles.isEmpty()) {
+            return drinkLists.get(0);
+        }
+
+        for (Style childStyle : childStyles) {
+            drinkLists.add(findByListTypeId(childStyle.getId(), styleRepository, "style", boughtDrinkService::findCurrentEditionByStyleId));
+        }
+
+        return DescriptiveList.<SoldDrinkLightDto>builder()
+                .title(style.getName())
+                .content(drinkLists.stream()
+                        .map(DescriptiveList::getContent)
+                        .flatMap(List::stream)
+                        .toList())
+                .description(style.getDescription())
+                .build();
     }
 
     public DescriptiveList<SoldDrinkLightDto> findByProducerId(Long producerId) {
@@ -91,6 +114,7 @@ public class ListService {
                         .map(Style::getId)
                         .filter(Predicate.not(stylesIdsToIgnoreInDisplay::contains))
                         .isPresent())
+                .filter(boughtDrink -> Availability.AVAILABLE == boughtDrink.getAvailability())
                 .map(soldDrinkLightDtoMapper::toDto)
                 .sorted(Comparator
                         .comparing(SoldDrinkLightDto::getStyleName)
