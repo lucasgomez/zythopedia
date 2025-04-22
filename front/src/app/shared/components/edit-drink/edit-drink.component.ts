@@ -9,7 +9,6 @@ import {ColorService} from "../../services/color.service";
 import {ProducerService} from "../../services/producer.service";
 import {StyleService} from "../../services/style.service";
 import {SelectItem} from "primeng/api";
-import {style} from "@angular/animations";
 
 @Component({
     selector: 'edit-drink',
