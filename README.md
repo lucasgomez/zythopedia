@@ -2,7 +2,50 @@
 Effort minimum de doc, parce que j'oublie d'année en année...
 
 ## Général
-L'appli est en java/spring boot pour le backend et a besoin d'une DB (nornalement PostgreSQL) pour les datas. Le front est en Angular. Elle est sensée pouvoir être buildée avec MVN sans autre difficulté. Si c'est pas le cas, essaye de supprimer target et refaire un clean install. Sinon prie, ca aide pas, mais ca fait passer le temps. 
+
+### Application
+L'appli est en java/spring boot pour le backend et a besoin d'une DB (nornalement PostgreSQL) pour les datas. Le front est en Angular. Elle est sensée pouvoir être buildée avec MVN sans autre difficulté. Si c'est pas le cas, essaye de supprimer target et refaire un clean install. Sinon prie, ca aide pas, mais ca fait passer le temps.
+
+#### Troubleshoot
+Sur une nouvelle install de Intellij, il faut activer le *Annotation processing* pour permettre à l'IDE de gérer les classes lombokisées ainsi que MapStruct. Au cas ou l'application build, mais échoue au démarrage Spring car il ne trouve pas un bean lié à MapStruct, il faut faire un *mvn clean install* pour le forcer à tout recréer. Pourquoi? Je sais pas.
+
+### Database
+L'application tourne normalement sur une DB Postgres. J'ai pas essayé le reste, ptête que ca marche, je vois pas de raison que ca ne soit pas ok.
+
+#### Création
+Pour créer la nouvelle DB, une fois postgres installé :
+```
+sudo su - postgres
+createuser zythopedia
+createdb zythopediadb
+psql
+```
+A partir de là, on est dans le postgres shell :
+```
+alter user zythopedia with encrypted password 'zythopedia';
+grant all privileges on database zythopediadb to zythopedia;
+```
+Ce qui doit normalement correspondre à la configuration suivante dans application.properties :
+```
+spring.datasource.url=jdbc:postgresql://localhost:5432/zythopediadb
+spring.datasource.username=zythopedia
+spring.datasource.password=zythopediapwd
+```
+
+*Note :* j'ai un souci avec le user 'zythopedia', il n'a pas accès au schéma 'public' et le GRANT ne semble pas changer ca, pour le moment c'est donc le user 'postgres' qui est utilisé
+
+#### Restore
+Pour créer les structures à partir de 0, il suffit de démarrer l'application et liquibase se charge de créer les structures.
+Pour restaurer un backup, il faut utiliser *pg_restore* en utilisant l'utilisateur *postgres*:
+```
+sudo -u postgres pg_restore -d zythopediadb --clean /home/shared/zytho.backup
+```
+Le *sudo -u postgres* pour le faire avec le user *postgres* et l'option *--clean* pour faire des DROP avant le réimport.
+
+#### Backup
+```
+sudo -u postgres pg_dump -d zythopediadb -F plain -c -f /home/shared/zytho_21-05-25.dump
+```
 
 ## Nouvelle édition
 Une fois que l'appli boot, il est possible de faire une nouvelle édition.
@@ -29,6 +72,19 @@ Pour terminer, il faut injecter ce fichier. Pour ce faire, requête POST sur htt
 Générer les fichiers pour partager le travail avec des GET sur :
  - Calculateur de prix : http://localhost:8080/api/export/calculator
  - Edition des boissons : http://localhost:8080/api/edition/2025/export/data
+
+## Queries utiles 
+
+### Query de base par brasserie
+```sql
+SELECT p.name, d."name", bd.service_method, bd.buying_price
+from producer p
+inner join drink d on d.producer_fk = p.id
+inner join bought_drink bd on bd.drink_fk = d.id
+inner join "style" s on s.id = d.style_fk  
+left outer join edition e on e.id = bd.edition_fk 
+where LOWER(p.name) = 'galio';
+```
 
 ### Query de ouf pour localiser les drink créés en doublon à l'import :
 ```sql
