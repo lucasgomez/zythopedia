@@ -18,6 +18,7 @@ export interface Drink {
     styleName: string;
     abv: number;
     availability: Availability;
+    location: string;
     services: Service[];
 }
 
@@ -34,14 +35,15 @@ export interface DetailedDrink {
     hoppiness: number;
     abv: number;
     availability: Availability;
+    location: string;
     services: Service[];
 }
 
 export interface FullDrinkDto {
     id: number;
     drinkId: number;
-    name: String;
-    description: String;
+    name: string;
+    description: string;
     abv: number;
     producerId: number;
     colorId: number;
@@ -51,6 +53,7 @@ export interface FullDrinkDto {
     sweetness: number;
     hoppiness: number;
     buyingPrice: number;
+    location: string;
     serviceMethod: ServiceMethod;
     volumeInCl: number;
     availability: Availability;

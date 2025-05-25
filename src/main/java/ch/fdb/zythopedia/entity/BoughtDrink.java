@@ -53,6 +53,9 @@ public class BoughtDrink {
     @Column(name = "RETURNABLE")
     private Boolean returnable;
 
+    @Column(name = "LOCATION")
+    private String location;
+
     @OneToMany(mappedBy = "boughtDrink")
     private List<Service> services;
 

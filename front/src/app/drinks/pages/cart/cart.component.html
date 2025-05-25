@@ -5,6 +5,7 @@
         <p-table [value]="buildTableData(services)">
             <ng-template pTemplate="body" let-service>
                 <tr [className]="service.styleClass">
+                    <td><div *ngIf="service.location">{{ service.location }}</div></td>
                     <td>
                         <a *ngIf="service.link" [routerLink]="service.link">{{ service.label }}</a>
                         <div *ngIf="!service.link">{{ service.label }}</div>

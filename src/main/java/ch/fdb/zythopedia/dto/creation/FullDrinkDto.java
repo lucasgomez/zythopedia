@@ -11,6 +11,7 @@ public class FullDrinkDto {
     private ServiceMethod serviceMethod;
     private Long volumeInCl;
     private Availability availability;
+    private String location;
 
     private Long drinkId;
     private String name;

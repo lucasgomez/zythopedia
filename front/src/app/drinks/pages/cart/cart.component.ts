@@ -3,6 +3,7 @@ import {BehaviorSubject, combineLatest, map, Observable, switchMap} from 'rxjs';
 import {ServiceService} from "../../../shared/services/service.service";
 import {Service} from "../../../shared/models/Service";
 import {CartService} from "../../../shared/services/cart.service";
+import {Availability} from "../../../shared/models/Availability";
 
 @Component({
     selector: 'app-cart',
@@ -100,6 +101,8 @@ export class CartComponent implements OnInit {
             label: `${service.producerName} - ${service?.drinkName}`,
             volume: `${service.volumeInCl}cl.`,
             price: `${service.sellingPrice}.-`,
+            location: service.location,
+            availability: service.availability,
         } as DrinkRow;
     }
 
@@ -128,6 +131,8 @@ interface DrinkRow {
     id?: number;
     link?: string;
     label: string;
+    location?: string;
+    availability: Availability;
     volume?: string;
     price: string;
     styleClass?: string;

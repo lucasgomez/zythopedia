@@ -21,5 +21,6 @@ public class SoldDrinkLightDto {
     private Long styleId;
     private String styleName;
     private Availability availability;
+    private String location;
     private List<ServiceDto> services;
 }

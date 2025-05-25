@@ -58,6 +58,10 @@ export class DescriptiveDrinksListComponent implements OnInit, AfterViewInit {
         return `/drinks/styles/${drink.styleId}`;
     }
 
+    buildDrinkNameWithLocation(drink: Drink): string {
+        return drink.name + (drink.location && drink.availability === 'AVAILABLE' ? ' - ' + drink.location : '');
+    }
+
     addDrinkServiceToBasket(service: Service): void {
         this.cartService.addDrinkServiceToBasket(service);
         this.messageService.add({severity: 'success', detail: `${service.drinkName} ajouté au panier`});

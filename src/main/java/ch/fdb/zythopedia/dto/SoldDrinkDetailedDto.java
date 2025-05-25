@@ -22,4 +22,5 @@ public class SoldDrinkDetailedDto {
     private Long hoppiness;
     private Availability availability;
     private List<ServiceDto> services;
+    private String location;
 }

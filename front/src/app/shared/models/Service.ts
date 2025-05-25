@@ -8,4 +8,5 @@ export interface Service {
     volumeInCl: number;
     sellingPrice: number;
     availability: Availability;
+    location?: string;
 }

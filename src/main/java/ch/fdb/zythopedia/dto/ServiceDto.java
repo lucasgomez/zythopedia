@@ -18,4 +18,5 @@ public class ServiceDto {
     private Long volumeInCl;
     private Double sellingPrice;
     private Availability availability;
+    private String location;
 }

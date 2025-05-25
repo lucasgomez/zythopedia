@@ -27,11 +27,11 @@
                         <td>
                             <ng-container *ngIf="expanded else collapsed">
                                 <h3><a [routerLink]="['/', 'drinks', drink.id]"
-                                       class="no-underline">{{ drink.name }}</a></h3>
+                                       class="no-underline">{{ buildDrinkNameWithLocation(drink) }}</a></h3>
                             </ng-container>
                             <ng-template #collapsed>
                                 <div>
-                                    <h4>{{ drink.name }}</h4>
+                                    <h4>{{ buildDrinkNameWithLocation(drink) }}</h4>
                                 </div>
                                 <div>
                                     {{ drink.producerName + ' ' + drink.originFlag }}
@@ -94,7 +94,7 @@
                 <ng-template pTemplate="body" let-drink>
                     <tr>
                         <td>
-                            <availability-badge [availability]="drink.availability"/>
+                            <availability-badge [availability]="drink.availability" [location]="drink.location"/>
                         </td>
                         <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{ drink.name }}</a></td>
                         <td>{{ drink.abv | abv }}</td>

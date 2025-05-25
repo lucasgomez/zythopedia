@@ -9,6 +9,7 @@ import {Availability} from "../../models/Availability";
 export class AvailibilityBadgeComponent {
 
   @Input() availability!: Availability;
+  @Input() location?: string;
   @Input() labelAddition = "";
   @Output() click: EventEmitter<null> = new EventEmitter<null>();
 

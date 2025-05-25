@@ -77,7 +77,7 @@ Générer les fichiers pour partager le travail avec des GET sur :
 
 ### Query de base par brasserie
 ```sql
-SELECT p.name, d."name", bd.service_method, bd.buying_price
+SELECT p.name, d."name", s.name, d.abv, bd.service_method, bd.buying_price
 from producer p
 inner join drink d on d.producer_fk = p.id
 inner join bought_drink bd on bd.drink_fk = d.id

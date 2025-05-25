@@ -28,7 +28,6 @@ export class BeerCardComponent implements OnInit {
     }
 
     buildPriceDisplay(service: Service): string {
-        debugger;
         return `${service.sellingPrice ?? '?'}.- (${service.volumeInCl}cl)`;
     }
 
