@@ -16,8 +16,8 @@ import {BeerCardComponent} from "./components/beer-card/beer-card.component";
 import {ChipModule} from "primeng/chip";
 import { AvailibilityBadgeComponent } from './components/availibility-badge/availibility-badge.component';
 import {BadgeModule} from "primeng/badge";
-import { EditDrinkComponent } from './components/edit-drink/edit-drink.component';
 import {DropdownModule} from "primeng/dropdown";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
     imports: [
@@ -32,7 +32,8 @@ import {DropdownModule} from "primeng/dropdown";
         MegaMenuModule,
         ChipModule,
         BadgeModule,
-        DropdownModule
+        DropdownModule,
+        DialogModule
     ],
     declarations: [
         HeaderComponent,
@@ -42,7 +43,6 @@ import {DropdownModule} from "primeng/dropdown";
         AvailabilityLabelPipe,
         AvailabilityColorPipe,
         AvailibilityBadgeComponent,
-        EditDrinkComponent,
     ],
     exports: [
         CommonModule,
@@ -55,7 +55,6 @@ import {DropdownModule} from "primeng/dropdown";
         AvailabilityLabelPipe,
         AvailabilityColorPipe,
         AvailibilityBadgeComponent,
-        EditDrinkComponent,
     ]
 })
 export class SharedModule {

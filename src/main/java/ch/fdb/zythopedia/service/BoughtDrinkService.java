@@ -322,10 +322,13 @@ public class BoughtDrinkService {
 
         drinkService.updateDrink(boughtDrink.getDrink(), boughtDrinkDto);
 
-        boughtDrink.setServiceMethod(boughtDrinkDto.getServiceMethod());
-        boughtDrink.setVolumeInCl(boughtDrinkDto.getVolumeInCl());
-        boughtDrink.setAvailability(boughtDrinkDto.getAvailability());
+        boughtDrink
+                .setAvailability(boughtDrinkDto.getAvailability())
+                .setServiceMethod(boughtDrinkDto.getServiceMethod())
+                .setVolumeInCl(boughtDrinkDto.getVolumeInCl())
+                .setBuyingPrice(boughtDrinkDto.getBuyingPrice())
+                .setLocation(boughtDrinkDto.getLocation());
 
-        return soldDrinkDetailedDtoMapper.toDto(boughtDrink);
+        return soldDrinkDetailedDtoMapper.toDto(boughtDrinkRepository.save(boughtDrink));
     }
 }

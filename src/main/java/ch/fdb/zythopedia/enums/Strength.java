@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Getter
@@ -26,9 +27,10 @@ public enum Strength {
     }
 
     public static Strength getStrengthByRank(Long rank) {
-        return Arrays.stream(Strength.values())
-                .filter(strength -> strength.getRank() == rank)
-                .findFirst()
+        return Optional.ofNullable(rank)
+                .flatMap(value -> Arrays.stream(Strength.values()).
+                        filter(strength -> strength.getRank() == value)
+                        .findFirst())
                 .orElse(null);
     }
 }

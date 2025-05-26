@@ -28,6 +28,12 @@ import {ToastModule} from "primeng/toast";
 import {DropdownModule} from "primeng/dropdown";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {DialogModule} from "primeng/dialog";
+import { DrinkEditionComponent } from './pages/drink-edition/drink-edition.component';
+import {ConfirmationService} from "primeng/api";
+import { CommonModule } from '@angular/common';
+import {InputTextModule} from "primeng/inputtext";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @NgModule({
     declarations: [
@@ -39,9 +45,11 @@ import {DialogModule} from "primeng/dialog";
         RandomComponent,
         CartComponent,
         StrengthRadarComponent,
+        DrinkEditionComponent,
     ],
     imports: [
         SharedModule,
+        ConfirmDialogModule,
         RouterModule.forChild([
             {
                 path: '',
@@ -63,6 +71,10 @@ import {DialogModule} from "primeng/dialog";
                 component: DogModeComponent,
                 resolve: {drinks: DrinksResolver},
                 data: {title: 'doG Mode'}
+            },
+            {
+                path: 'drink-edition/:id',
+                component: DrinkEditionComponent
             },
             {
                 path: 'colors/:colorId',
@@ -113,10 +125,14 @@ import {DialogModule} from "primeng/dialog";
         DataViewModule,
         BadgeModule,
         ToastModule,
+        InputTextModule,
+        InputTextareaModule,
         DropdownModule,
         ToggleButtonModule,
-        DialogModule
+        DialogModule,
+        CommonModule,
     ],
+    providers: [ConfirmationService],
 })
 export class DrinksModule {
 }

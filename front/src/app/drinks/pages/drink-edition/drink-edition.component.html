@@ -1,0 +1,64 @@
+<div *ngIf="!isLoading; else loading">
+    <form [formGroup]="drinkForm">
+        <div class="p-fluid">
+
+            <!-- Champ Location (texte simple) -->
+            <div class="p-field">
+                <label for="location">Emplacement</label>
+                <input type="text" id="location" formControlName="location" pInputText />
+            </div>
+
+            <div class="p-field">
+                <label for="name">Nom</label>
+                <input type="text" id="name" formControlName="name" pInputText />
+            </div>
+
+            <div class="p-field">
+                <label for="availability">Disponibilité</label>
+                <p-dropdown [options]="availabilitiesList" formControlName="availability"></p-dropdown>
+            </div>
+
+            <div class="p-field">
+                <label for="producerId">Producteur</label>
+                <p-dropdown [options]="(producerList$ | async) || []" optionLabel="label" optionValue="value" formControlName="producerId"></p-dropdown>
+            </div>
+
+            <div class="p-field">
+                <label for="colorId">Couleur</label>
+                <p-dropdown [options]="(colorList$ | async) || []" optionLabel="label" optionValue="value" formControlName="colorId"></p-dropdown>
+            </div>
+
+            <div class="p-field">
+                <label for="styleId">Style</label>
+                <p-dropdown [options]="(styleList$ | async) || []" optionLabel="label" optionValue="value" formControlName="styleId"></p-dropdown>
+            </div>
+
+            <div class="p-field">
+                <label for="description">Description</label>
+                <textarea id="description" formControlName="description" pInputTextarea></textarea>
+            </div>
+
+            <div class="p-field">
+                <label for="abv">Taux d'alcool (%)</label>
+                <input type="number" id="abv" formControlName="abv" pInputText min="0" max="100" step="0.1" />
+            </div>
+
+            <div class="p-field">
+                <label for="buyingPrice">Prix d'achat (€)</label>
+                <input type="number" id="buyingPrice" formControlName="buyingPrice" pInputText min="0" step="0.01" />
+            </div>
+
+            <div class="p-field">
+                <p-button label="Sauvegarder" icon="pi pi-check" (click)="saveDrink()"></p-button>
+                <p-button label="Réinitialiser" icon="pi pi-refresh" (click)="resetForm()" class="p-button-warning"></p-button>
+                <p-button label="Annuler" icon="pi pi-times" (click)="cancel()" class="p-button-secondary"></p-button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<ng-template #loading>
+    <p>Chargement en cours...</p>
+</ng-template>
+
+<p-confirmDialog></p-confirmDialog>

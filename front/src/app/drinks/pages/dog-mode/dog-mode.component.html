@@ -1,63 +1,57 @@
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <form [formGroup]="loginForm">
-        <label for="username">Username</label>
-        <input id="username" type="text" formControlName="username" class="form-control"/>
-        <label for="password">Password</label>
-        <input id="password" type="password" formControlName="password" class="form-control"/>
-        <div class="border-round surface-card shadow-1">
-            <p-table [value]="drinks.content" responsiveLayout="stack">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="name">
-                            Nom
-                            <p-sortIcon field="name"></p-sortIcon>
-                            <p-columnFilter type="text" field="name" display="menu"></p-columnFilter>
-                        </th>
-                        <th pSortableColumn="producerName">
-                            Producteur
-                            <p-sortIcon field="producerName"></p-sortIcon>
-                            <p-columnFilter type="text" field="producerName" display="menu"></p-columnFilter>
-                        </th>
-                        <th pSortableColumn="service">
-                            Service
-                            <p-sortIcon field="serviceMethod"></p-sortIcon>
-                            <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
-                        </th>
-                        <th pSortableColumn="availability">
-                            Dispo.
-                            <p-sortIcon field="availability"></p-sortIcon>
-                            <p-columnFilter type="text" field="availability" display="menu"></p-columnFilter>
-                        </th>
-                        <th pSortableColumn="actions">
-                            Actions
-                            <p-sortIcon field="actions"></p-sortIcon>
-                            <p-columnFilter type="text" field="actions" display="menu"></p-columnFilter>
-                        </th>
-                    </tr>
-                    <tr>
+    <div class="p-fluid">
+        <form [formGroup]="loginForm" class="p-grid">
+            <div class="p-field p-col-12 p-md-6">
+                <label for="username">Username</label>
+                <input id="username" type="text" formControlName="username" class="p-inputtext">
+            </div>
+            <div class="p-field p-col-12 p-md-6">
+                <label for="password">Password</label>
+                <input id="password" type="password" formControlName="password" class="p-inputtext">
+            </div>
+        </form>
+    </div>
 
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-drink>
-                    <tr>
-                        <td><a [routerLink]="['/', 'drinks', drink.id]" class="no-underline">{{ drink.name }}</a></td>
-                        <td>{{ drink.producerName }}</td>
-                        <td>{{ drink.services.length > 1 ? 'TAP' : 'BOTTLE' }}</td>
-                        <td><availability-badge [availability]="drink.availability"></availability-badge></td>
-                        <td>
-                            <availability-badge [availability]="getNextAvailability(drink.availability)" (click)="changeAvailability(drink)" [labelAddition]="'->'"/>
-                            <p-button icon="pi pi-pencil" (onClick)="editDrink(drink)"></p-button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
-    </form>
-    <p-dialog header="Edition d'une binch" [modal]="true" [(visible)]="editDrinkPopupVisible">
-        <edit-drink
-                [drink]="(detailedDrinkToEdit$ | async) ?? undefined"
-                (onSave)="onSaveDrink($event)"
-        />
+    <p-table [value]="drinks.content" responsiveLayout="stack" class="p-datatable p-datatable-striped">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">
+                    Nom
+                    <p-sortIcon field="name"></p-sortIcon>
+                </th>
+                <th>
+                    Producteur
+                </th>
+                <th>
+                    Location
+                </th>
+                <th>
+                    Dispo.
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-drink>
+            <tr>
+                <td>{{ drink.name }}</td>
+                <td>{{ drink.producerName }}</td>
+                <td>{{ drink.location || 'N/A' }}</td>
+                <td><availability-badge
+                        [availability]="drink.availability"
+                        [showAvailabilityMenu]="true"
+                        (clickToChangeAvailability)="handleAvailabilityChange(drink, $event)"
+                ></availability-badge></td>
+                <td>
+                    <p-button icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'drink-edition', drink.id]" label="Edit" class="p-button-sm"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-dialog header="Modifier emplacement" [modal]="true" [(visible)]="editDrinkPopupVisible" [closable]="true" [style]="{width: '400px'}">
+        <div>A completer</div>
     </p-dialog>
 </ng-container>
 <ng-template #loading>

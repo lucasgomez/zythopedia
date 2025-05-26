@@ -10,12 +10,25 @@ export class AvailibilityBadgeComponent {
 
   @Input() availability!: Availability;
   @Input() location?: string;
-  @Input() labelAddition = "";
-  @Output() click: EventEmitter<null> = new EventEmitter<null>();
+  @Input() showAvailabilityMenu = false;
+  @Output() clickToChangeAvailability: EventEmitter<Availability> = new EventEmitter<Availability>();
+
+  availabilityOptions: Availability[] = ['AVAILABLE', 'OUT_OF_STOCK', 'SOON'];
+  popupVisible = false;
+
+  get otherAvailabilities(): Availability[] {
+    return this.availabilityOptions.filter(option => option !== this.availability);
+  }
 
   onClick(): void {
-    if (this.click) {
-      this.click.emit();
+    if (this.clickToChangeAvailability) {
+      this.popupVisible = true;
     }
   }
+
+  changeAvailability(newAvailability: Availability): void {
+    this.clickToChangeAvailability?.emit(newAvailability);
+    this.popupVisible = false;
+  }
+
 }

@@ -8,3 +8,4 @@ front/dist/
 front/node_modules/
 front/.angular/cache
 /out
+/src/package-lock.json

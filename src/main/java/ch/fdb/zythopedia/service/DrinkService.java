@@ -160,7 +160,7 @@ public class DrinkService {
                 Drink::getColor, Drink::setColor, colorRepository::findById);
         updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getStyleId(),
                 Drink::getStyle, Drink::setStyle, styleRepository::findById);
-        updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getColorId(),
+        updatePropertyIfNeeded(drinkToUpdate, boughtDrinkSubmitted.getProducerId(),
                 Drink::getProducer, Drink::setProducer, producerRepository::findById);
 
         drinkToUpdate.setName(boughtDrinkSubmitted.getName());

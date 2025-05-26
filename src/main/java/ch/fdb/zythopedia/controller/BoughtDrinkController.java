@@ -46,7 +46,7 @@ public class BoughtDrinkController {
     }
 
     @GetMapping("/boughtdrink/{boughtDrinkId}/full")
-    @Secured("ROLE_MANAGER")
+    @Secured({"ROLE_MANAGER", "ROLE_ADMIN"}) //TODO Check how to add hierarhy of roles
     public FullDrinkDto getFullBoughtDrink(@PathVariable Long boughtDrinkId) {
         return boughtDrinkService.getFullBoughtDrink(boughtDrinkId);
     }

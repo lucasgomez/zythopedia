@@ -1,6 +1,14 @@
-<p-badge size="large"
-         [severity]="availability | availabilityColor"
-         [value]="labelAddition + (availability | availabilityIcon) + (location && availability === 'AVAILABLE' ? ' ' + location : '')"
-         [pTooltip]="(availability | availabilityLabel)"
-         (click)="onClick()"
-></p-badge>
+<div (click)="onClick()" class="availability-badge">
+    <p-badge size="large"
+             [severity]="availability | availabilityColor"
+             [value]="(availability | availabilityIcon) + (location && availability === 'AVAILABLE' ? ' ' + location : '')"
+             [pTooltip]="(availability | availabilityLabel)"
+             (click)="onClick()"
+    ></p-badge>
+
+    <p-dialog header="Changer la dispo" [(visible)]="popupVisible" [modal]="true" [style]="{width: '300px'}">
+        <div *ngFor="let status of otherAvailabilities">
+            <p-button [label]="status" (click)="changeAvailability(status)" class="p-button-sm p-button-text"></p-button>
+        </div>
+    </p-dialog>
+</div>
