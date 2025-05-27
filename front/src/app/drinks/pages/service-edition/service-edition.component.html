@@ -1,0 +1,36 @@
+<div *ngIf="isLoading" class="loading-indicator">Chargement...</div>
+
+<div *ngIf="!isLoading">
+  <h1>{{ drink.name }} - {{ drink.producer.name }}</h1>
+
+  <form [formGroup]="servicesForm" (ngSubmit)="saveServices()">
+    <div formArrayName="services">
+      <div
+        *ngFor="let serviceControl of services.controls; let i = index"
+        [formGroupName]="i"
+        class="service-entry"
+      >
+        <div>
+          <label>Volume (en CL)</label>
+          <input pInputText
+            type="number"
+            formControlName="volumeInCl"
+          />
+        </div>
+        <div>
+          <label>Prix de vente</label>
+          <input pInputText
+            type="number"
+            formControlName="sellingPrice"
+          />
+        </div>
+        <p-button type="button" icon="pi pi-minus" (click)="removeService(i)"></p-button>
+      </div>
+    </div>
+    <p-button type="button" icon="pi pi-plus" (click)="addService()"></p-button>
+    <div class="actions">
+        <p-button label="Sauvegarder" icon="pi pi-check" (click)="saveServices()"></p-button>
+        <p-button label="Annuler" icon="pi pi-times" (click)="cancel()" class="p-button-secondary"></p-button>
+    </div>
+  </form>
+</div>

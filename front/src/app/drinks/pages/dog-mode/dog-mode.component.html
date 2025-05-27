@@ -44,7 +44,8 @@
                         (clickToChangeAvailability)="handleAvailabilityChange(drink, $event)"
                 ></availability-badge></td>
                 <td>
-                    <p-button icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'drink-edition', drink.id]" label="Edit" class="p-button-sm"></p-button>
+                    <p-button icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'drink-edition', drink.id]" label="Boisson" class="p-button-sm"></p-button>
+                    <p-button icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'service-edition', drink.id]" label="Services" class="p-button-sm"></p-button>
                 </td>
             </tr>
         </ng-template>

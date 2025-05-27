@@ -34,6 +34,7 @@ import { CommonModule } from '@angular/common';
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import { ServiceEditionComponent } from './pages/service-edition/service-edition.component';
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
         CartComponent,
         StrengthRadarComponent,
         DrinkEditionComponent,
+        ServiceEditionComponent,
     ],
     imports: [
         SharedModule,
@@ -75,6 +77,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
             {
                 path: 'drink-edition/:id',
                 component: DrinkEditionComponent
+            },
+            {
+                path: 'service-edition/:id',
+                component: ServiceEditionComponent
             },
             {
                 path: 'colors/:colorId',
