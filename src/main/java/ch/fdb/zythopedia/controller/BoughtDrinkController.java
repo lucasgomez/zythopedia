@@ -72,4 +72,10 @@ public class BoughtDrinkController {
     public void delete(@PathVariable Long boughtDrinkId) {
         boughtDrinkService.delete(boughtDrinkId);
     }
+
+    @PostMapping("/boughtdrink/panicmode")
+    @Secured("ROLE_ADMIN")
+    public void panicMode() {
+        boughtDrinkService.updateBoughtDrinksStatus(Availability.OUT_OF_STOCK);
+    }
 }

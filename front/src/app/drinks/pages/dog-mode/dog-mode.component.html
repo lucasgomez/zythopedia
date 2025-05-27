@@ -1,16 +1,5 @@
+<p-button label="☠" (click)="nukeDemAll()"></p-button>
 <ng-container *ngIf="drinks$ | async as drinks else loading">
-    <div class="p-fluid">
-        <form [formGroup]="loginForm" class="p-grid">
-            <div class="p-field p-col-12 p-md-6">
-                <label for="username">Username</label>
-                <input id="username" type="text" formControlName="username" class="p-inputtext">
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <label for="password">Password</label>
-                <input id="password" type="password" formControlName="password" class="p-inputtext">
-            </div>
-        </form>
-    </div>
 
     <p-table [value]="drinks.content" responsiveLayout="stack" class="p-datatable p-datatable-striped">
         <ng-template pTemplate="header">
@@ -58,3 +47,5 @@
 <ng-template #loading>
     <p>Chargement en cours...</p>
 </ng-template>
+
+<<p-confirmDialog></p-confirmDialog>

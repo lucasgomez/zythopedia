@@ -1,0 +1,18 @@
+<div class="login-page">
+  <h1>{{ userMessage }}</h1>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <div class="form-group">
+      <label for="login">Login</label>
+      <input pInputText id="login" type="text" formControlName="login" placeholder="Entrez votre login" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input pInputText id="password" type="password" formControlName="password" placeholder="Entrez votre mot de passe" />
+    </div>
+
+    <p-button type="submit" label="Login"></p-button>
+    <p-button type="button" label="Logout" (click)="onLogout()"></p-button>
+  </form>
+</div>

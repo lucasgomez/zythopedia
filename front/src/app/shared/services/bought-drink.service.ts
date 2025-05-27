@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {DetailedDrink, FullDrinkDto} from '../models/Drink';
+import {LoginService} from "./login.service";
 
 const API_URL = `${environment.BASE_URL}boughtdrink`;
 
@@ -11,43 +12,35 @@ const API_URL = `${environment.BASE_URL}boughtdrink`;
 })
 export class BoughtDrinkService {
 
-    constructor(private readonly http: HttpClient) {
+    constructor(
+        private readonly http: HttpClient,
+        private readonly loginService: LoginService) {
     }
 
     getDrink(drinkId: number): Observable<DetailedDrink> {
         return this.http.get<DetailedDrink>(`${API_URL}/${drinkId}/detail`);
     }
 
-    changeAvailability(drinkId: number, availability: string, credentials: ClunkyCredentials): Observable<DetailedDrink> {
+    changeAvailability(drinkId: number, availability: string): Observable<DetailedDrink> {
         return this.http.get<DetailedDrink>(
             `${API_URL}/${drinkId}/availability/${availability}`,
-            BoughtDrinkService.getHttpOptions(credentials));
+            this.loginService.getHttpOptions());
     }
 
-    updateDrink(drinkId: number, updatedDrink: FullDrinkDto, credentials: ClunkyCredentials): Observable<DetailedDrink> {
+    updateDrink(drinkId: number, updatedDrink: FullDrinkDto): Observable<DetailedDrink> {
         return this.http.put<DetailedDrink>(
                     `${API_URL}/${drinkId}`,
                     updatedDrink,
-                    BoughtDrinkService.getHttpOptions(credentials));
+            this.loginService.getHttpOptions());
     }
 
-    getFullDrink(drinkId: number, credentials: ClunkyCredentials): Observable<FullDrinkDto> {
+    getFullDrink(drinkId: number): Observable<FullDrinkDto> {
         return this.http.get<FullDrinkDto>(
             `${API_URL}/${drinkId}/full`,
-            BoughtDrinkService.getHttpOptions(credentials));
+            this.loginService.getHttpOptions());
     }
 
-    private static getHttpOptions(credentials: ClunkyCredentials): {headers: HttpHeaders} {
-        return {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${btoa(`${credentials.username}:${credentials.password}`)}`
-            })
-        };
+    nukeDemAll(): Observable<void> {
+        return this.http.post<void>(`${API_URL}/panicmode`, null, this.loginService.getHttpOptions());
     }
-}
-
-export class ClunkyCredentials {
-    username!: string;
-    password!: string;
 }

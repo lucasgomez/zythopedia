@@ -331,4 +331,13 @@ public class BoughtDrinkService {
 
         return soldDrinkDetailedDtoMapper.toDto(boughtDrinkRepository.save(boughtDrink));
     }
+
+    public void updateBoughtDrinksStatus(Availability availability) {
+        log.error("[Panic mode activated!]");
+        boughtDrinkRepository.findByEdition(editionService.getCurrentEdition())
+                .stream()
+                .filter(BOUGHT_DRINK_AVAILABLE)
+                .map(boughtDrink -> boughtDrink.setAvailability(availability))
+                .forEach(boughtDrinkRepository::save);
+    }
 }

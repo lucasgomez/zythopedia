@@ -5,6 +5,7 @@ import { BoughtDrinkService } from '../../../shared/services/bought-drink.servic
 import { ServiceService } from '../../../shared/services/service.service';
 import { DetailedDrink } from '../../../shared/models/Drink';
 import { Service } from "../../../shared/models/Service";
+import {LoginService} from "../../../shared/services/login.service";
 
 @Component({
   selector: 'app-service-edition',
@@ -22,6 +23,7 @@ export class ServiceEditionComponent implements OnInit {
     private router: Router,
     private fb: FormBuilder,
     private boughtDrinkService: BoughtDrinkService,
+    private loginService: LoginService,
     private serviceService: ServiceService
   ) {}
 
@@ -104,7 +106,7 @@ export class ServiceEditionComponent implements OnInit {
   saveServices(): void {
     if (this.servicesForm.valid) {
       this.serviceService
-        .updateServices(this.boughtDrinkId, this.servicesForm.value.services, this.getCredentials())
+        .updateServices(this.boughtDrinkId, this.servicesForm.value.services)
         .subscribe({
           next: () => {
             alert('Services sauvegardés avec succès.');
@@ -117,10 +119,5 @@ export class ServiceEditionComponent implements OnInit {
     } else {
       alert('Veuillez corriger les erreurs dans le formulaire.');
     }
-  }
-
-  private getCredentials() {
-    //TODO use stored credentials
-    return { username: 'barbar', password: 'motdepasse' };
   }
 }

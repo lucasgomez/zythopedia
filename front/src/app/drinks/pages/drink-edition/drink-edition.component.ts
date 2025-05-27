@@ -9,6 +9,7 @@ import {ProducerService} from "../../../shared/services/producer.service";
 import {StyleService} from "../../../shared/services/style.service";
 import {FullDrinkDto} from "../../../shared/models/Drink";
 import {Availability} from "../../../shared/models/Availability";
+import {LoginService} from "../../../shared/services/login.service";
 
 @Component({
   selector: 'app-drink-edition',
@@ -69,7 +70,7 @@ export class DrinkEditionComponent implements OnInit {
   }
 
   private loadDrinkData(): void {
-    this.boughtDrinkService.getFullDrink(this.drinkId, this.getCredentials()).subscribe({
+    this.boughtDrinkService.getFullDrink(this.drinkId).subscribe({
       next: (drink: FullDrinkDto) => {
         this.drinkForm.patchValue(drink);
         this.isLoading = false;
@@ -110,7 +111,7 @@ export class DrinkEditionComponent implements OnInit {
       accept: () => {
         // Réaliser l'appel à l'API pour sauvegarder
         this.boughtDrinkService
-          .updateDrink(this.drinkId, this.drinkForm.value, this.getCredentials())
+          .updateDrink(this.drinkId, this.drinkForm.value)
           .subscribe(() => {
             alert('Drink sauvegardé avec succès.');
             this.router.navigate(['/drinks', this.drinkId]); // Rediriger après la sauvegarde
@@ -139,10 +140,5 @@ export class DrinkEditionComponent implements OnInit {
         this.router.navigate(['/']); // Retourner à la page précédente
       },
     });
-  }
-
-  private getCredentials() {
-    //TODO use stored credentials
-    return { username: 'barbar', password: 'motdepasse' };
   }
 }

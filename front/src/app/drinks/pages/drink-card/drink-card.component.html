@@ -1,4 +1,5 @@
 <div class="surface-card p-4 shadow-2 border-round">
+    <p-button *ngIf="isLoggedIn" icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'drink-edition', drink.id]" class="p-button-sm"></p-button>
     <div class="font-medium text-3xl text-900 mb-3">{{ drink.name }}</div>
     <div *ngIf="drink.description" class="text-500 mb-5">{{ drink.description }}</div>
     <div class="grid grid-nogutter border-top-1 surface-border pt-2">
@@ -43,6 +44,7 @@
         </div>
         <div class="col-12 md:col-10 p-3">
             <div class="text-500 font-medium mb-3">Quantités de service</div>
+            <p-button *ngIf="isLoggedIn" icon="pi pi-pencil" [routerLink]="['/', 'drinks', 'service-edition', drink.id]"class="p-button-sm"></p-button>
             <div *ngFor="let service of drink.services"
                  class="flex md:align-items-center md:justify-content-between border-top-1 surface-border p-3 flex-column md:flex-row">
                 <ul class="list-none p-0 m-0 flex align-items-end select-none flex-row">

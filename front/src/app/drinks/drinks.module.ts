@@ -35,6 +35,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import { ServiceEditionComponent } from './pages/service-edition/service-edition.component';
+import { LoginComponent } from './pages/login/login.component';
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { ServiceEditionComponent } from './pages/service-edition/service-edition
         StrengthRadarComponent,
         DrinkEditionComponent,
         ServiceEditionComponent,
+        LoginComponent,
     ],
     imports: [
         SharedModule,
@@ -115,6 +117,10 @@ import { ServiceEditionComponent } from './pages/service-edition/service-edition
             {
                 path: 'cart',
                 component: CartComponent
+            },
+            {
+                path: 'login',
+                component: LoginComponent
             },
             {
                 path: ':drinkId',
