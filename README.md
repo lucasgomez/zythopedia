@@ -42,10 +42,19 @@ sudo -u postgres pg_restore -d zythopediadb --clean /home/shared/zytho.backup
 ```
 Le *sudo -u postgres* pour le faire avec le user *postgres* et l'option *--clean* pour faire des DROP avant le réimport.
 
-#### Backup
+#### Backup pour pg_restore
+```
+sudo -u postgres pg_dump -d zythopediadb -F tar -c -f /home/shared/zytho_21-05-25.dump
+```
+
+#### Backup à destination d'un import plain text
 ```
 sudo -u postgres pg_dump -d zythopediadb -F plain -c -f /home/shared/zytho_21-05-25.dump
 ```
+
+#### Restore d'un plain backup
+D'abord vider la DB si ne contiens pas de DROP dans le scipt. Puis :
+```sudo -u postgres psql zythopediadb < /home/shared/zytho_25-05-25.dump``
 
 ## Nouvelle édition
 Une fois que l'appli boot, il est possible de faire une nouvelle édition.
@@ -103,3 +112,12 @@ AND    d.description IS NULL;
 
 ## Release
 mvn release:prepare
+mvn release:perform
+npm run build:prod
+
+### Problèmes
+#### Le front n'arrive pas à contacter le back
+Il faut s'assurer que le script de redirect est présent et bien configuré. On peut le trouver à la racine de "sites/soif.fetedelabiere.ch" dans un répertoire "redirect". Dedans se trouve l'adresse IP du serveur backend. Ce répertoire n'est pas pris dans le npm build
+
+#### On ne peut pas accéder à autre chose que la page "root", les autres font un Objet non trouvé
+Il faut copier le fichier .httaccess depuis une ancienne version pour que ca marche.
