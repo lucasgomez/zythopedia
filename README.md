@@ -99,3 +99,7 @@ FROM   bought_drink bd
 INNER JOIN drink d ON bd.drink_fk = d.id
 WHERE  bd.edition_fk = 2794
 AND    d.description IS NULL;
+```
+
+## Release
+mvn release:prepare
