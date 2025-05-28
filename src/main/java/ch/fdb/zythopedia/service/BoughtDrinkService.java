@@ -1,9 +1,6 @@
 package ch.fdb.zythopedia.service;
 
-import ch.fdb.zythopedia.dto.ColorDto;
-import ch.fdb.zythopedia.dto.EnumerableDto;
-import ch.fdb.zythopedia.dto.IdOrNameDto;
-import ch.fdb.zythopedia.dto.SoldDrinkDetailedDto;
+import ch.fdb.zythopedia.dto.*;
 import ch.fdb.zythopedia.dto.creation.CreateBoughtDrinkDto;
 import ch.fdb.zythopedia.dto.creation.CreateDrinkDto;
 import ch.fdb.zythopedia.dto.creation.FullDrinkDto;
@@ -222,7 +219,13 @@ public class BoughtDrinkService {
 
     public Optional<ch.fdb.zythopedia.dto.SoldDrinkDetailedDto> findById(Long boughtDrinkId) {
         return boughtDrinkRepository.findById(boughtDrinkId)
-                .map(soldDrinkDetailedDtoMapper::toDto);
+                .map(soldDrinkDetailedDtoMapper::toDto)
+                .map(BoughtDrinkService::sortServicesByVolume);
+    }
+
+    private static SoldDrinkDetailedDto sortServicesByVolume(SoldDrinkDetailedDto drink) {
+        drink.getServices().sort(Comparator.comparing(ServiceDto::getVolumeInCl));
+        return drink;
     }
 
     public FullDrinkDto getFullBoughtDrink(Long boughtDrinkId) {
